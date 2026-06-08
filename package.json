@@ -1,0 +1,50 @@
+{
+  "name": "vue-framework-front",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "yarn@1.22.22",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "typecheck": "vue-tsc --noEmit",
+    "lint": "eslint . --ext .ts,.vue --max-warnings 0",
+    "lint:style": "stylelint \"src/**/*.{css,vue}\"",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "openapi:generate": "node scripts/generate-openapi.mjs",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:live:monolith-vm": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-e2e-live-monolith-vm.ps1"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "axios": "^1.7.9",
+    "element-plus": "^2.9.4",
+    "openapi-fetch": "^0.17.0",
+    "pinia": "^2.3.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/compiler-dom": "^3.5.35",
+    "@vue/eslint-config-typescript": "^14.3.0",
+    "@vue/test-utils": "^2.4.6",
+    "eslint": "^9.18.0",
+    "eslint-plugin-vue": "^9.32.0",
+    "jsdom": "^29.1.1",
+    "openapi-typescript": "^7.13.0",
+    "postcss-html": "^1.8.1",
+    "prettier": "^3.8.3",
+    "stylelint": "^17.12.0",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-config-standard-vue": "^1.0.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.8",
+    "vue-tsc": "^2.2.0"
+  }
+}
