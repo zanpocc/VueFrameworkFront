@@ -1,4 +1,4 @@
-import { http, type ApiResult } from './http';
+import { http, unwrap, type ApiResult } from './http';
 
 export interface SysUser {
   id: number;
@@ -102,13 +102,6 @@ export interface SysPermission {
   permissionName: string;
   resourceType: string;
   status: string;
-}
-
-function unwrap<T>(response: { data: ApiResult<T> }) {
-  if (!response.data.success) {
-    throw new Error(response.data.message || response.data.code);
-  }
-  return response.data.data;
 }
 
 export const iamApi = {

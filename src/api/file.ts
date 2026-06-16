@@ -1,4 +1,4 @@
-import { http, type ApiResult } from './http';
+import { http, unwrap, type ApiResult } from './http';
 
 export interface FileObject {
   id: number;
@@ -26,16 +26,28 @@ export interface FilePreviewInfo {
   reason: string;
 }
 
-function unwrap<T>(response: { data: ApiResult<T> }) {
-  if (!response.data.success) {
-    throw new Error(response.data.message || response.data.code);
-  }
-  return response.data.data;
+export interface FileStorageDiagnostic {
+  activeStorageType: string;
+  bucketName: string;
+  health: string;
+  message: string;
+  activeStorageAvailable: boolean;
+  availableStorageTypes: string[];
+  localRoot: string;
+  maxFileSizeBytes: number;
+  maxPreviewSizeBytes: number;
+  s3Enabled: boolean;
+  s3Endpoint: string;
+  s3Region: string;
+  s3PathStyleAccess: boolean;
 }
 
 export const fileApi = {
   files(status = '') {
     return http.get<ApiResult<FileObject[]>>('/files', { params: { status } }).then(unwrap);
+  },
+  storageDiagnostics() {
+    return http.get<ApiResult<FileStorageDiagnostic>>('/files/storage/diagnostics').then(unwrap);
   },
   upload(file: File) {
     const formData = new FormData();

@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 import type { AxiosAdapter } from 'axios';
 import { http } from '@/api/http';
+import { globalLoading } from '@/stores/global-loading';
 import { readAccessToken, writeAccessToken } from '@/stores/auth-storage';
 
 const elMessageError = vi.hoisted(() => vi.fn());
@@ -15,6 +16,7 @@ vi.mock('element-plus', async (importOriginal) => ({
 describe('http client', () => {
   beforeEach(() => {
     window.localStorage.clear();
+    globalLoading.reset();
   });
 
   it('injects bearer token into requests', async () => {
@@ -33,6 +35,24 @@ describe('http client', () => {
     const response = await http.get('/probe', { adapter });
 
     expect(response.config.headers.Authorization).toBe('Bearer token-1');
+  });
+
+  it('injects request and trace headers into requests', async () => {
+    const adapter: AxiosAdapter = async (config) => {
+      return {
+        data: { ok: true },
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config,
+      };
+    };
+
+    const response = await http.get('/probe', { adapter });
+
+    expect(response.config.headers['X-Request-Id']).toEqual(expect.any(String));
+    expect(response.config.headers['X-Trace-Id']).toBe(response.config.headers['X-Request-Id']);
+    expect(globalLoading.loading.value).toBe(false);
   });
 
   it('clears token after 401 response', async () => {

@@ -1,4 +1,4 @@
-import { http, type ApiResult } from './http';
+import { http, unwrap, type ApiResult } from './http';
 
 export interface DataSourceDiagnostic {
   name: string;
@@ -13,11 +13,13 @@ export interface ShardRoute {
   actualTable: string;
 }
 
-function unwrap<T>(response: { data: ApiResult<T> }) {
-  if (!response.data.success) {
-    throw new Error(response.data.message || response.data.code);
-  }
-  return response.data.data;
+export interface SlowSqlRecord {
+  occurredAt: string;
+  durationMs: number;
+  thresholdMs: number;
+  traceId: string | null;
+  statementId: string;
+  sql: string;
 }
 
 export const dataGovernanceApi = {
@@ -39,5 +41,8 @@ export const dataGovernanceApi = {
     return http
       .get<ApiResult<ShardRoute>>('/system/data/sharding/async-task', { params: { date } })
       .then(unwrap);
+  },
+  slowSql() {
+    return http.get<ApiResult<SlowSqlRecord[]>>('/system/data/slow-sql').then(unwrap);
   },
 };

@@ -1,4 +1,4 @@
-import { http, type ApiResult } from './http';
+import { http, unwrap, type ApiResult } from './http';
 
 export interface SysConfig {
   id: number;
@@ -35,6 +35,27 @@ export interface DictItem {
 
 export type DictItemCommand = Omit<DictItem, 'id'>;
 
+export interface Notice {
+  id: number;
+  title: string;
+  noticeType: string;
+  content: string;
+  status: string;
+  pinned: boolean;
+  sortOrder: number;
+  publisher: string | null;
+  publishedAt: string | null;
+  createdBy: string | null;
+  updatedBy: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type NoticeCommand = Pick<
+  Notice,
+  'title' | 'noticeType' | 'content' | 'status' | 'pinned' | 'sortOrder'
+>;
+
 export interface LoginLog {
   id: number;
   username: string;
@@ -56,11 +77,31 @@ export interface OperationLog {
   operatedAt: string;
 }
 
-function unwrap<T>(response: { data: ApiResult<T> }) {
-  if (!response.data.success) {
-    throw new Error(response.data.message || response.data.code);
-  }
-  return response.data.data;
+export interface AuditEvent {
+  id: number;
+  username: string;
+  module: string;
+  action: string;
+  resourceType: string | null;
+  resourceId: string | null;
+  detail: string | null;
+  success: boolean;
+  traceId: string | null;
+  clientIp: string | null;
+  createdAt: string;
+}
+
+export interface ExceptionLog {
+  id: number;
+  exceptionClass: string;
+  message: string | null;
+  stackTrace: string | null;
+  requestMethod: string | null;
+  requestUri: string | null;
+  username: string | null;
+  traceId: string | null;
+  clientIp: string | null;
+  createdAt: string;
 }
 
 export const systemApi = {
@@ -77,6 +118,9 @@ export const systemApi = {
   },
   deleteConfig(id: number) {
     return http.delete<ApiResult<void>>(`/system/configs/${id}`).then(unwrap);
+  },
+  refreshConfigCache() {
+    return http.post<ApiResult<void>>('/system/configs/cache/refresh').then(unwrap);
   },
   dictTypes(keyword = '') {
     return http
@@ -106,6 +150,26 @@ export const systemApi = {
   deleteDictItem(id: number) {
     return http.delete<ApiResult<void>>(`/system/dict-items/${id}`).then(unwrap);
   },
+  notices(keyword = '', status = '') {
+    return http
+      .get<ApiResult<Notice[]>>('/system/notices', { params: { keyword, status } })
+      .then(unwrap);
+  },
+  createNotice(payload: NoticeCommand) {
+    return http.post<ApiResult<Notice>>('/system/notices', payload).then(unwrap);
+  },
+  updateNotice(id: number, payload: NoticeCommand) {
+    return http.put<ApiResult<Notice>>(`/system/notices/${id}`, payload).then(unwrap);
+  },
+  publishNotice(id: number) {
+    return http.post<ApiResult<Notice>>(`/system/notices/${id}/publish`).then(unwrap);
+  },
+  revokeNotice(id: number) {
+    return http.post<ApiResult<Notice>>(`/system/notices/${id}/revoke`).then(unwrap);
+  },
+  deleteNotice(id: number) {
+    return http.delete<ApiResult<void>>(`/system/notices/${id}`).then(unwrap);
+  },
   loginLogs(username = '') {
     return http
       .get<ApiResult<LoginLog[]>>('/system/login-logs', { params: { username } })
@@ -114,6 +178,18 @@ export const systemApi = {
   operationLogs(username = '') {
     return http
       .get<ApiResult<OperationLog[]>>('/system/operation-logs', { params: { username } })
+      .then(unwrap);
+  },
+  auditEvents(module = '', username = '') {
+    return http
+      .get<ApiResult<AuditEvent[]>>('/system/audit-events', { params: { module, username } })
+      .then(unwrap);
+  },
+  exceptionLogs(exceptionClass = '', username = '') {
+    return http
+      .get<ApiResult<ExceptionLog[]>>('/system/exception-logs', {
+        params: { exceptionClass, username },
+      })
       .then(unwrap);
   },
 };

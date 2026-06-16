@@ -1,14 +1,26 @@
 <template>
   <el-container class="app-shell">
-    <el-aside class="app-shell__aside" width="232px">
-      <div class="app-shell__brand">QuickFramework</div>
-      <el-menu router :default-active="activeMenu">
-        <MenuNode v-for="item in authStore.visibleMenus" :key="item.id" :menu="item" />
+    <el-aside class="app-shell__aside" :width="isCollapsed ? '64px' : '232px'">
+      <div class="app-shell__brand">
+        <span v-if="!isCollapsed" class="app-shell__brand-text">QuickFramework</span>
+        <span v-else class="app-shell__brand-icon">QF</span>
+      </div>
+      <div v-if="!isCollapsed" class="app-shell__menu-search">
+        <el-input v-model="menuKeyword" clearable placeholder="搜索菜单" size="small" />
+      </div>
+      <el-menu router :default-active="activeMenu" :collapse="isCollapsed">
+        <MenuNode v-for="item in filteredMenus" :key="item.id" :menu="item" />
       </el-menu>
     </el-aside>
     <el-container>
       <el-header class="app-shell__header">
-        <span>企业平台脚手架</span>
+        <div class="app-shell__header-left">
+          <el-icon class="app-shell__collapse-btn" @click="isCollapsed = !isCollapsed">
+            <Fold v-if="!isCollapsed" />
+            <Expand v-else />
+          </el-icon>
+          <AppBreadcrumb />
+        </div>
         <el-dropdown trigger="click" @command="handleCommand">
           <el-button text>
             <el-icon><User /></el-icon>
@@ -22,15 +34,21 @@
           </template>
         </el-dropdown>
       </el-header>
+      <AppTabNav />
+      <div v-if="isGlobalLoading" class="app-shell__loading-bar" />
       <el-main class="app-shell__main">
-        <RouterView />
+        <RouterView v-slot="{ Component }">
+          <KeepAlive :include="tabStore.cachedNames">
+            <component :is="Component" :key="$route.path" />
+          </KeepAlive>
+        </RouterView>
       </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script setup lang="ts">
-import { computed, defineComponent, h } from 'vue';
+import { computed, defineComponent, h, ref } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
 import {
   ArrowDown,
@@ -40,6 +58,8 @@ import {
   Connection,
   Document,
   EditPen,
+  Expand,
+  Fold,
   Menu,
   Monitor,
   OfficeBuilding,
@@ -55,11 +75,19 @@ import {
 import { ElIcon, ElMenuItem, ElSubMenu } from 'element-plus';
 import type { MenuTreeNode } from '@/api/auth';
 import { useAuthStore } from '@/stores/auth';
+import { globalLoading } from '@/stores/global-loading';
+import { useTabStore } from '@/stores/tabs';
+import AppBreadcrumb from '@/components/AppBreadcrumb.vue';
+import AppTabNav from '@/components/AppTabNav.vue';
 
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
+const tabStore = useTabStore();
 const activeMenu = computed(() => route.path);
+const isCollapsed = ref(false);
+const menuKeyword = ref('');
+const isGlobalLoading = globalLoading.loading;
 
 const iconMap = {
   Monitor,
@@ -80,6 +108,29 @@ const iconMap = {
   User,
   UserFilled,
 };
+
+const filteredMenus = computed(() => {
+  const keyword = menuKeyword.value.trim().toLowerCase();
+  if (!keyword) {
+    return authStore.visibleMenus;
+  }
+  return filterMenus(authStore.visibleMenus, keyword);
+});
+
+function filterMenus(menus: MenuTreeNode[], keyword: string): MenuTreeNode[] {
+  return menus
+    .map((menu) => {
+      const children = filterMenus(menu.children ?? [], keyword);
+      const matched =
+        menu.title.toLowerCase().includes(keyword) ||
+        menu.routePath.toLowerCase().includes(keyword);
+      if (!matched && children.length === 0) {
+        return null;
+      }
+      return { ...menu, children };
+    })
+    .filter((menu): menu is MenuTreeNode => menu !== null);
+}
 
 const MenuNode = defineComponent({
   name: 'MenuNode',
@@ -135,18 +186,37 @@ async function handleCommand(command: string) {
 }
 
 .app-shell__aside {
-  border-right: 1px solid #e5e7eb;
-  background: #fff;
+  border-right: 1px solid var(--qf-border-color);
+  background: var(--qf-color-bg-surface);
+  transition: width 0.2s;
+  overflow: hidden;
 }
 
 .app-shell__brand {
   display: flex;
   align-items: center;
+  justify-content: center;
   height: 56px;
+  font-size: var(--qf-font-size-subtitle);
+  font-weight: var(--qf-font-weight-heading);
+  border-bottom: 1px solid var(--qf-border-color);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.app-shell__brand-text {
   padding: 0 20px;
-  font-size: 16px;
+}
+
+.app-shell__brand-icon {
+  font-size: 18px;
   font-weight: 700;
-  border-bottom: 1px solid #e5e7eb;
+  color: var(--el-color-primary);
+}
+
+.app-shell__menu-search {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--qf-border-color);
 }
 
 .app-shell__header {
@@ -154,9 +224,25 @@ async function handleCommand(command: string) {
   align-items: center;
   justify-content: space-between;
   height: 56px;
-  font-weight: 600;
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
+  font-weight: var(--qf-font-weight-semibold);
+  background: var(--qf-color-bg-surface);
+  border-bottom: 1px solid var(--qf-border-color);
+}
+
+.app-shell__header-left {
+  display: flex;
+  gap: var(--qf-spacing-md);
+  align-items: center;
+}
+
+.app-shell__collapse-btn {
+  font-size: 18px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.app-shell__collapse-btn:hover {
+  color: var(--el-color-primary);
 }
 
 .app-shell__header :deep(.el-button) {
@@ -167,5 +253,22 @@ async function handleCommand(command: string) {
 
 .app-shell__main {
   padding: 20px;
+}
+
+.app-shell__loading-bar {
+  height: 2px;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--el-color-primary), var(--el-color-success));
+  animation: qf-loading-slide 1.1s ease-in-out infinite alternate;
+}
+
+@keyframes qf-loading-slide {
+  from {
+    transform: translateX(-35%);
+  }
+
+  to {
+    transform: translateX(35%);
+  }
 }
 </style>

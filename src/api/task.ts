@@ -1,4 +1,4 @@
-import { http, type ApiResult } from './http';
+import { http, unwrap, type ApiResult } from './http';
 
 export interface AsyncTask {
   id: number;
@@ -14,6 +14,10 @@ export interface AsyncTask {
   nextRetryAt: string | null;
   lockedBy: string | null;
   lockedAt: string | null;
+  manualAction: string | null;
+  manualComment: string | null;
+  manualHandledBy: string | null;
+  manualHandledAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -52,13 +56,6 @@ export interface OutboxMessage {
   publishedAt: string | null;
 }
 
-function unwrap<T>(response: { data: ApiResult<T> }) {
-  if (!response.data.success) {
-    throw new Error(response.data.message || response.data.code);
-  }
-  return response.data.data;
-}
-
 export const taskApi = {
   tasks(status = '') {
     return http.get<ApiResult<AsyncTask[]>>('/tasks', { params: { status } }).then(unwrap);
@@ -66,14 +63,23 @@ export const taskApi = {
   createTask(payload: AsyncTaskCommand) {
     return http.post<ApiResult<AsyncTask>>('/tasks', payload).then(unwrap);
   },
+  taskDetail(id: number) {
+    return http.get<ApiResult<AsyncTask>>(`/tasks/${id}`).then(unwrap);
+  },
   taskLogs(id: number) {
     return http.get<ApiResult<AsyncTaskLog[]>>(`/tasks/${id}/logs`).then(unwrap);
   },
-  retryTask(id: number) {
-    return http.post<ApiResult<AsyncTask>>(`/tasks/${id}/retry`).then(unwrap);
+  retryTask(id: number, comment?: string) {
+    return http.post<ApiResult<AsyncTask>>(`/tasks/${id}/retry`, { comment }).then(unwrap);
   },
-  cancelTask(id: number) {
-    return http.post<ApiResult<AsyncTask>>(`/tasks/${id}/cancel`).then(unwrap);
+  cancelTask(id: number, comment?: string) {
+    return http.post<ApiResult<AsyncTask>>(`/tasks/${id}/cancel`, { comment }).then(unwrap);
+  },
+  ignoreTask(id: number, comment?: string) {
+    return http.post<ApiResult<AsyncTask>>(`/tasks/${id}/ignore`, { comment }).then(unwrap);
+  },
+  restoreTask(id: number, comment?: string) {
+    return http.post<ApiResult<AsyncTask>>(`/tasks/${id}/restore`, { comment }).then(unwrap);
   },
   dispatch(batchSize = 10) {
     return http
@@ -84,5 +90,8 @@ export const taskApi = {
     return http
       .get<ApiResult<OutboxMessage[]>>('/tasks/outbox', { params: { status } })
       .then(unwrap);
+  },
+  retryOutbox(id: number) {
+    return http.post<ApiResult<OutboxMessage>>(`/tasks/outbox/${id}/retry`).then(unwrap);
   },
 };

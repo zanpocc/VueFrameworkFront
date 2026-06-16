@@ -3,9 +3,13 @@
     <header class="page__header">
       <div>
         <h1>文件管理</h1>
-        <p>管理平台文件元数据，上传和下载本地或对象存储中的文件。</p>
+        <p>管理平台文件元数据，上传、预览和下载本地或对象存储中的文件。</p>
       </div>
       <div class="file-actions">
+        <el-button :loading="diagnosticLoading" @click="loadStorageDiagnostics">
+          <el-icon><Refresh /></el-icon>
+          <span>刷新诊断</span>
+        </el-button>
         <el-upload :show-file-list="false" :auto-upload="false" :on-change="uploadFile">
           <el-button v-permission="'system:file:view'" type="primary">
             <el-icon><Upload /></el-icon>
@@ -15,51 +19,83 @@
       </div>
     </header>
 
-    <el-form class="page__filters" inline @submit.prevent="loadFiles">
-      <el-form-item label="状态">
-        <el-select v-model="status" clearable placeholder="全部" style="width: 180px">
-          <el-option label="有效" value="ACTIVE" />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="loadFiles">
-          <el-icon><Search /></el-icon>
-          <span>查询</span>
-        </el-button>
-        <el-button @click="resetFilters">
-          <el-icon><Refresh /></el-icon>
-          <span>重置</span>
-        </el-button>
-      </el-form-item>
-    </el-form>
-
-    <el-table v-loading="loading" :data="files" border row-key="id">
-      <el-table-column prop="originalFilename" label="文件名" min-width="180" show-overflow-tooltip />
-      <el-table-column prop="storageType" label="存储" width="100" />
-      <el-table-column prop="bucketName" label="Bucket" min-width="140" show-overflow-tooltip />
-      <el-table-column prop="contentType" label="类型" min-width="150" show-overflow-tooltip />
-      <el-table-column label="大小" width="110">
-        <template #default="{ row }">
-          {{ formatSize(row.fileSize) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" width="100">
-        <template #default="{ row }">
-          <el-tag :type="row.status === 'ACTIVE' ? 'success' : 'info'">
-            {{ row.status }}
+    <div class="storage-diagnostic">
+      <el-descriptions v-if="storageDiagnostic" :column="3" border>
+        <el-descriptions-item label="当前后端">
+          <el-tag :type="storageDiagnostic.health === 'UP' ? 'success' : 'danger'">
+            {{ storageDiagnostic.activeStorageType }}
           </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="uploadedBy" label="上传人" width="120" />
-      <el-table-column prop="createdAt" label="上传时间" min-width="170" />
-      <el-table-column label="操作" width="220" fixed="right">
-        <template #default="{ row }">
-          <el-button text type="primary" @click="openDetail(row)">详情</el-button>
-          <el-button text type="primary" @click="openPreview(row)">预览</el-button>
-          <el-button text type="primary" @click="downloadFile(row)">下载</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+        </el-descriptions-item>
+        <el-descriptions-item label="Bucket">
+          {{ storageDiagnostic.bucketName }}
+        </el-descriptions-item>
+        <el-descriptions-item label="健康状态">
+          {{ storageDiagnostic.health }}
+        </el-descriptions-item>
+        <el-descriptions-item label="可用后端">
+          {{ storageDiagnostic.availableStorageTypes.join(', ') || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item label="本地根目录">
+          {{ storageDiagnostic.localRoot }}
+        </el-descriptions-item>
+        <el-descriptions-item label="S3 端点">
+          {{ storageDiagnostic.s3Enabled ? storageDiagnostic.s3Endpoint || '-' : '未启用' }}
+        </el-descriptions-item>
+        <el-descriptions-item label="最大上传">
+          {{ formatSize(storageDiagnostic.maxFileSizeBytes) }}
+        </el-descriptions-item>
+        <el-descriptions-item label="最大预览">
+          {{ formatSize(storageDiagnostic.maxPreviewSizeBytes) }}
+        </el-descriptions-item>
+        <el-descriptions-item label="诊断信息">
+          {{ storageDiagnostic.message }}
+        </el-descriptions-item>
+      </el-descriptions>
+      <el-empty v-else description="暂无存储诊断信息" :image-size="48" />
+    </div>
+
+    <QfDataTable
+      :columns="columns"
+      :data="table.allRows.value"
+      :loading="table.loading.value"
+      :page-size="20"
+      :actions-width="220"
+    >
+      <template #filters="{ reload, reset }">
+        <el-form-item label="状态">
+          <el-select
+            v-model="table.filters.status"
+            clearable
+            placeholder="全部"
+            style="width: 180px"
+          >
+            <el-option label="有效" value="ACTIVE" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="reload()">
+            <el-icon><Search /></el-icon>
+            <span>查询</span>
+          </el-button>
+          <el-button @click="reset()">
+            <el-icon><Refresh /></el-icon>
+            <span>重置</span>
+          </el-button>
+        </el-form-item>
+      </template>
+
+      <template #fileSize="{ row }">
+        {{ formatSize(row.fileSize) }}
+      </template>
+
+      <template #status="{ row }">
+        <QfStatusTag :status="row.status" />
+      </template>
+
+      <template #actions="{ row }">
+        <QfTableActions :actions="getFileActions(row as FileObject)" :max-inline="2" />
+      </template>
+    </QfDataTable>
 
     <el-dialog v-model="detailVisible" title="文件详情" width="720px">
       <el-descriptions v-if="currentFile" :column="1" border>
@@ -93,7 +129,12 @@
       </el-descriptions>
     </el-dialog>
 
-    <el-dialog v-model="previewVisible" title="文件预览" width="720px">
+    <el-dialog
+      v-model="previewVisible"
+      title="文件预览"
+      width="820px"
+      @closed="clearPreviewContent"
+    >
       <div v-if="previewInfo" class="preview-panel">
         <div class="preview-panel__status">
           <el-tag :type="previewInfo.previewable ? 'success' : 'info'">
@@ -118,32 +159,86 @@
             {{ previewInfo.reason || '当前文件类型可用于后续在线预览渲染。' }}
           </el-descriptions-item>
         </el-descriptions>
+        <div v-loading="previewLoading" class="preview-content">
+          <el-image
+            v-if="previewInfo.previewType === 'IMAGE' && previewObjectUrl"
+            :src="previewObjectUrl"
+            fit="contain"
+            class="preview-image"
+          />
+          <iframe
+            v-else-if="previewInfo.previewType === 'PDF' && previewObjectUrl"
+            :src="previewObjectUrl"
+            class="preview-frame"
+            title="PDF 预览"
+          />
+          <pre v-else-if="previewInfo.previewType === 'TEXT'" class="preview-text">{{
+            previewText
+          }}</pre>
+          <el-empty v-else :description="previewInfo.reason || '当前文件类型暂不支持在线渲染'" />
+        </div>
       </div>
     </el-dialog>
   </section>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+defineOptions({ name: 'FileList' });
+
+import { ref } from 'vue';
 import { ElMessage, type UploadFile } from 'element-plus';
 import { Refresh, Search, Upload } from '@element-plus/icons-vue';
-import { fileApi, type FileObject, type FilePreviewInfo } from '@/api/file';
+import { QfDataTable, QfStatusTag, QfTableActions, formatSize } from '@/shared';
+import type { QfTableColumn, QfActionItem } from '@/shared';
+import { useTable } from '@/shared';
+import {
+  fileApi,
+  type FileObject,
+  type FilePreviewInfo,
+  type FileStorageDiagnostic,
+} from '@/api/file';
 
-const loading = ref(false);
+const columns: QfTableColumn<FileObject>[] = [
+  { prop: 'originalFilename', label: '文件名', minWidth: 180, showOverflowTooltip: true },
+  { prop: 'storageType', label: '存储', width: 100 },
+  { prop: 'bucketName', label: 'Bucket', minWidth: 140, showOverflowTooltip: true },
+  { prop: 'contentType', label: '类型', minWidth: 150, showOverflowTooltip: true },
+  { prop: 'fileSize', label: '大小', width: 110, slot: 'fileSize' },
+  { prop: 'status', label: '状态', width: 100, slot: 'status' },
+  { prop: 'uploadedBy', label: '上传人', width: 120 },
+  { prop: 'createdAt', label: '上传时间', minWidth: 170 },
+];
+
+const table = useTable<FileObject, { status: string }>({
+  fetcher: (filters) => fileApi.files(filters.status),
+  defaultFilters: { status: '' },
+});
+
 const uploading = ref(false);
-const status = ref('');
-const files = ref<FileObject[]>([]);
+const diagnosticLoading = ref(false);
+const storageDiagnostic = ref<FileStorageDiagnostic | null>(null);
 const detailVisible = ref(false);
 const previewVisible = ref(false);
 const currentFile = ref<FileObject | null>(null);
 const previewInfo = ref<FilePreviewInfo | null>(null);
+const previewLoading = ref(false);
+const previewObjectUrl = ref('');
+const previewText = ref('');
 
-async function loadFiles() {
-  loading.value = true;
+function getFileActions(row: FileObject): QfActionItem[] {
+  return [
+    { label: '详情', handler: () => openDetail(row) },
+    { label: '预览', handler: () => openPreview(row) },
+    { label: '下载', handler: () => downloadFile(row) },
+  ];
+}
+
+async function loadStorageDiagnostics() {
+  diagnosticLoading.value = true;
   try {
-    files.value = await fileApi.files(status.value);
+    storageDiagnostic.value = await fileApi.storageDiagnostics();
   } finally {
-    loading.value = false;
+    diagnosticLoading.value = false;
   }
 }
 
@@ -155,15 +250,10 @@ async function uploadFile(uploadFileInfo: UploadFile) {
   try {
     await fileApi.upload(uploadFileInfo.raw);
     ElMessage.success('文件已上传');
-    await loadFiles();
+    await Promise.all([table.reload(), loadStorageDiagnostics()]);
   } finally {
     uploading.value = false;
   }
-}
-
-function resetFilters() {
-  status.value = '';
-  void loadFiles();
 }
 
 async function openDetail(row: FileObject) {
@@ -172,8 +262,42 @@ async function openDetail(row: FileObject) {
 }
 
 async function openPreview(row: FileObject) {
+  clearPreviewContent();
   previewInfo.value = await fileApi.previewInfo(row.id);
   previewVisible.value = true;
+  if (!previewInfo.value.previewable) {
+    return;
+  }
+  await loadPreviewContent(row);
+}
+
+async function loadPreviewContent(row: FileObject) {
+  if (!previewInfo.value || !['IMAGE', 'PDF', 'TEXT'].includes(previewInfo.value.previewType)) {
+    return;
+  }
+  previewLoading.value = true;
+  try {
+    const response = await fileApi.download(row.id);
+    const blob = new Blob([response.data], {
+      type: previewInfo.value.contentType || row.contentType || 'application/octet-stream',
+    });
+    if (previewInfo.value.previewType === 'TEXT') {
+      previewText.value = await blob.text();
+    } else {
+      previewObjectUrl.value = window.URL.createObjectURL(blob);
+    }
+  } finally {
+    previewLoading.value = false;
+  }
+}
+
+function clearPreviewContent() {
+  if (previewObjectUrl.value) {
+    window.URL.revokeObjectURL(previewObjectUrl.value);
+  }
+  previewObjectUrl.value = '';
+  previewText.value = '';
+  previewLoading.value = false;
 }
 
 async function downloadFile(row: FileObject) {
@@ -191,17 +315,7 @@ async function downloadFile(row: FileObject) {
   window.URL.revokeObjectURL(url);
 }
 
-function formatSize(size: number) {
-  if (size < 1024) {
-    return `${size} B`;
-  }
-  if (size < 1024 * 1024) {
-    return `${(size / 1024).toFixed(1)} KB`;
-  }
-  return `${(size / 1024 / 1024).toFixed(1)} MB`;
-}
-
-onMounted(loadFiles);
+void loadStorageDiagnostics();
 </script>
 
 <style scoped>
@@ -217,13 +331,15 @@ onMounted(loadFiles);
   align-items: center;
 }
 
+.storage-diagnostic {
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
 .file-sha {
-  font-family:
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    Consolas,
-    monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   overflow-wrap: anywhere;
 }
 
@@ -236,5 +352,30 @@ onMounted(loadFiles);
   display: flex;
   gap: 8px;
   align-items: center;
+}
+
+.preview-content {
+  min-height: 220px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+}
+
+.preview-image {
+  width: 100%;
+  max-height: 520px;
+}
+
+.preview-frame {
+  width: 100%;
+  height: 560px;
+  border: 0;
+}
+
+.preview-text {
+  max-height: 520px;
+  padding: 12px;
+  margin: 0;
+  overflow: auto;
+  white-space: pre-wrap;
 }
 </style>

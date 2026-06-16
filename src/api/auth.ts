@@ -1,4 +1,4 @@
-import { http, type ApiResult } from './http';
+import { http, unwrap, type ApiResult } from './http';
 
 export interface LoginRequest {
   username: string;
@@ -40,13 +40,6 @@ export interface RefreshTokenRequest {
 
 export interface LogoutResponse {
   invalidated: boolean;
-}
-
-function unwrap<T>(response: { data: ApiResult<T> }) {
-  if (!response.data.success) {
-    throw new Error(response.data.message || response.data.code);
-  }
-  return response.data.data;
 }
 
 export const authApi = {

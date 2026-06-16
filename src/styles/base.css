@@ -16,8 +16,8 @@ body {
     BlinkMacSystemFont,
     'Segoe UI',
     sans-serif;
-  color: #1f2937;
-  background: #f6f7fb;
+  color: var(--qf-color-text-primary);
+  background: var(--qf-color-bg-page);
 }
 
 * {
@@ -26,29 +26,64 @@ body {
 
 .page {
   display: grid;
-  gap: 16px;
+  gap: var(--qf-spacing-md);
 }
 
 .page__header {
   display: flex;
-  gap: 16px;
-  align-items: flex-start;
+  gap: var(--qf-spacing-lg);
+  align-items: center;
   justify-content: space-between;
 }
 
 .page__header h1 {
-  margin: 0 0 6px;
-  font-size: 24px;
+  margin: 0 0 4px;
+  font-size: var(--qf-font-size-heading);
+  line-height: 1.25;
 }
 
 .page__header p {
   margin: 0;
-  color: #64748b;
+  color: var(--qf-color-text-secondary);
+  font-size: var(--qf-font-size-body);
 }
 
 .page__filters {
-  padding: 16px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  padding: var(--qf-spacing-md);
+  background: var(--qf-color-bg-surface);
+  border: 1px solid var(--qf-border-color);
+  border-radius: var(--qf-border-radius);
+}
+
+.page__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qf-spacing-sm);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.el-table th.el-table__cell {
+  color: var(--qf-color-text-secondary);
+  font-weight: var(--qf-font-weight-semibold);
+  background: var(--el-fill-color-lighter);
+}
+
+.el-table .el-table__cell {
+  padding: 8px 0;
+}
+
+.el-dialog__body {
+  padding-top: 12px;
+}
+
+.el-form--label-top .el-form-item {
+  margin-bottom: 16px;
+}
+
+@media (width <= 768px) {
+  .page__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
 }

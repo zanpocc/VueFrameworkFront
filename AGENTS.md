@@ -59,12 +59,43 @@ tests/
 
 - 页面按业务模块放入 `src/modules/{module}`。
 - 跨模块通用组件放 `src/components`。
+- 跨模块原子级共享组件放 `src/shared`，详见下方"共享层 src/shared/"。
 - 请求类型优先由 OpenAPI 生成，不手写重复 DTO。
 - 权限判断集中在 `src/permissions`。
 - API 错误、token 过期、traceId、下载响应在请求层统一处理。
 - Store 只保存跨页面状态；页面局部状态不要塞进全局 store。
 - 表单 schema、流程 schema 必须有类型定义和版本号。
 - 不把后端返回的菜单、按钮权限当作安全边界，前端只负责体验。
+
+## 共享层 src/shared/
+
+定位：跨业务模块复用的原子组件层。与 `src/components` 区别在于：
+
+- `src/components` 面向应用壳、布局、菜单、面包屑等"框架级"组件；
+- `src/shared` 面向"业务页面里反复出现的同一种交互单元"，例如带权限的按钮、列表 + 筛选、抽屉表单、文件上传。
+
+当前组件：
+
+- `QfPermissionButton`：在 `el-button` 之上叠加权限编码校验。支持 `code: string | string[]` 与 `mode: 'hide' | 'disable'`（默认 `hide`）。相对 `v-permission` 指令，可响应权限变化、可保留按钮位置。
+- `QfDataTable`：组合 `el-table` + `el-pagination` 与筛选/操作槽位，统一列表页加载器签名为 `({ page, size, filters }) => Promise<{ records, total }>`，并通过 `defineExpose({ refresh, reload, reset })` 暴露命令式刷新。
+- `QfFormDrawer`：组合 `el-drawer` + `el-form` 的新增/编辑面板。`submit` 事件只在 `validate()` 通过后触发，关闭抽屉不会触发提交。
+- `QfFileUpload`：基于现有 `fileApi.upload` 的上传组件。`v-model` 暴露文件 id（单文件为 `number`，多文件为 `number[]`），客户端先做大小与数量校验。
+
+新增共享组件的判定：
+
+- 至少有 2 个业务模块（`src/modules/*`）会使用；
+- 不依赖单一业务的领域字段；
+- 对外只暴露 props/slots/events，不读取业务 store。
+
+只满足前两条的情况，先放入业务模块；满足全部三条再迁移到 `src/shared`。
+
+测试规范：
+
+- 每个共享组件至少覆盖：渲染、prop 响应、事件触发、一个边界情形；
+- 测试放在 `src/shared/components/__tests__/*.spec.ts`，由 `yarn test:unit` 统一执行；
+- 涉及 axios 的组件统一通过 `vi.mock('@/api/...')` 隔离网络。
+
+本地手工验证可访问 dev-only 路由 `/shared/playground`（仅 `import.meta.env.DEV` 注册），无需进入业务页面。
 
 ## UI 约定
 

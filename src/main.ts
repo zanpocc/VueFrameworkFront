@@ -5,6 +5,7 @@ import 'element-plus/dist/index.css';
 import App from './App.vue';
 import { router } from './router';
 import { permissionDirective } from './permissions/directive';
+import './assets/tokens/index.css';
 import './styles/base.css';
 
 const app = createApp(App);

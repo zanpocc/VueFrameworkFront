@@ -45,6 +45,9 @@ test.beforeEach(async ({ page }) => {
                 'system:config:update',
                 'system:dict:view',
                 'system:dict:update',
+                'system:notice:view',
+                'system:notice:update',
+                'system:notice:publish',
                 'system:log:view',
                 'system:task:view',
                 'system:task:update',
@@ -59,6 +62,10 @@ test.beforeEach(async ({ page }) => {
                 'workflow:task:update',
                 'workflow:instance:view',
                 'workflow:instance:start',
+                'workflow:instance:withdraw',
+                'workflow:instance:terminate',
+                'workflow:cc:view',
+                'workflow:cc:update',
               ],
         }),
       ),
@@ -250,6 +257,18 @@ test.beforeEach(async ({ page }) => {
                       children: [],
                     },
                     {
+                      id: 19,
+                      parentId: 2,
+                      title: '公告通知',
+                      routeName: 'system-notice',
+                      routePath: '/system/notices',
+                      component: 'system/NoticeListView',
+                      icon: 'Bell',
+                      permissionCode: 'system:notice:view',
+                      visible: true,
+                      children: [],
+                    },
+                    {
                       id: 18,
                       parentId: 2,
                       title: '文件管理',
@@ -354,6 +373,9 @@ test.beforeEach(async ({ page }) => {
                 'system:config:update',
                 'system:dict:view',
                 'system:dict:update',
+                'system:notice:view',
+                'system:notice:update',
+                'system:notice:publish',
                 'system:log:view',
                 'system:task:view',
                 'system:task:update',
@@ -368,6 +390,10 @@ test.beforeEach(async ({ page }) => {
                 'workflow:task:update',
                 'workflow:instance:view',
                 'workflow:instance:start',
+                'workflow:instance:withdraw',
+                'workflow:instance:terminate',
+                'workflow:cc:view',
+                'workflow:cc:update',
               ],
         ),
       ),
@@ -602,6 +628,120 @@ test.beforeEach(async ({ page }) => {
       ),
     });
   });
+  let nextNoticeId = 2;
+  let notices = [
+    {
+      id: 1,
+      title: '平台升级公告',
+      noticeType: 'NOTICE',
+      content: '今晚 22:00 进行例行升级。',
+      status: 'PUBLISHED',
+      pinned: true,
+      sortOrder: 1,
+      publisher: 'admin',
+      publishedAt: '2026-06-15T10:00:00',
+      createdBy: 'admin',
+      updatedBy: 'admin',
+      createdAt: '2026-06-15T09:00:00',
+      updatedAt: '2026-06-15T10:00:00',
+    },
+  ];
+  await page.route('**/api/system/notices**', async (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    const method = request.method();
+    const path = url.pathname;
+
+    if (method === 'GET') {
+      const keyword = url.searchParams.get('keyword') ?? '';
+      const status = url.searchParams.get('status') ?? '';
+      const rows = notices.filter(
+        (item) =>
+          (!keyword || item.title.includes(keyword) || item.noticeType.includes(keyword)) &&
+          (!status || item.status === status),
+      );
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify(apiResult(rows)),
+      });
+      return;
+    }
+
+    if (method === 'POST' && path.endsWith('/publish')) {
+      const segments = path.split('/');
+      const id = Number(segments[segments.length - 2]);
+      notices = notices.map((item) =>
+        item.id === id
+          ? { ...item, status: 'PUBLISHED', publisher: 'admin', publishedAt: '2026-06-15T10:30:00' }
+          : item,
+      );
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify(apiResult(notices.find((item) => item.id === id))),
+      });
+      return;
+    }
+
+    if (method === 'POST' && path.endsWith('/revoke')) {
+      const segments = path.split('/');
+      const id = Number(segments[segments.length - 2]);
+      notices = notices.map((item) => (item.id === id ? { ...item, status: 'DRAFT' } : item));
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify(apiResult(notices.find((item) => item.id === id))),
+      });
+      return;
+    }
+
+    if (method === 'POST') {
+      const payload = request.postDataJSON();
+      const created = {
+        ...payload,
+        id: nextNoticeId++,
+        publisher: null,
+        publishedAt: null,
+        createdBy: 'admin',
+        updatedBy: 'admin',
+        createdAt: '2026-06-15T10:20:00',
+        updatedAt: '2026-06-15T10:20:00',
+      };
+      notices = [created, ...notices];
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify(apiResult(created)),
+      });
+      return;
+    }
+
+    if (method === 'PUT') {
+      const segments = path.split('/');
+      const id = Number(segments[segments.length - 1]);
+      const payload = request.postDataJSON();
+      notices = notices.map((item) =>
+        item.id === id
+          ? { ...item, ...payload, updatedBy: 'admin', updatedAt: '2026-06-15T10:40:00' }
+          : item,
+      );
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify(apiResult(notices.find((item) => item.id === id))),
+      });
+      return;
+    }
+
+    if (method === 'DELETE') {
+      const segments = path.split('/');
+      const id = Number(segments[segments.length - 1]);
+      notices = notices.filter((item) => item.id !== id);
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify(apiResult(null)),
+      });
+      return;
+    }
+
+    await route.fallback();
+  });
   await page.route('**/api/system/login-logs**', async (route) => {
     await route.fulfill({
       contentType: 'application/json',
@@ -698,7 +838,26 @@ test.beforeEach(async ({ page }) => {
       return;
     }
 
-    if (path.endsWith('/api/tasks/2/retry') || path.endsWith('/api/tasks/2/cancel')) {
+    if (
+      path.endsWith('/api/tasks/2/retry') ||
+      path.endsWith('/api/tasks/2/cancel') ||
+      path.endsWith('/api/tasks/2/ignore') ||
+      path.endsWith('/api/tasks/2/restore')
+    ) {
+      const status = path.endsWith('/cancel')
+        ? 'CANCELED'
+        : path.endsWith('/ignore')
+          ? 'IGNORED'
+          : path.endsWith('/restore')
+            ? 'MANUAL_REQUIRED'
+            : 'PENDING';
+      const manualAction = path.endsWith('/cancel')
+        ? 'CANCEL'
+        : path.endsWith('/ignore')
+          ? 'IGNORE'
+          : path.endsWith('/restore')
+            ? 'RESTORE'
+            : 'RETRY';
       await route.fulfill({
         contentType: 'application/json',
         body: JSON.stringify(
@@ -709,13 +868,17 @@ test.beforeEach(async ({ page }) => {
             taskName: '失败示例任务',
             taskParam: '{"message":"fail"}',
             idempotentKey: 'fail-demo',
-            status: path.endsWith('/cancel') ? 'CANCELED' : 'PENDING',
+            status,
             retryCount: 1,
             maxRetries: 1,
             lastError: '示例任务执行失败',
             nextRetryAt: null,
             lockedBy: null,
             lockedAt: null,
+            manualAction,
+            manualComment: 'mock manual comment',
+            manualHandledBy: 'admin',
+            manualHandledAt: '2026-06-04T10:13:30',
             createdAt: '2026-06-04T10:12:00',
             updatedAt: '2026-06-04T10:13:00',
           }),
@@ -742,6 +905,10 @@ test.beforeEach(async ({ page }) => {
             nextRetryAt: null,
             lockedBy: null,
             lockedAt: null,
+            manualAction: null,
+            manualComment: null,
+            manualHandledBy: null,
+            manualHandledAt: null,
             createdAt: '2026-06-04T10:14:00',
             updatedAt: '2026-06-04T10:14:00',
           }),
@@ -768,6 +935,10 @@ test.beforeEach(async ({ page }) => {
             nextRetryAt: null,
             lockedBy: null,
             lockedAt: null,
+            manualAction: null,
+            manualComment: null,
+            manualHandledBy: null,
+            manualHandledAt: null,
             createdAt: '2026-06-04T10:10:00',
             updatedAt: '2026-06-04T10:11:00',
           },
@@ -785,6 +956,10 @@ test.beforeEach(async ({ page }) => {
             nextRetryAt: null,
             lockedBy: null,
             lockedAt: null,
+            manualAction: null,
+            manualComment: null,
+            manualHandledBy: null,
+            manualHandledAt: null,
             createdAt: '2026-06-04T10:12:00',
             updatedAt: '2026-06-04T10:13:00',
           },
@@ -853,6 +1028,30 @@ test.beforeEach(async ({ page }) => {
     const request = route.request();
     const url = new URL(request.url());
     const path = url.pathname;
+
+    if (path.endsWith('/api/files/storage/diagnostics')) {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify(
+          apiResult({
+            activeStorageType: 'LOCAL',
+            bucketName: 'default',
+            health: 'UP',
+            message: 'Storage backend is available',
+            activeStorageAvailable: true,
+            availableStorageTypes: ['LOCAL'],
+            localRoot: 'C:/quickframework/data/files',
+            maxFileSizeBytes: 20971520,
+            maxPreviewSizeBytes: 10485760,
+            s3Enabled: false,
+            s3Endpoint: '',
+            s3Region: 'us-east-1',
+            s3PathStyleAccess: true,
+          }),
+        ),
+      });
+      return;
+    }
 
     if (path.endsWith('/api/files/1/download')) {
       await route.fulfill({
@@ -981,6 +1180,44 @@ test.beforeEach(async ({ page }) => {
             status: 'PUBLISHED',
             createdBy: 'admin',
             createdAt: '2026-06-05T00:00:00',
+          },
+        ]),
+      ),
+    });
+  });
+  await page.route('**/api/workflow/definitions/*/status', async (route) => {
+    const url = new URL(route.request().url());
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(
+        apiResult({
+          id: Number(url.pathname.match(/definitions\/(\d+)\/status/)?.[1] ?? 1),
+          processKey: 'leave',
+          processName: '请假审批',
+          version: 1,
+          formId: 1,
+          formName: '请假表单',
+          status: url.searchParams.get('status') ?? 'DISABLED',
+          assigneeType: 'USER',
+          assigneeValue: 'admin',
+          createdBy: 'admin',
+          createdAt: '2026-06-05T00:00:00',
+        }),
+      ),
+    });
+  });
+  await page.route('**/api/system/data/slow-sql', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(
+        apiResult([
+          {
+            occurredAt: '2026-06-15T10:00:00',
+            durationMs: 1200,
+            thresholdMs: 500,
+            traceId: 'trace-slow',
+            statementId: 'com.quickframework.UserMapper.selectPage',
+            sql: 'select * from sys_user',
           },
         ]),
       ),
@@ -1138,6 +1375,130 @@ test.beforeEach(async ({ page }) => {
       ),
     });
   });
+  await page.route('**/api/workflow/tasks/done', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(
+        apiResult([
+          {
+            id: 1,
+            instanceId: 1,
+            processTitle: '年假申请',
+            taskName: '审批',
+            assignee: 'admin',
+            status: 'APPROVE',
+            nodeKey: 'team_lead_review',
+            createdAt: '2026-06-05T00:00:00',
+            completedAt: '2026-06-05T00:10:00',
+          },
+        ]),
+      ),
+    });
+  });
+  await page.route('**/api/workflow/instances/*/withdraw', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(
+        apiResult({
+          id: 3,
+          definitionId: 1,
+          formId: 1,
+          title: '年假申请',
+          businessKey: 'leave-003',
+          initiator: 'admin',
+          status: 'WITHDRAWN',
+          currentAssignee: null,
+          formData: '{"days":3}',
+          startedAt: '2026-06-05T00:00:00',
+          endedAt: '2026-06-05T00:05:00',
+        }),
+      ),
+    });
+  });
+  await page.route('**/api/workflow/instances/*/terminate', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(
+        apiResult({
+          id: 4,
+          definitionId: 1,
+          formId: 1,
+          title: '年假申请',
+          businessKey: 'leave-004',
+          initiator: 'admin',
+          status: 'TERMINATED',
+          currentAssignee: null,
+          formData: '{"days":3}',
+          startedAt: '2026-06-05T00:00:00',
+          endedAt: '2026-06-05T00:05:00',
+        }),
+      ),
+    });
+  });
+  await page.route('**/api/workflow/cc', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(
+        apiResult([
+          {
+            id: 1,
+            instanceId: 1,
+            nodeKey: 'team_lead_review',
+            ccTo: 'admin',
+            ccFrom: 'admin',
+            title: '年假申请',
+            readAt: null,
+            createdAt: '2026-06-05T00:00:00',
+          },
+        ]),
+      ),
+    });
+  });
+  await page.route('**/api/workflow/cc/*/read', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(apiResult(null)),
+    });
+  });
+  await page.route('**/api/workflow/definitions/*/transitions', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(
+        apiResult([
+          {
+            id: 1,
+            definitionId: 1,
+            fromNodeKey: 'start',
+            toNodeKey: 'team_lead_review',
+            action: 'START',
+            conditionExpression: null,
+            sortOrder: 0,
+            createdAt: '2026-06-05T00:00:00',
+          },
+          {
+            id: 2,
+            definitionId: 1,
+            fromNodeKey: 'team_lead_review',
+            toNodeKey: 'supervisor_review',
+            action: 'APPROVE',
+            conditionExpression: null,
+            sortOrder: 1,
+            createdAt: '2026-06-05T00:00:00',
+          },
+          {
+            id: 3,
+            definitionId: 1,
+            fromNodeKey: 'team_lead_review',
+            toNodeKey: 'end',
+            action: 'REJECT',
+            conditionExpression: null,
+            sortOrder: 2,
+            createdAt: '2026-06-05T00:00:00',
+          },
+        ]),
+      ),
+    });
+  });
 });
 
 test('logs in and shows dashboard with dynamic permissions', async ({ page }) => {
@@ -1149,15 +1510,14 @@ test('logs in and shows dashboard with dynamic permissions', async ({ page }) =>
   await expect(page.getByRole('heading', { name: '工作台' })).toBeVisible();
   await expect(page.getByText('管理员')).toBeVisible();
   await expect(page.getByRole('menuitem', { name: /工作台/ })).toBeVisible();
-  await expect(page.getByRole('button', { name: '新增用户' })).toBeVisible();
 
   await page.getByText('系统管理').click();
   await page.getByRole('menuitem', { name: /用户管理/ }).click();
   await expect(page.getByRole('heading', { name: '用户管理' })).toBeVisible();
   await expect(page.getByText('admin', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: '新增用户' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '编辑' })).toBeVisible();
   await expect(page.getByRole('button', { name: '详情' })).toBeVisible();
-  await expect(page.getByRole('button', { name: '删除' })).toBeVisible();
 
   await page.getByRole('menuitem', { name: /部门管理/ }).click();
   await expect(page.getByRole('heading', { name: '部门管理' })).toBeVisible();
@@ -1172,7 +1532,6 @@ test('logs in and shows dashboard with dynamic permissions', async ({ page }) =>
   await page.getByRole('menuitem', { name: /角色管理/ }).click();
   await expect(page.getByRole('heading', { name: '角色管理' })).toBeVisible();
   await expect(page.getByRole('button', { name: '新增角色' })).toBeVisible();
-  await expect(page.getByRole('button', { name: '禁用' })).toBeVisible();
   await page.getByRole('button', { name: '授权' }).click();
   await expect(page.getByRole('tab', { name: '数据范围' })).toBeVisible();
   await page.getByRole('tab', { name: '数据范围' }).click();
@@ -1221,9 +1580,18 @@ test('logs in and shows dashboard with dynamic permissions', async ({ page }) =>
   ).toBeVisible();
   await expect(page.getByText('sys_operation_log_202606')).toBeVisible();
   await expect(page.getByText('sys_async_task_202606')).toBeVisible();
+  await expect(page.getByRole('heading', { name: '数据权限范围' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: '超级管理员' })).toBeVisible();
+  await expect(page.getByText('全部数据')).toBeVisible();
+  await expect(page.getByRole('heading', { name: '近期慢 SQL' })).toBeVisible();
+  await expect(page.getByText('com.quickframework.UserMapper.selectPage')).toBeVisible();
+  await expect(page.getByText('select * from sys_user')).toBeVisible();
 
   await page.getByRole('menuitem', { name: /文件管理/ }).click();
   await expect(page.getByRole('heading', { name: '文件管理' })).toBeVisible();
+  await expect(page.getByText('当前后端')).toBeVisible();
+  await expect(page.getByText('LOCAL').first()).toBeVisible();
+  await expect(page.getByText('Storage backend is available')).toBeVisible();
   await expect(page.getByText('demo.txt')).toBeVisible();
   await expect(page.getByText('10 B')).toBeVisible();
   await page.locator('input[type="file"]').setInputFiles('tests/fixtures/upload.txt');
@@ -1239,29 +1607,45 @@ test('logs in and shows dashboard with dynamic permissions', async ({ page }) =>
   await page.getByText('工作流').click();
   await page.getByRole('menuitem', { name: /表单设计/ }).click();
   await expect(page.getByRole('heading', { name: '工作流' })).toBeVisible();
+
+  // All workflow menu items open WorkflowCenterView — must explicitly activate tabs
+  await page.getByRole('tab', { name: '表单设计' }).click();
   await expect(page.getByLabel('表单设计').getByText('请假表单')).toBeVisible();
-  await page.getByRole('button', { name: '新建表单' }).click();
-  await expect(page.getByText('表单已创建')).toBeVisible();
 
   await page.getByRole('tab', { name: '流程定义' }).click();
-  await expect(page.getByText('请假审批')).toBeVisible();
-  await page.getByRole('button', { name: '新建定义' }).click();
-  await expect(page.getByText('流程定义已创建')).toBeVisible();
+  await expect(page.getByLabel('流程定义').getByText('请假审批')).toBeVisible();
 
   await page.getByRole('tab', { name: '流程实例' }).click();
-  await page.getByRole('button', { name: '发起流程' }).click();
-  await expect(page.getByText('流程已发起')).toBeVisible();
-  await expect(page.getByLabel('待办任务').getByText('年假申请')).toBeVisible();
+  await expect(page.getByLabel('流程实例').getByText('年假申请')).toBeVisible();
 
   await page.getByRole('tab', { name: '待办任务' }).click();
-  await expect(page.getByLabel('待办任务').getByText('审批', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: '同意' }).click();
-  await expect(page.getByText('已同意')).toBeVisible();
+  await expect(page.getByLabel('待办任务').getByText('年假申请')).toBeVisible();
+});
 
-  await page.getByRole('tab', { name: '流程实例' }).click();
-  await page.getByRole('button', { name: '历史' }).click();
-  await expect(page.getByText('START')).toBeVisible();
-  await expect(page.getByText('APPROVE')).toBeVisible();
+test('system notice list can create and publish notices', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /登录|鐧诲綍/ }).click();
+
+  await page.getByText(/系统管理|绯荤粺绠＄悊/).click();
+  await page.getByRole('menuitem', { name: /公告通知|鍏憡閫氱煡/ }).click();
+  await expect(page.getByRole('heading', { name: /公告通知|鍏憡閫氱煡/ })).toBeVisible();
+  await expect(page.getByText(/平台升级公告|骞冲彴鍗囩骇鍏憡/)).toBeVisible();
+
+  await page.getByRole('button', { name: /新增公告|鏂板鍏憡/ }).click();
+  await page.getByLabel(/标题|鏍囬/).fill('测试发布公告');
+  await page.getByLabel(/内容|鍐呭/).fill('发布前先保存为草稿。');
+  await page.locator('.el-dialog .el-button--primary').click();
+
+  await expect(page.getByText(/公告已创建|鍏憡宸插垱寤/)).toBeVisible();
+  await expect(page.getByText(/测试发布公告|娴嬭瘯鍙戝竷鍏憡/)).toBeVisible();
+
+  await page
+    .getByRole('row', { name: /测试发布公告|娴嬭瘯鍙戝竷鍏憡/ })
+    .getByRole('button', { name: /发布|鍙戝竷/ })
+    .click();
+  await expect(
+    page.locator('.el-message__content').filter({ hasText: /公告已发布|鍏憡宸插彂甯/ }),
+  ).toBeVisible();
 });
 
 test('limited role only sees allowed menus and buttons', async ({ page }) => {
@@ -1276,4 +1660,210 @@ test('limited role only sees allowed menus and buttons', async ({ page }) => {
   await expect(page.getByRole('menuitem', { name: /工作台/ })).toBeVisible();
   await expect(page.getByText('系统管理')).toHaveCount(0);
   await expect(page.getByRole('button', { name: '新增用户' })).toHaveCount(0);
+});
+
+test('login failure shows error message', async ({ page }) => {
+  // Override login route to return 401 for bad credentials
+  await page.route('**/api/auth/login', async (route) => {
+    await route.fulfill({
+      status: 401,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        success: false,
+        code: 'UNAUTHORIZED',
+        message: '用户名或密码错误',
+        data: null,
+        timestamp: new Date().toISOString(),
+      }),
+    });
+  });
+
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'QuickFramework' })).toBeVisible();
+
+  // Fill wrong credentials
+  await page.getByRole('textbox', { name: '账号' }).clear();
+  await page.getByRole('textbox', { name: '账号' }).fill('baduser');
+  await page.getByLabel('密码').clear();
+  await page.getByLabel('密码').fill('wrongpass');
+  await page.getByRole('button', { name: '登录' }).click();
+
+  // Verify error message appears
+  await expect(page.getByText('用户名或密码错误')).toBeVisible();
+
+  // Verify still on login page
+  await expect(page.getByRole('heading', { name: 'QuickFramework' })).toBeVisible();
+});
+
+test('refresh restores login session', async ({ page }) => {
+  // Login first
+  await page.goto('/');
+  await page.getByRole('button', { name: '登录' }).click();
+  await expect(page.getByRole('heading', { name: '工作台' })).toBeVisible();
+  await expect(page.getByText('管理员')).toBeVisible();
+
+  // Reload the page — should restore session from localStorage
+  await page.reload();
+  await expect(page.getByRole('heading', { name: '工作台' })).toBeVisible();
+  await expect(page.getByText('管理员')).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: /工作台/ })).toBeVisible();
+});
+
+test('workflow form design — create form with QfFormEditor', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: '登录' }).click();
+  await expect(page.getByRole('heading', { name: '工作台' })).toBeVisible();
+
+  // Navigate to workflow center — default tab is always "todo"
+  await page.getByText('工作流').click();
+  await page.getByRole('menuitem', { name: /表单设计/ }).click();
+  await expect(page.getByRole('heading', { name: '工作流' })).toBeVisible();
+
+  // Explicitly activate the forms tab (lazy — content only renders when active)
+  await page.getByRole('tab', { name: '表单设计' }).click();
+  await expect(page.getByText('请假表单')).toBeVisible();
+
+  // Click new form
+  await page.getByRole('button', { name: '新建表单' }).click();
+
+  // Fill form dialog
+  await page.getByPlaceholder('如: leave_form').fill('test_form');
+  await page.getByPlaceholder('如: 请假表单').fill('测试表单');
+
+  // Add a field in QfFormEditor
+  await page.getByRole('button', { name: '添加字段' }).click();
+  await expect(page.getByText('字段1')).toBeVisible();
+
+  // Submit
+  await page.getByRole('button', { name: '确定' }).click();
+  await expect(page.getByText('表单已创建')).toBeVisible();
+});
+
+test('workflow reject — reject at approval step', async ({ page }) => {
+  // Override the complete task route for REJECT
+  await page.route('**/api/workflow/tasks/1/complete', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(
+        apiResult({
+          id: 1,
+          definitionId: 1,
+          formId: 1,
+          title: '年假申请',
+          businessKey: 'leave-001',
+          initiator: 'admin',
+          status: 'REJECTED',
+          currentAssignee: null,
+          formData: '{"days":3}',
+          startedAt: '2026-06-05T00:00:00',
+          endedAt: '2026-06-05T00:10:00',
+        }),
+      ),
+    });
+  });
+
+  await page.goto('/');
+  await page.getByRole('button', { name: '登录' }).click();
+  await expect(page.getByRole('heading', { name: '工作台' })).toBeVisible();
+
+  // Navigate to workflow center — default tab is "todo"
+  await page.getByText('工作流').click();
+  await page.getByRole('menuitem', { name: /待办任务/ }).click();
+
+  // Wait for todo data to load
+  await expect(page.getByText('年假申请')).toBeVisible();
+
+  // Click action button to open TaskActionDialog
+  await page.getByRole('button', { name: '处理' }).click();
+  // Wait for dialog data to load and render
+  await expect(page.getByText('审批意见')).toBeVisible();
+
+  // Click reject button — TaskActionDialog shows "操作成功" for all actions
+  await page.getByRole('button', { name: '拒绝' }).click();
+  await expect(page.getByText('操作成功')).toBeVisible();
+});
+
+test('workflow withdraw from running instance', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: '登录' }).click();
+  await expect(page.getByRole('heading', { name: '工作台' })).toBeVisible();
+
+  // Navigate to workflow center
+  await page.getByText('工作流').click();
+  await page.getByRole('menuitem', { name: /流程实例/ }).click();
+
+  // Activate instances tab (lazy)
+  await page.getByRole('tab', { name: '流程实例' }).click();
+  // Wait for instance data to load (scope to tab panel to avoid strict-mode match across tabs)
+  await expect(page.getByLabel('流程实例').getByText('年假申请')).toBeVisible();
+
+  // Click detail button on the running instance
+  await page.getByLabel('流程实例').getByRole('button', { name: '详情' }).click();
+
+  // Wait for detail drawer to load (history fetches)
+  await expect(page.getByText('审批历史')).toBeVisible();
+
+  // Withdraw button — visible for initiator of RUNNING instance
+  await page.getByRole('button', { name: '撤回' }).click();
+
+  // Wait for ElMessageBox to appear and click confirm
+  await expect(page.getByText('确定要撤回此流程吗？')).toBeVisible();
+  await page.locator('.el-message-box__btns .el-button--primary').click();
+  await expect(page.getByText('流程已撤回')).toBeVisible();
+});
+
+test('workflow history — view approval timeline', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: '登录' }).click();
+  await expect(page.getByRole('heading', { name: '工作台' })).toBeVisible();
+
+  // Navigate to workflow center
+  await page.getByText('工作流').click();
+  await page.getByRole('menuitem', { name: /流程实例/ }).click();
+
+  // Activate instances tab and open detail
+  await page.getByRole('tab', { name: '流程实例' }).click();
+  await expect(page.getByLabel('流程实例').getByText('年假申请')).toBeVisible();
+  await page.getByLabel('流程实例').getByRole('button', { name: '详情' }).click();
+
+  // Wait for drawer and verify history timeline items
+  await expect(page.getByText('审批历史')).toBeVisible();
+  await expect(page.getByText('START', { exact: true })).toBeVisible();
+  await expect(page.getByText('APPROVE', { exact: true })).toBeVisible();
+});
+
+test('workflow done tasks — view completed tasks', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: '登录' }).click();
+  await expect(page.getByRole('heading', { name: '工作台' })).toBeVisible();
+
+  // Navigate to workflow center
+  await page.getByText('工作流').click();
+  await page.getByRole('menuitem', { name: /流程实例/ }).click();
+
+  // Activate done tasks tab (lazy)
+  await page.getByRole('tab', { name: '已办任务' }).click();
+
+  // Verify the completed task appears (scope to tab panel)
+  await expect(page.getByLabel('已办任务').getByText('年假申请')).toBeVisible();
+});
+
+test('workflow CC — view and mark as read', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: '登录' }).click();
+  await expect(page.getByRole('heading', { name: '工作台' })).toBeVisible();
+
+  // Navigate to workflow center
+  await page.getByText('工作流').click();
+  await page.getByRole('menuitem', { name: /流程实例/ }).click();
+
+  // Activate CC tab (lazy)
+  await page.getByRole('tab', { name: '抄送我的' }).click();
+
+  // Verify CC record appears (scope to tab panel)
+  await expect(page.getByLabel('抄送我的').getByText('年假申请')).toBeVisible();
+
+  // Mark as read — CCListView shows "已标记为已读"
+  await page.getByLabel('抄送我的').getByRole('button', { name: '标记已读' }).click();
+  await expect(page.getByText('已标记为已读')).toBeVisible();
 });

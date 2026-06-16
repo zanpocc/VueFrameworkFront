@@ -2,17 +2,23 @@
   <main class="login-view">
     <section class="login-panel">
       <h1>QuickFramework</h1>
-      <el-form label-position="top" @submit.prevent="submit">
-        <el-form-item label="账号">
-          <el-input v-model="form.username" autocomplete="username" placeholder="请输入账号" />
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-position="top"
+        @submit.prevent="submit"
+      >
+        <el-form-item label="账号" prop="username">
+          <el-input v-model="form.username" autocomplete="username" placeholder="Username" />
         </el-form-item>
-        <el-form-item label="密码">
+        <el-form-item label="密码" prop="password">
           <el-input
             v-model="form.password"
             autocomplete="current-password"
             type="password"
             show-password
-            placeholder="请输入密码"
+            placeholder="Password"
             @keyup.enter="submit"
           />
         </el-form-item>
@@ -41,6 +47,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import type { FormInstance, FormRules } from 'element-plus';
 import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
@@ -48,10 +55,16 @@ const route = useRoute();
 const authStore = useAuthStore();
 const submitting = ref(false);
 const errorMessage = ref('');
+const formRef = ref<FormInstance>();
 const form = reactive({
   username: 'admin',
   password: 'admin123',
 });
+
+const rules: FormRules<typeof form> = {
+  username: [{ required: true, message: 'Required', trigger: 'blur' }],
+  password: [{ required: true, message: 'Required', trigger: 'blur' }],
+};
 
 async function submit() {
   if (submitting.value) {
@@ -59,6 +72,7 @@ async function submit() {
   }
 
   errorMessage.value = '';
+  await formRef.value?.validate();
   submitting.value = true;
   try {
     await authStore.login(form);

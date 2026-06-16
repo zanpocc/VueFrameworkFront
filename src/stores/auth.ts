@@ -83,15 +83,22 @@ export const useAuthStore = defineStore('auth', {
         return;
       }
 
-      const [user, menus, permissions] = await Promise.all([
-        authApi.me(),
-        authApi.menus(),
-        authApi.permissions(),
-      ]);
-      this.user = user;
-      this.menus = menus;
-      this.permissions = permissions;
-      this.bootstrapped = true;
+      try {
+        const [user, menus, permissions] = await Promise.all([
+          authApi.me(),
+          authApi.menus(),
+          authApi.permissions(),
+        ]);
+        this.user = user;
+        this.menus = menus;
+        this.permissions = permissions;
+      } catch {
+        // Token expired or backend unreachable — clear session so the router
+        // guard redirects to login instead of leaving the user on a white screen.
+        this.clearSession();
+      } finally {
+        this.bootstrapped = true;
+      }
     },
     clearSession() {
       this.token = null;

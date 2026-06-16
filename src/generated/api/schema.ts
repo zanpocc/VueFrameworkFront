@@ -4,6 +4,22 @@
  */
 
 export interface paths {
+    "/api/system/notices/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["updateNotice"];
+        post?: never;
+        delete: operations["deleteNotice"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/system/dict-types/{id}": {
         parameters: {
             query?: never;
@@ -228,6 +244,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/workflow/instances/{id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["withdraw"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workflow/instances/{id}/terminate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["terminate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workflow/instances/{id}/cc": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["sendCc"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/workflow/forms": {
         parameters: {
             query?: never;
@@ -244,6 +308,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/workflow/forms/{id}/binding": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getBinding"];
+        put?: never;
+        post: operations["bindForm"];
+        delete: operations["unbindForm"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/workflow/definitions": {
         parameters: {
             query?: never;
@@ -254,6 +334,86 @@ export interface paths {
         get: operations["definitions"];
         put?: never;
         post: operations["createDefinition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workflow/definitions/{id}/transitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listTransitions"];
+        put?: never;
+        post: operations["addTransition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workflow/definitions/{id}/nodes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listNodes"];
+        put?: never;
+        post: operations["addNode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workflow/definitions/{id}/nodes/{nodeKey}/callbacks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listCallbacks"];
+        put?: never;
+        post: operations["addCallback"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workflow/definitions/{id}/model/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["importDefinitionModel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workflow/cc/{ccId}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["markCcRead"];
         delete?: never;
         options?: never;
         head?: never;
@@ -292,6 +452,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/tasks/{id}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["restoreTask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tasks/{id}/ignore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ignoreTask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/tasks/{id}/cancel": {
         parameters: {
             query?: never;
@@ -308,6 +500,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/tasks/outbox/{id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["retryOutbox"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/tasks/dispatch": {
         parameters: {
             query?: never;
@@ -318,6 +526,54 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["dispatch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/system/notices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notices"];
+        put?: never;
+        post: operations["createNotice"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/system/notices/{id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["revokeNotice"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/system/notices/{id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["publishNotice"];
         delete?: never;
         options?: never;
         head?: never;
@@ -356,6 +612,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/system/dict-items/cache/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["refreshDictCache"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/system/configs": {
         parameters: {
             query?: never;
@@ -372,6 +644,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/system/configs/cache/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["refreshConfigCache"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/iam/users": {
         parameters: {
             query?: never;
@@ -382,6 +670,22 @@ export interface paths {
         get: operations["users"];
         put?: never;
         post: operations["createUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/iam/users/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["importUsers"];
         delete?: never;
         options?: never;
         head?: never;
@@ -452,7 +756,39 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/auth/login": {
+    "/api/files": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["files"];
+        put?: never;
+        post: operations["upload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/demo/repair-orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list"];
+        put?: never;
+        post: operations["submit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/demo/repair-orders/{id}/cancel": {
         parameters: {
             query?: never;
             header?: never;
@@ -461,7 +797,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["login"];
+        post: operations["cancel"];
         delete?: never;
         options?: never;
         head?: never;
@@ -498,6 +834,38 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workflow/definitions/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["updateDefinitionStatus"];
         trace?: never;
     };
     "/api/iam/users/{id}/status": {
@@ -548,6 +916,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/workflow/tasks/done": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["done"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/workflow/instances/{id}/history": {
         parameters: {
             query?: never;
@@ -556,6 +940,38 @@ export interface paths {
             cookie?: never;
         };
         get: operations["history"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workflow/instances/{id}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workflow/cc": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listMyCc"];
         put?: never;
         post?: never;
         delete?: never;
@@ -644,6 +1060,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/system/exception-logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["exceptionLogs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/system/dict-items/cache": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["cachedDictItems"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/system/data/sources": {
         parameters: {
             query?: never;
@@ -652,6 +1100,38 @@ export interface paths {
             cookie?: never;
         };
         get: operations["sources"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/system/data/slow-sql": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["slowSql"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/system/data/sharding/rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["shardingRules"];
         put?: never;
         post?: never;
         delete?: never;
@@ -724,6 +1204,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/system/configs/key/{configKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["configByKey"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/system/audit-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auditEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/iam/users/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["exportUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/iam/permissions": {
         parameters: {
             query?: never;
@@ -748,6 +1276,86 @@ export interface paths {
             cookie?: never;
         };
         get: operations["health"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/files/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["file"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/files/{id}/preview-info": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["previewInfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/files/{id}/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["download"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/files/storage/diagnostics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["storageDiagnostics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/demo/repair-orders/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["detail"];
         put?: never;
         post?: never;
         delete?: never;
@@ -804,6 +1412,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/workflow/definitions/{id}/transitions/{transitionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["removeTransition"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workflow/definitions/{id}/nodes/{nodeKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["removeNode"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workflow/definitions/{id}/nodes/{nodeKey}/callbacks/{callbackId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["removeCallback"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -815,6 +1471,56 @@ export interface components {
             data?: Record<string, never>;
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
+        };
+        ApiResultMapStringString: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: {
+                [key: string]: string;
+            };
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        NoticeCommand: {
+            title: string;
+            noticeType: string;
+            content: string;
+            status?: string;
+            pinned?: boolean;
+            /** Format: int32 */
+            sortOrder?: number;
+        };
+        ApiResultNoticeView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["NoticeView"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        NoticeView: {
+            /** Format: int64 */
+            id?: number;
+            title?: string;
+            noticeType?: string;
+            content?: string;
+            status?: string;
+            pinned?: boolean;
+            /** Format: int32 */
+            sortOrder?: number;
+            publisher?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            createdBy?: string;
+            updatedBy?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
         };
         DictTypeCommand: {
             dictCode: string;
@@ -829,6 +1535,7 @@ export interface components {
             data?: components["schemas"]["DictTypeView"];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         DictTypeView: {
             /** Format: int64 */
@@ -854,6 +1561,7 @@ export interface components {
             data?: components["schemas"]["DictItemView"];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         DictItemView: {
             /** Format: int64 */
@@ -882,6 +1590,7 @@ export interface components {
             data?: components["schemas"]["ConfigView"];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         ConfigView: {
             /** Format: int64 */
@@ -912,6 +1621,7 @@ export interface components {
             data?: components["schemas"]["UserView"];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         UserView: {
             /** Format: int64 */
@@ -942,6 +1652,7 @@ export interface components {
             data?: components["schemas"]["SysRole"];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         SysRole: {
             /** Format: int64 */
@@ -973,6 +1684,7 @@ export interface components {
             data?: components["schemas"]["SysPost"];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         SysPost: {
             /** Format: int64 */
@@ -1005,6 +1717,7 @@ export interface components {
             data?: components["schemas"]["SysMenu"];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         SysMenu: {
             /** Format: int64 */
@@ -1038,6 +1751,7 @@ export interface components {
             data?: components["schemas"]["SysDept"];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         SysDept: {
             /** Format: int64 */
@@ -1060,6 +1774,7 @@ export interface components {
             data?: components["schemas"]["ProcessInstanceView"];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         ProcessInstanceView: {
             /** Format: int64 */
@@ -1085,6 +1800,29 @@ export interface components {
             businessKey?: string;
             formData?: string;
         };
+        ApiResultCcView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["CcView"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        CcView: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int64 */
+            instanceId?: number;
+            nodeKey?: string;
+            ccTo?: string;
+            ccFrom?: string;
+            title?: string;
+            /** Format: date-time */
+            readAt?: string;
+            /** Format: date-time */
+            createdAt?: string;
+        };
         FormDefinitionCommand: {
             formKey: string;
             formName: string;
@@ -1098,6 +1836,7 @@ export interface components {
             data?: components["schemas"]["FormDefinitionView"];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         FormDefinitionView: {
             /** Format: int64 */
@@ -1108,6 +1847,38 @@ export interface components {
             version?: number;
             schemaJson?: string;
             status?: string;
+            createdBy?: string;
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        FormTableBindingCommand: {
+            physicalTable: string;
+            businessPkColumn: string;
+            dbSchema?: string;
+            serviceName?: string;
+            datasourceKey?: string;
+            updateMode?: string;
+        };
+        ApiResultFormTableBindingView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["FormTableBindingView"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        FormTableBindingView: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int64 */
+            formId?: number;
+            physicalTable?: string;
+            businessPkColumn?: string;
+            dbSchema?: string;
+            serviceName?: string;
+            datasourceKey?: string;
+            updateMode?: string;
             createdBy?: string;
             /** Format: date-time */
             createdAt?: string;
@@ -1128,6 +1899,7 @@ export interface components {
             data?: components["schemas"]["ProcessDefinitionView"];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         ProcessDefinitionView: {
             /** Format: int64 */
@@ -1146,6 +1918,125 @@ export interface components {
             /** Format: date-time */
             createdAt?: string;
         };
+        ProcessTransitionCommand: {
+            fromNodeKey: string;
+            toNodeKey: string;
+            action: string;
+            conditionExpression?: string;
+            /** Format: int32 */
+            sortOrder?: number;
+        };
+        ApiResultProcessTransitionView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["ProcessTransitionView"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ProcessTransitionView: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int64 */
+            definitionId?: number;
+            fromNodeKey?: string;
+            toNodeKey?: string;
+            action?: string;
+            conditionExpression?: string;
+            /** Format: int32 */
+            sortOrder?: number;
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        ProcessNodeCommand: {
+            nodeKey: string;
+            nodeName: string;
+            nodeType?: string;
+            assigneeType?: string;
+            assigneeValue?: string;
+            /** Format: int32 */
+            sortOrder?: number;
+        };
+        ApiResultProcessNodeView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["ProcessNodeView"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ProcessNodeView: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int64 */
+            definitionId?: number;
+            nodeKey?: string;
+            nodeName?: string;
+            nodeType?: string;
+            assigneeType?: string;
+            assigneeValue?: string;
+            /** Format: int32 */
+            sortOrder?: number;
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        NodeCallbackCommand: {
+            eventType: string;
+            serviceName: string;
+            httpMethod?: string;
+            path: string;
+            paramTemplate?: string;
+            headerTemplate?: string;
+            /** Format: int32 */
+            sortOrder?: number;
+            enabled?: boolean;
+        };
+        ApiResultNodeCallbackView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["NodeCallbackView"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        NodeCallbackView: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int64 */
+            definitionId?: number;
+            nodeKey?: string;
+            eventType?: string;
+            serviceName?: string;
+            httpMethod?: string;
+            path?: string;
+            paramTemplate?: string;
+            headerTemplate?: string;
+            /** Format: int32 */
+            sortOrder?: number;
+            enabled?: boolean;
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        ProcessModelImportCommand: {
+            nodes: components["schemas"]["ProcessNodeCommand"][];
+            transitions?: components["schemas"]["ProcessTransitionCommand"][];
+        };
+        ApiResultProcessModelImportResult: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["ProcessModelImportResult"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ProcessModelImportResult: {
+            nodes?: components["schemas"]["ProcessNodeView"][];
+            transitions?: components["schemas"]["ProcessTransitionView"][];
+        };
         AsyncTaskCommand: {
             taskType: string;
             taskName: string;
@@ -1161,6 +2052,7 @@ export interface components {
             data?: components["schemas"]["AsyncTaskView"];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         AsyncTaskView: {
             /** Format: int64 */
@@ -1182,166 +2074,27 @@ export interface components {
             lockedBy?: string;
             /** Format: date-time */
             lockedAt?: string;
+            manualAction?: string;
+            manualComment?: string;
+            manualHandledBy?: string;
+            /** Format: date-time */
+            manualHandledAt?: string;
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
             updatedAt?: string;
         };
-        ApiResultInteger: {
-            success?: boolean;
-            code?: string;
-            message?: string;
-            /** Format: int32 */
-            data?: number;
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        LoginRequest: {
-            username: string;
-            password: string;
-        };
-        ApiResultLoginResponse: {
-            success?: boolean;
-            code?: string;
-            message?: string;
-            data?: components["schemas"]["LoginResponse"];
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        LoginResponse: {
-            accessToken?: string;
-            refreshToken?: string;
-            tokenType?: string;
-            /** Format: int64 */
-            expiresIn?: number;
-            user?: components["schemas"]["UserProfile"];
-            permissions?: string[];
-        };
-        RefreshTokenRequest: {
-            refreshToken: string;
-        };
-        ApiResultLogoutResponse: {
-            success?: boolean;
-            code?: string;
-            message?: string;
-            data?: components["schemas"]["LogoutResponse"];
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        LogoutResponse: {
-            invalidated?: boolean;
-        };
-        UserProfile: {
-            /** Format: int64 */
-            id?: number;
-            username?: string;
-            nickname?: string;
-            email?: string;
-        };
-        ApiResultListWorkflowTaskView: {
-            success?: boolean;
-            code?: string;
-            message?: string;
-            data?: components["schemas"]["WorkflowTaskView"][];
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        WorkflowTaskView: {
-            /** Format: int64 */
-            id?: number;
-            /** Format: int64 */
-            instanceId?: number;
-            processTitle?: string;
-            taskName?: string;
-            assignee?: string;
-            status?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            completedAt?: string;
-        };
-        ApiResultListProcessInstanceView: {
-            success?: boolean;
-            code?: string;
-            message?: string;
-            data?: components["schemas"]["ProcessInstanceView"][];
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        ApiResultListWorkflowHistoryView: {
-            success?: boolean;
-            code?: string;
-            message?: string;
-            data?: components["schemas"]["WorkflowHistoryView"][];
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        WorkflowHistoryView: {
-            /** Format: int64 */
-            id?: number;
-            /** Format: int64 */
-            instanceId?: number;
-            /** Format: int64 */
-            taskId?: number;
-            operator?: string;
-            action?: string;
+        ManualTaskActionCommand: {
             comment?: string;
-            /** Format: date-time */
-            createdAt?: string;
         };
-        ApiResultListFormDefinitionView: {
+        ApiResultOutboxMessageView: {
             success?: boolean;
             code?: string;
             message?: string;
-            data?: components["schemas"]["FormDefinitionView"][];
+            data?: components["schemas"]["OutboxMessageView"];
             /** Format: date-time */
             timestamp?: string;
-        };
-        ApiResultListProcessDefinitionView: {
-            success?: boolean;
-            code?: string;
-            message?: string;
-            data?: components["schemas"]["ProcessDefinitionView"][];
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        ApiResultListAsyncTaskView: {
-            success?: boolean;
-            code?: string;
-            message?: string;
-            data?: components["schemas"]["AsyncTaskView"][];
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        ApiResultListAsyncTaskLogView: {
-            success?: boolean;
-            code?: string;
-            message?: string;
-            data?: components["schemas"]["AsyncTaskLogView"][];
-            /** Format: date-time */
-            timestamp?: string;
-        };
-        AsyncTaskLogView: {
-            /** Format: int64 */
-            id?: number;
-            /** Format: int64 */
-            taskId?: number;
-            /** Format: int32 */
-            attemptNo?: number;
-            status?: string;
-            message?: string;
-            /** Format: date-time */
-            startedAt?: string;
-            /** Format: date-time */
-            finishedAt?: string;
-        };
-        ApiResultListOutboxMessageView: {
-            success?: boolean;
-            code?: string;
-            message?: string;
-            data?: components["schemas"]["OutboxMessageView"][];
-            /** Format: date-time */
-            timestamp?: string;
+            traceId?: string;
         };
         OutboxMessageView: {
             /** Format: int64 */
@@ -1364,6 +2117,339 @@ export interface components {
             /** Format: date-time */
             publishedAt?: string;
         };
+        ApiResultInteger: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            /** Format: int32 */
+            data?: number;
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ApiResultCacheRefreshView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["CacheRefreshView"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        CacheRefreshView: {
+            cacheName?: string;
+            /** Format: int32 */
+            size?: number;
+        };
+        ApiResultUserImportResult: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["UserImportResult"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        UserImportResult: {
+            /** Format: int32 */
+            created?: number;
+            /** Format: int32 */
+            updated?: number;
+            /** Format: int32 */
+            skipped?: number;
+            errors?: string[];
+        };
+        ApiResultFileObjectView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["FileObjectView"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        FileObjectView: {
+            /** Format: int64 */
+            id?: number;
+            storageType?: string;
+            bucketName?: string;
+            objectKey?: string;
+            originalFilename?: string;
+            contentType?: string;
+            /** Format: int64 */
+            fileSize?: number;
+            fileSha256?: string;
+            status?: string;
+            uploadedBy?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+        };
+        RepairOrderSubmitCommand: {
+            title: string;
+            description?: string;
+            equipmentCode: string;
+            attachmentFileIds?: number[];
+        };
+        ApiResultRepairOrderView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["RepairOrderView"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        RepairOrderAttachmentView: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int64 */
+            orderId?: number;
+            /** Format: int64 */
+            fileId?: number;
+            /** Format: date-time */
+            uploadedAt?: string;
+        };
+        RepairOrderView: {
+            /** Format: int64 */
+            id?: number;
+            code?: string;
+            title?: string;
+            description?: string;
+            applicant?: string;
+            equipmentCode?: string;
+            /** Format: int64 */
+            wfInstanceId?: number;
+            wfStatus?: string;
+            wfCurrentNode?: string;
+            /** Format: date-time */
+            wfStartedAt?: string;
+            /** Format: date-time */
+            wfEndedAt?: string;
+            wfBusinessKey?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            attachments?: components["schemas"]["RepairOrderAttachmentView"][];
+        };
+        RefreshTokenRequest: {
+            refreshToken: string;
+        };
+        ApiResultLoginResponse: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["LoginResponse"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        LoginResponse: {
+            accessToken?: string;
+            refreshToken?: string;
+            tokenType?: string;
+            /** Format: int64 */
+            expiresIn?: number;
+            user?: components["schemas"]["UserProfile"];
+            permissions?: string[];
+        };
+        UserProfile: {
+            /** Format: int64 */
+            id?: number;
+            username?: string;
+            nickname?: string;
+            email?: string;
+        };
+        ApiResultLogoutResponse: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["LogoutResponse"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        LogoutResponse: {
+            invalidated?: boolean;
+        };
+        LoginRequest: {
+            username: string;
+            password: string;
+            captchaId?: string;
+            captchaCode?: string;
+        };
+        ApiResultListWorkflowTaskView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["WorkflowTaskView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        WorkflowTaskView: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int64 */
+            instanceId?: number;
+            processTitle?: string;
+            taskName?: string;
+            assignee?: string;
+            status?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            completedAt?: string;
+        };
+        ApiResultListProcessInstanceView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["ProcessInstanceView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ApiResultListWorkflowHistoryView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["WorkflowHistoryView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        WorkflowHistoryView: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int64 */
+            instanceId?: number;
+            /** Format: int64 */
+            taskId?: number;
+            operator?: string;
+            action?: string;
+            comment?: string;
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        ApiResultListProcessEventView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["ProcessEventView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ProcessEventView: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int64 */
+            instanceId?: number;
+            eventType?: string;
+            nodeKey?: string;
+            operator?: string;
+            payload?: string;
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        ApiResultListFormDefinitionView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["FormDefinitionView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ApiResultListProcessDefinitionView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["ProcessDefinitionView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ApiResultListProcessTransitionView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["ProcessTransitionView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ApiResultListProcessNodeView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["ProcessNodeView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ApiResultListNodeCallbackView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["NodeCallbackView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ApiResultListCcView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["CcView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ApiResultListAsyncTaskView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["AsyncTaskView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ApiResultListAsyncTaskLogView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["AsyncTaskLogView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        AsyncTaskLogView: {
+            /** Format: int64 */
+            id?: number;
+            /** Format: int64 */
+            taskId?: number;
+            /** Format: int32 */
+            attemptNo?: number;
+            status?: string;
+            message?: string;
+            /** Format: date-time */
+            startedAt?: string;
+            /** Format: date-time */
+            finishedAt?: string;
+        };
+        ApiResultListOutboxMessageView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["OutboxMessageView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
         ApiResultListOperationLogView: {
             success?: boolean;
             code?: string;
@@ -1371,6 +2457,7 @@ export interface components {
             data?: components["schemas"]["OperationLogView"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         OperationLogView: {
             /** Format: int64 */
@@ -1384,6 +2471,15 @@ export interface components {
             /** Format: date-time */
             operatedAt?: string;
         };
+        ApiResultListNoticeView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["NoticeView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
         ApiResultListLoginLogView: {
             success?: boolean;
             code?: string;
@@ -1391,6 +2487,7 @@ export interface components {
             data?: components["schemas"]["LoginLogView"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         LoginLogView: {
             /** Format: int64 */
@@ -1403,6 +2500,29 @@ export interface components {
             /** Format: date-time */
             loginAt?: string;
         };
+        ApiResultListExceptionLogEntry: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["ExceptionLogEntry"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ExceptionLogEntry: {
+            /** Format: int64 */
+            id?: number;
+            exceptionClass?: string;
+            message?: string;
+            stackTrace?: string;
+            requestMethod?: string;
+            requestUri?: string;
+            username?: string;
+            traceId?: string;
+            clientIp?: string;
+            /** Format: date-time */
+            createdAt?: string;
+        };
         ApiResultListDictTypeView: {
             success?: boolean;
             code?: string;
@@ -1410,6 +2530,7 @@ export interface components {
             data?: components["schemas"]["DictTypeView"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         ApiResultListDictItemView: {
             success?: boolean;
@@ -1418,6 +2539,7 @@ export interface components {
             data?: components["schemas"]["DictItemView"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         ApiResultListDataSourceDiagnosticView: {
             success?: boolean;
@@ -1426,12 +2548,54 @@ export interface components {
             data?: components["schemas"]["DataSourceDiagnosticView"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         DataSourceDiagnosticView: {
             name?: string;
             url?: string;
             defaultSource?: boolean;
             health?: string;
+        };
+        ApiResultListSlowSqlRecord: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["SlowSqlRecord"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        SlowSqlRecord: {
+            /** Format: date-time */
+            occurredAt?: string;
+            /** Format: int64 */
+            durationMs?: number;
+            /** Format: int64 */
+            thresholdMs?: number;
+            traceId?: string;
+            statementId?: string;
+            sql?: string;
+        };
+        ApiResultShardingSphereRuleView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["ShardingSphereRuleView"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        ShardingSphereRuleView: {
+            enabled?: boolean;
+            datasourceEnabled?: boolean;
+            databaseName?: string;
+            tables?: components["schemas"]["TableRuleView"][];
+        };
+        TableRuleView: {
+            logicTable?: string;
+            actualDataNodes?: string;
+            shardingColumn?: string;
+            algorithmExpression?: string;
         };
         ApiResultShardRouteView: {
             success?: boolean;
@@ -1440,6 +2604,7 @@ export interface components {
             data?: components["schemas"]["ShardRouteView"];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         ShardRouteView: {
             logicTable?: string;
@@ -1453,6 +2618,7 @@ export interface components {
             data?: string;
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         ApiResultListConfigView: {
             success?: boolean;
@@ -1461,6 +2627,31 @@ export interface components {
             data?: components["schemas"]["ConfigView"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
+        };
+        ApiResultListAuditEventQueryView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["AuditEventQueryView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        AuditEventQueryView: {
+            /** Format: int64 */
+            id?: number;
+            username?: string;
+            module?: string;
+            action?: string;
+            resourceType?: string;
+            resourceId?: string;
+            detail?: string;
+            success?: boolean;
+            traceId?: string;
+            clientIp?: string;
+            /** Format: date-time */
+            createdAt?: string;
         };
         ApiResultListUserView: {
             success?: boolean;
@@ -1469,6 +2660,7 @@ export interface components {
             data?: components["schemas"]["UserView"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         ApiResultListSysRole: {
             success?: boolean;
@@ -1477,6 +2669,7 @@ export interface components {
             data?: components["schemas"]["SysRole"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         ApiResultListRoleDataScopeView: {
             success?: boolean;
@@ -1485,6 +2678,7 @@ export interface components {
             data?: components["schemas"]["RoleDataScopeView"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         RoleDataScopeView: {
             /** Format: int64 */
@@ -1501,6 +2695,7 @@ export interface components {
             data?: components["schemas"]["SysPost"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         ApiResultListSysPermission: {
             success?: boolean;
@@ -1509,6 +2704,7 @@ export interface components {
             data?: components["schemas"]["SysPermission"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         SysPermission: {
             /** Format: int64 */
@@ -1525,6 +2721,7 @@ export interface components {
             data?: components["schemas"]["SysMenu"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         ApiResultListSysDept: {
             success?: boolean;
@@ -1533,16 +2730,72 @@ export interface components {
             data?: components["schemas"]["SysDept"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
-        ApiResultMapStringString: {
+        ApiResultListFileObjectView: {
             success?: boolean;
             code?: string;
             message?: string;
-            data?: {
-                [key: string]: string;
-            };
+            data?: components["schemas"]["FileObjectView"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
+        };
+        ApiResultFilePreviewInfo: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["FilePreviewInfo"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        FilePreviewInfo: {
+            /** Format: int64 */
+            id?: number;
+            originalFilename?: string;
+            contentType?: string;
+            /** Format: int64 */
+            fileSize?: number;
+            previewable?: boolean;
+            previewType?: string;
+            previewUrl?: string;
+            reason?: string;
+        };
+        ApiResultFileStorageDiagnosticView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["FileStorageDiagnosticView"];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
+        };
+        FileStorageDiagnosticView: {
+            activeStorageType?: string;
+            bucketName?: string;
+            health?: string;
+            message?: string;
+            activeStorageAvailable?: boolean;
+            availableStorageTypes?: string[];
+            localRoot?: string;
+            /** Format: int64 */
+            maxFileSizeBytes?: number;
+            /** Format: int64 */
+            maxPreviewSizeBytes?: number;
+            s3Enabled?: boolean;
+            s3Endpoint?: string;
+            s3Region?: string;
+            s3PathStyleAccess?: boolean;
+        };
+        ApiResultListRepairOrderView: {
+            success?: boolean;
+            code?: string;
+            message?: string;
+            data?: components["schemas"]["RepairOrderView"][];
+            /** Format: date-time */
+            timestamp?: string;
+            traceId?: string;
         };
         ApiResultListString: {
             success?: boolean;
@@ -1551,6 +2804,7 @@ export interface components {
             data?: string[];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         ApiResultListMenuTreeNode: {
             success?: boolean;
@@ -1559,6 +2813,7 @@ export interface components {
             data?: components["schemas"]["MenuTreeNode"][];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
         MenuTreeNode: {
             /** Format: int64 */
@@ -1580,6 +2835,7 @@ export interface components {
             data?: components["schemas"]["UserProfile"];
             /** Format: date-time */
             timestamp?: string;
+            traceId?: string;
         };
     };
     responses: never;
@@ -1590,6 +2846,72 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    updateNotice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NoticeCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultNoticeView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    deleteNotice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultVoid"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
     updateDictType: {
         parameters: {
             query?: never;
@@ -1620,7 +2942,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -1651,7 +2973,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -1686,7 +3008,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -1717,7 +3039,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -1752,7 +3074,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -1783,7 +3105,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -1814,7 +3136,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -1849,7 +3171,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -1880,7 +3202,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -1915,7 +3237,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -1946,7 +3268,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -1981,7 +3303,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2012,7 +3334,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2047,7 +3369,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2082,7 +3404,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2113,7 +3435,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2148,7 +3470,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2183,7 +3505,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2214,7 +3536,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2249,7 +3571,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2280,7 +3602,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2315,7 +3637,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2346,7 +3668,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2381,7 +3703,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2410,7 +3732,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2443,7 +3765,110 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    withdraw: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultProcessInstanceView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    terminate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TaskActionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultProcessInstanceView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    sendCc: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    [key: string]: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultCcView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2472,7 +3897,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2505,7 +3930,104 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    getBinding: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultFormTableBindingView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    bindForm: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FormTableBindingCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultFormTableBindingView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    unbindForm: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "*/*": components["schemas"]["ApiResultVoid"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2534,7 +4056,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2567,7 +4089,273 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    listTransitions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultListProcessTransitionView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    addTransition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProcessTransitionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultProcessTransitionView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    listNodes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultListProcessNodeView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    addNode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProcessNodeCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultProcessNodeView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    listCallbacks: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                nodeKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultListNodeCallbackView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    addCallback: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                nodeKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NodeCallbackCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultNodeCallbackView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    importDefinitionModel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProcessModelImportCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultProcessModelImportResult"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    markCcRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ccId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "*/*": components["schemas"]["ApiResultVoid"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2598,7 +4386,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2631,7 +4419,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2645,7 +4433,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ManualTaskActionCommand"];
+            };
+        };
         responses: {
             /** @description OK */
             200: {
@@ -2662,12 +4454,117 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    restoreTask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ManualTaskActionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultAsyncTaskView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    ignoreTask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ManualTaskActionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultAsyncTaskView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
     };
     cancelTask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ManualTaskActionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultAsyncTaskView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    retryOutbox: {
         parameters: {
             query?: never;
             header?: never;
@@ -2684,7 +4581,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultAsyncTaskView"];
+                    "*/*": components["schemas"]["ApiResultOutboxMessageView"];
                 };
             };
             /** @description Bad Request */
@@ -2693,7 +4590,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2724,7 +4621,134 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    notices: {
+        parameters: {
+            query?: {
+                keyword?: string;
+                status?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultListNoticeView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    createNotice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NoticeCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultNoticeView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    revokeNotice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultNoticeView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    publishNotice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultNoticeView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2755,7 +4779,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2788,7 +4812,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2819,7 +4843,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2852,7 +4876,36 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    refreshDictCache: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultCacheRefreshView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2883,7 +4936,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2916,7 +4969,36 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    refreshConfigCache: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultCacheRefreshView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2947,7 +5029,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -2980,7 +5062,43 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    importUsers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultUserImportResult"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3009,7 +5127,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3042,7 +5160,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3071,7 +5189,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3104,7 +5222,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3133,7 +5251,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3166,7 +5284,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3195,7 +5313,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3228,21 +5346,55 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
     };
-    login: {
+    files: {
+        parameters: {
+            query?: {
+                status?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultListFileObjectView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    upload: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody: {
+        requestBody?: {
             content: {
-                "application/json": components["schemas"]["LoginRequest"];
+                "application/json": {
+                    /** Format: binary */
+                    file: string;
+                };
             };
         };
         responses: {
@@ -3252,7 +5404,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultLoginResponse"];
+                    "*/*": components["schemas"]["ApiResultFileObjectView"];
                 };
             };
             /** @description Bad Request */
@@ -3261,7 +5413,100 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultListRepairOrderView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    submit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RepairOrderSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultRepairOrderView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultRepairOrderView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3294,7 +5539,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3323,7 +5568,73 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultLoginResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    updateDefinitionStatus: {
+        parameters: {
+            query: {
+                status: string;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultProcessDefinitionView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3356,7 +5667,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3389,7 +5700,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3418,7 +5729,36 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    done: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultListWorkflowTaskView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3449,7 +5789,67 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    listEvents: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultListProcessEventView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    listMyCc: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultListCcView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3480,7 +5880,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3511,7 +5911,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3542,7 +5942,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3573,7 +5973,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3604,7 +6004,70 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    exceptionLogs: {
+        parameters: {
+            query?: {
+                exceptionClass?: string;
+                username?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultListExceptionLogEntry"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    cachedDictItems: {
+        parameters: {
+            query?: {
+                dictCode?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultListDictItemView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3633,7 +6096,65 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    slowSql: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultListSlowSqlRecord"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    shardingRules: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultShardingSphereRuleView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3664,7 +6185,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3695,7 +6216,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3724,7 +6245,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3753,7 +6274,101 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    configByKey: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                configKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultConfigView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    auditEvents: {
+        parameters: {
+            query?: {
+                module?: string;
+                username?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultListAuditEventQueryView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    exportUsers: {
+        parameters: {
+            query?: {
+                keyword?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3782,7 +6397,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3811,7 +6426,160 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    file: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultFileObjectView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    previewInfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultFilePreviewInfo"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    download: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": string;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    storageDiagnostics: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultFileStorageDiagnosticView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultRepairOrderView"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3840,7 +6608,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3869,7 +6637,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiResultVoid"];
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };
@@ -3898,7 +6666,104 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    removeTransition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                transitionId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "*/*": components["schemas"]["ApiResultVoid"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    removeNode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                nodeKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultVoid"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
+                };
+            };
+        };
+    };
+    removeCallback: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                nodeKey: string;
+                callbackId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultVoid"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResultMapStringString"] | components["schemas"]["ApiResultVoid"];
                 };
             };
         };

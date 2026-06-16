@@ -3,81 +3,204 @@
     <header class="page__header">
       <div>
         <h1>日志查询</h1>
-        <p>查看登录日志和平台操作日志。</p>
+        <p>查看登录、操作、审计和异常日志。</p>
       </div>
     </header>
 
-    <el-form class="page__filters" inline @submit.prevent="loadLogs">
-      <el-form-item label="用户">
-        <el-input v-model="username" clearable placeholder="用户名" />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="loadLogs"> 查询 </el-button>
-      </el-form-item>
-    </el-form>
-
     <el-tabs v-model="activeTab">
       <el-tab-pane label="登录日志" name="login">
-        <el-table v-loading="loading" :data="loginLogs" border row-key="id">
-          <el-table-column prop="username" label="用户" width="130" />
-          <el-table-column label="结果" width="100">
-            <template #default="{ row }">
-              <el-tag :type="row.success ? 'success' : 'danger'">
-                {{ row.success ? '成功' : '失败' }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="message" label="消息" min-width="160" />
-          <el-table-column prop="loginIp" label="IP" width="140" />
-          <el-table-column prop="userAgent" label="UA" min-width="220" />
-          <el-table-column prop="loginAt" label="时间" min-width="180" />
-        </el-table>
+        <QfDataTable
+          :columns="loginColumns"
+          :data="loginTable.allRows.value"
+          :loading="loginTable.loading.value"
+          :page-size="20"
+        >
+          <template #filters="{ reload }">
+            <el-form-item label="用户">
+              <el-input v-model="loginTable.filters.username" clearable placeholder="用户名" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="reload()"> 查询 </el-button>
+            </el-form-item>
+          </template>
+          <template #success="{ row }">
+            <QfStatusTag
+              :status="row.success ? 'SUCCESS' : 'FAILED'"
+              :label="row.success ? '成功' : '失败'"
+            />
+          </template>
+        </QfDataTable>
       </el-tab-pane>
 
       <el-tab-pane label="操作日志" name="operation">
-        <el-table v-loading="loading" :data="operationLogs" border row-key="id">
-          <el-table-column prop="username" label="用户" width="130" />
-          <el-table-column prop="moduleName" label="模块" width="130" />
-          <el-table-column prop="operationType" label="操作" width="110" />
-          <el-table-column prop="resourceName" label="资源" min-width="180" />
-          <el-table-column label="结果" width="100">
-            <template #default="{ row }">
-              <el-tag :type="row.success ? 'success' : 'danger'">
-                {{ row.success ? '成功' : '失败' }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="message" label="消息" min-width="160" />
-          <el-table-column prop="operatedAt" label="时间" min-width="180" />
-        </el-table>
+        <QfDataTable
+          :columns="operationColumns"
+          :data="operationTable.allRows.value"
+          :loading="operationTable.loading.value"
+          :page-size="20"
+        >
+          <template #filters="{ reload }">
+            <el-form-item label="用户">
+              <el-input v-model="operationTable.filters.username" clearable placeholder="用户名" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="reload()"> 查询 </el-button>
+            </el-form-item>
+          </template>
+          <template #success="{ row }">
+            <QfStatusTag
+              :status="row.success ? 'SUCCESS' : 'FAILED'"
+              :label="row.success ? '成功' : '失败'"
+            />
+          </template>
+        </QfDataTable>
+      </el-tab-pane>
+
+      <el-tab-pane label="审计日志" name="audit">
+        <QfDataTable
+          :columns="auditColumns"
+          :data="auditTable.allRows.value"
+          :loading="auditTable.loading.value"
+          :page-size="20"
+        >
+          <template #filters="{ reload }">
+            <el-form-item label="模块">
+              <el-input v-model="auditTable.filters.module" clearable placeholder="模块" />
+            </el-form-item>
+            <el-form-item label="用户">
+              <el-input v-model="auditTable.filters.username" clearable placeholder="用户名" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="reload()"> 查询 </el-button>
+            </el-form-item>
+          </template>
+          <template #success="{ row }">
+            <QfStatusTag
+              :status="row.success ? 'SUCCESS' : 'FAILED'"
+              :label="row.success ? '成功' : '失败'"
+            />
+          </template>
+        </QfDataTable>
+      </el-tab-pane>
+
+      <el-tab-pane label="异常日志" name="exception">
+        <QfDataTable
+          :columns="exceptionColumns"
+          :data="exceptionTable.allRows.value"
+          :loading="exceptionTable.loading.value"
+          :page-size="20"
+        >
+          <template #filters="{ reload }">
+            <el-form-item label="异常类">
+              <el-input
+                v-model="exceptionTable.filters.exceptionClass"
+                clearable
+                placeholder="异常类"
+              />
+            </el-form-item>
+            <el-form-item label="用户">
+              <el-input v-model="exceptionTable.filters.username" clearable placeholder="用户名" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="reload()"> 查询 </el-button>
+            </el-form-item>
+          </template>
+        </QfDataTable>
       </el-tab-pane>
     </el-tabs>
   </section>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
-import { systemApi, type LoginLog, type OperationLog } from '@/api/system';
+defineOptions({ name: 'LogList' });
+import { ref, watch } from 'vue';
+import { QfDataTable, QfStatusTag } from '@/shared';
+import type { QfTableColumn } from '@/shared';
+import { useTable } from '@/shared';
+import {
+  systemApi,
+  type AuditEvent,
+  type ExceptionLog,
+  type LoginLog,
+  type OperationLog,
+} from '@/api/system';
 
-const loading = ref(false);
-const username = ref('');
+const loginColumns: QfTableColumn<LoginLog>[] = [
+  { prop: 'username', label: '用户', width: 130 },
+  { prop: 'success', label: '结果', width: 100, slot: 'success' },
+  { prop: 'message', label: '消息', minWidth: 160 },
+  { prop: 'loginIp', label: 'IP', width: 140 },
+  { prop: 'userAgent', label: 'UA', minWidth: 220 },
+  { prop: 'loginAt', label: '时间', minWidth: 180 },
+];
+
+const operationColumns: QfTableColumn<OperationLog>[] = [
+  { prop: 'username', label: '用户', width: 130 },
+  { prop: 'moduleName', label: '模块', width: 130 },
+  { prop: 'operationType', label: '操作', width: 110 },
+  { prop: 'resourceName', label: '资源', minWidth: 180 },
+  { prop: 'success', label: '结果', width: 100, slot: 'success' },
+  { prop: 'message', label: '消息', minWidth: 160 },
+  { prop: 'operatedAt', label: '时间', minWidth: 180 },
+];
+
+const auditColumns: QfTableColumn<AuditEvent>[] = [
+  { prop: 'username', label: '用户', width: 130 },
+  { prop: 'module', label: '模块', width: 130 },
+  { prop: 'action', label: '动作', width: 130 },
+  { prop: 'resourceType', label: '资源类型', width: 120 },
+  { prop: 'resourceId', label: '资源 ID', width: 120 },
+  { prop: 'success', label: '结果', width: 100, slot: 'success' },
+  { prop: 'traceId', label: 'TraceId', minWidth: 180 },
+  { prop: 'clientIp', label: 'IP', width: 140 },
+  { prop: 'createdAt', label: '时间', minWidth: 180 },
+];
+
+const exceptionColumns: QfTableColumn<ExceptionLog>[] = [
+  { prop: 'exceptionClass', label: '异常类', minWidth: 220 },
+  { prop: 'message', label: '消息', minWidth: 220 },
+  { prop: 'requestMethod', label: '方法', width: 90 },
+  { prop: 'requestUri', label: '请求 URI', minWidth: 180 },
+  { prop: 'username', label: '用户', width: 130 },
+  { prop: 'traceId', label: 'TraceId', minWidth: 180 },
+  { prop: 'clientIp', label: 'IP', width: 140 },
+  { prop: 'createdAt', label: '时间', minWidth: 180 },
+];
+
 const activeTab = ref('login');
-const loginLogs = ref<LoginLog[]>([]);
-const operationLogs = ref<OperationLog[]>([]);
 
-async function loadLogs() {
-  loading.value = true;
-  try {
-    if (activeTab.value === 'login') {
-      loginLogs.value = await systemApi.loginLogs(username.value);
-    } else {
-      operationLogs.value = await systemApi.operationLogs(username.value);
-    }
-  } finally {
-    loading.value = false;
+const loginTable = useTable<LoginLog, { username: string }>({
+  fetcher: (filters) => systemApi.loginLogs(filters.username),
+  defaultFilters: { username: '' },
+});
+
+const operationTable = useTable<OperationLog, { username: string }>({
+  fetcher: (filters) => systemApi.operationLogs(filters.username),
+  defaultFilters: { username: '' },
+  autoLoad: false,
+});
+
+const auditTable = useTable<AuditEvent, { module: string; username: string }>({
+  fetcher: (filters) => systemApi.auditEvents(filters.module, filters.username),
+  defaultFilters: { module: '', username: '' },
+  autoLoad: false,
+});
+
+const exceptionTable = useTable<ExceptionLog, { exceptionClass: string; username: string }>({
+  fetcher: (filters) => systemApi.exceptionLogs(filters.exceptionClass, filters.username),
+  defaultFilters: { exceptionClass: '', username: '' },
+  autoLoad: false,
+});
+
+watch(activeTab, (tab) => {
+  if (tab === 'login') {
+    void loginTable.reload();
+  } else if (tab === 'operation') {
+    void operationTable.reload();
+  } else if (tab === 'audit') {
+    void auditTable.reload();
+  } else if (tab === 'exception') {
+    void exceptionTable.reload();
   }
-}
-
-watch(activeTab, loadLogs);
-onMounted(loadLogs);
+});
 </script>

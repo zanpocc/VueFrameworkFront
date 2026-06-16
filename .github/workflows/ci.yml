@@ -37,6 +37,12 @@ jobs:
       - name: Typecheck
         run: yarn typecheck
 
+      - name: OpenAPI generated types are current
+        if: ${{ vars.OPENAPI_SCHEMA != '' }}
+        env:
+          OPENAPI_SCHEMA: ${{ vars.OPENAPI_SCHEMA }}
+        run: yarn openapi:check
+
       - name: Unit tests
         run: yarn test:unit
 

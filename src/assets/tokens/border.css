@@ -1,0 +1,4 @@
+:root {
+  --qf-border-radius: 8px;
+  --qf-border-color: var(--qf-color-border);
+}

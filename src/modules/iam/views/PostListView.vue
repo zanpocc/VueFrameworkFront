@@ -5,125 +5,117 @@
         <h1>岗位管理</h1>
         <p>维护岗位编码、名称、排序和状态。</p>
       </div>
-      <el-button v-permission="'system:post:update'" type="primary" @click="openCreate">
+      <QfPermissionButton code="system:post:update" type="primary" @click="dialog.openCreate()">
         新增岗位
-      </el-button>
+      </QfPermissionButton>
     </header>
 
-    <el-table v-loading="loading" :data="posts" border row-key="id">
-      <el-table-column prop="postCode" label="岗位编码" min-width="160" />
-      <el-table-column prop="postName" label="岗位名称" min-width="160" />
-      <el-table-column prop="sortOrder" label="排序" width="100" />
-      <el-table-column prop="status" label="状态" width="120" />
-      <el-table-column label="操作" width="180">
-        <template #default="{ row }">
-          <el-button v-permission="'system:post:update'" text type="primary" @click="openEdit(row)">
-            编辑
-          </el-button>
-          <el-button
-            v-permission="'system:post:update'"
-            text
-            type="danger"
-            @click="deletePost(row)"
-          >
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <el-dialog v-model="dialogVisible" :title="editingPost ? '编辑岗位' : '新增岗位'" width="480px">
-      <el-form label-position="top">
-        <el-form-item label="岗位编码">
-          <el-input v-model="form.postCode" />
-        </el-form-item>
-        <el-form-item label="岗位名称">
-          <el-input v-model="form.postName" />
-        </el-form-item>
-        <el-form-item label="排序">
-          <el-input-number v-model="form.sortOrder" :min="0" />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="form.status">
-            <el-option label="启用" value="ENABLED" />
-            <el-option label="禁用" value="DISABLED" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="dialogVisible = false"> 取消 </el-button>
-        <el-button type="primary" :loading="submitting" @click="submit"> 保存 </el-button>
+    <QfDataTable
+      :columns="columns"
+      :data="table.allRows.value"
+      :loading="table.loading.value"
+      :actions-width="180"
+    >
+      <template #status="{ row }">
+        <QfStatusTag :status="row.status" />
       </template>
-    </el-dialog>
+      <template #actions="{ row }">
+        <QfPermissionButton
+          code="system:post:update"
+          text
+          type="primary"
+          @click="openEditPost(row as SysPost)"
+        >
+          编辑
+        </QfPermissionButton>
+        <QfPermissionButton
+          code="system:post:update"
+          text
+          type="danger"
+          @click="handleDelete(row as SysPost)"
+        >
+          删除
+        </QfPermissionButton>
+      </template>
+    </QfDataTable>
+
+    <QfFormDialog
+      v-model="dialog.visible.value"
+      :title="dialog.isEditing.value ? '编辑岗位' : '新增岗位'"
+      :model="dialog.form"
+      :rules="rules"
+      :loading="dialog.submitting.value"
+      @submit="dialog.submit()"
+      @cancel="dialog.cancel()"
+    >
+      <el-form-item label="岗位编码" prop="postCode">
+        <el-input v-model="dialog.form.postCode" />
+      </el-form-item>
+      <el-form-item label="岗位名称" prop="postName">
+        <el-input v-model="dialog.form.postName" />
+      </el-form-item>
+      <el-form-item label="排序" prop="sortOrder">
+        <el-input-number v-model="dialog.form.sortOrder" :min="0" />
+      </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="dialog.form.status">
+          <el-option label="启用" value="ENABLED" />
+          <el-option label="禁用" value="DISABLED" />
+        </el-select>
+      </el-form-item>
+    </QfFormDialog>
   </section>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+defineOptions({ name: 'PostList' });
+import type { FormRules } from 'element-plus';
+import { QfDataTable, QfFormDialog, QfStatusTag, QfPermissionButton } from '@/shared';
+import type { QfTableColumn } from '@/shared';
+import { useTable, useDialogForm, useConfirmDelete } from '@/shared';
 import { iamApi, type PostCommand, type SysPost } from '@/api/iam';
 
-const loading = ref(false);
-const submitting = ref(false);
-const dialogVisible = ref(false);
-const posts = ref<SysPost[]>([]);
-const editingPost = ref<SysPost | null>(null);
-const form = reactive<PostCommand>({
-  postCode: '',
-  postName: '',
-  sortOrder: 0,
-  status: 'ENABLED',
+const columns: QfTableColumn<SysPost>[] = [
+  { prop: 'postCode', label: '岗位编码', minWidth: 160 },
+  { prop: 'postName', label: '岗位名称', minWidth: 160 },
+  { prop: 'sortOrder', label: '排序', width: 100 },
+  { prop: 'status', label: '状态', width: 120, slot: 'status' },
+];
+
+const rules: FormRules<PostCommand> = {
+  postCode: [{ required: true, message: '请输入岗位编码', trigger: 'blur' }],
+  postName: [{ required: true, message: '请输入岗位名称', trigger: 'blur' }],
+};
+
+const table = useTable<SysPost>({ fetcher: () => iamApi.posts() });
+
+const dialog = useDialogForm<PostCommand>({
+  defaults: { postCode: '', postName: '', sortOrder: 0, status: 'ENABLED' },
+  async onSubmit(form, editingItem) {
+    if (editingItem) {
+      await iamApi.updatePost((editingItem as SysPost).id, form);
+    } else {
+      await iamApi.createPost(form);
+    }
+    await table.reload();
+  },
+  successMessage: (isEdit) => (isEdit ? '岗位已更新' : '岗位已创建'),
 });
 
-async function loadPosts() {
-  loading.value = true;
-  try {
-    posts.value = await iamApi.posts();
-  } finally {
-    loading.value = false;
-  }
-}
+const { confirmDelete } = useConfirmDelete();
 
-function openCreate() {
-  editingPost.value = null;
-  Object.assign(form, { postCode: '', postName: '', sortOrder: 0, status: 'ENABLED' });
-  dialogVisible.value = true;
-}
-
-function openEdit(row: SysPost) {
-  editingPost.value = row;
-  Object.assign(form, {
+function openEditPost(row: SysPost) {
+  dialog.openEdit(row, {
     postCode: row.postCode,
     postName: row.postName,
     sortOrder: row.sortOrder,
     status: row.status,
   });
-  dialogVisible.value = true;
 }
 
-async function submit() {
-  submitting.value = true;
-  try {
-    if (editingPost.value) {
-      await iamApi.updatePost(editingPost.value.id, form);
-      ElMessage.success('岗位已更新');
-    } else {
-      await iamApi.createPost(form);
-      ElMessage.success('岗位已创建');
-    }
-    dialogVisible.value = false;
-    await loadPosts();
-  } finally {
-    submitting.value = false;
-  }
-}
-
-async function deletePost(row: SysPost) {
-  await ElMessageBox.confirm(`确认删除岗位 ${row.postName}？`, '删除岗位', { type: 'warning' });
+async function handleDelete(row: SysPost) {
+  await confirmDelete(row.postName, '岗位');
   await iamApi.deletePost(row.id);
-  ElMessage.success('岗位已删除');
-  await loadPosts();
+  await table.reload();
 }
-
-onMounted(loadPosts);
 </script>

@@ -14,6 +14,7 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "openapi:generate": "node scripts/generate-openapi.mjs",
+    "openapi:check": "node scripts/check-openapi.mjs",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:live:monolith-vm": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-e2e-live-monolith-vm.ps1"
