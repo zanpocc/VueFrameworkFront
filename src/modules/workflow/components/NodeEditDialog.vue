@@ -25,14 +25,38 @@
         </el-select>
       </el-form-item>
       <el-form-item v-if="form.nodeType === 'APPROVAL'" label="审批人类型" prop="assigneeType">
-        <el-select v-model="form.assigneeType" style="width: 100%">
+        <el-select v-model="form.assigneeType" style="width: 100%" @change="onAssigneeTypeChange">
           <el-option label="指定用户" value="USER" />
           <el-option label="指定角色" value="ROLE" />
           <el-option label="指定部门" value="DEPT" />
+          <el-option label="指定岗位" value="POST" />
         </el-select>
       </el-form-item>
       <el-form-item v-if="form.nodeType === 'APPROVAL'" label="审批人" prop="assigneeValue">
-        <el-input v-model="form.assigneeValue" placeholder="如: admin" />
+        <!-- USER nodes assign by username (Flowable taskAssignee); ROLE/DEPT/POST
+             nodes assign by id (candidate group "role:1" etc). assigneeValue is
+             stored as a string in the DB column either way. -->
+        <QfUserSelect
+          v-if="form.assigneeType === 'USER'"
+          v-model="form.assigneeValue"
+          value-key="username"
+          placeholder="请选择用户"
+        />
+        <QfRoleSelect
+          v-else-if="form.assigneeType === 'ROLE'"
+          v-model="assigneeId"
+          placeholder="请选择角色"
+        />
+        <QfDeptSelect
+          v-else-if="form.assigneeType === 'DEPT'"
+          v-model="assigneeId"
+          placeholder="请选择部门"
+        />
+        <QfPostSelect
+          v-else-if="form.assigneeType === 'POST'"
+          v-model="assigneeId"
+          placeholder="请选择岗位"
+        />
       </el-form-item>
     </el-form>
 
@@ -48,6 +72,7 @@ import { ref, computed } from 'vue';
 import type { FormRules, FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import { workflowApi, type DefinitionNode, type NodeCommand } from '@/api/workflow';
+import { QfUserSelect, QfRoleSelect, QfDeptSelect, QfPostSelect } from '@/shared';
 
 const props = defineProps<{
   definitionId: number;
@@ -77,6 +102,29 @@ const rules: FormRules = {
   nodeName: [{ required: true, message: '请输入节点名称', trigger: 'blur' }],
   nodeType: [{ required: true, message: '请选择节点类型', trigger: 'change' }],
 };
+
+/**
+ * Bridges the string-backed `form.assigneeValue` (DB column is VARCHAR) with the
+ * number-typed v-model of the Qf*Select components. Selectors emit number | null;
+ * we stringify on write so the backend receives the id as a string.
+ */
+const assigneeId = computed<number | null>({
+  get: () => {
+    const v = form.value.assigneeValue;
+    if (v === null || v === undefined || v === '') return null;
+    const n = Number(v);
+    return Number.isNaN(n) ? null : n;
+  },
+  set: (v) => {
+    form.value.assigneeValue = v === null || v === undefined ? '' : String(v);
+  },
+});
+
+/** Clear the assignee value when the kind changes so a stale id from another kind
+ *  doesn't leak into the new selector (e.g. a user id fed to QfRoleSelect). */
+function onAssigneeTypeChange() {
+  form.value.assigneeValue = '';
+}
 
 function onOpen() {
   if (props.editNode) {

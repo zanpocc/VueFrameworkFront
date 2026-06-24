@@ -1,7 +1,7 @@
 <template>
   <main class="login-view">
     <section class="login-panel">
-      <h1>QuickFramework</h1>
+      <h1>{{ t('auth.login.title') }}</h1>
       <el-form
         ref="formRef"
         :model="form"
@@ -9,16 +9,20 @@
         label-position="top"
         @submit.prevent="submit"
       >
-        <el-form-item label="账号" prop="username">
-          <el-input v-model="form.username" autocomplete="username" placeholder="Username" />
+        <el-form-item :label="t('auth.login.username')" prop="username">
+          <el-input
+            v-model="form.username"
+            autocomplete="username"
+            :placeholder="t('auth.login.usernamePlaceholder')"
+          />
         </el-form-item>
-        <el-form-item label="密码" prop="password">
+        <el-form-item :label="t('auth.login.password')" prop="password">
           <el-input
             v-model="form.password"
             autocomplete="current-password"
             type="password"
             show-password
-            placeholder="Password"
+            :placeholder="t('auth.login.passwordPlaceholder')"
             @keyup.enter="submit"
           />
         </el-form-item>
@@ -37,7 +41,7 @@
           :loading="submitting"
           @click="submit"
         >
-          登录
+          {{ t('auth.login.submit') }}
         </el-button>
       </el-form>
     </section>
@@ -45,11 +49,13 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import type { FormInstance, FormRules } from 'element-plus';
 import { useAuthStore } from '@/stores/auth';
 
+const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
@@ -61,10 +67,12 @@ const form = reactive({
   password: 'admin123',
 });
 
-const rules: FormRules<typeof form> = {
-  username: [{ required: true, message: 'Required', trigger: 'blur' }],
-  password: [{ required: true, message: 'Required', trigger: 'blur' }],
-};
+// FormRules 需要响应 locale 切换：用 computed 让 vue-i18n 的 reactive
+// locale 触发表单 rule 重新计算。直接写常量会让切换语言后校验文案不动。
+const rules = computed<FormRules<typeof form>>(() => ({
+  username: [{ required: true, message: t('auth.login.usernameRequired'), trigger: 'blur' }],
+  password: [{ required: true, message: t('auth.login.passwordRequired'), trigger: 'blur' }],
+}));
 
 async function submit() {
   if (submitting.value) {
@@ -79,7 +87,7 @@ async function submit() {
     const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/';
     await router.replace(redirect);
   } catch (error) {
-    errorMessage.value = error instanceof Error ? error.message : '登录失败，请检查账号和密码';
+    errorMessage.value = error instanceof Error ? error.message : t('auth.login.failedFallback');
   } finally {
     submitting.value = false;
   }

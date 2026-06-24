@@ -11,3 +11,4 @@ export { useConfirmDelete, type UseConfirmDeleteReturn } from './useConfirmDelet
 export { useDeptSelect, type UseDeptSelectReturn, resetDeptCache } from './useDeptSelect';
 export { useUserSelect, type UseUserSelectReturn, resetUserCache } from './useUserSelect';
 export { useRoleSelect, type UseRoleSelectReturn, resetRoleCache } from './useRoleSelect';
+export { usePostSelect, type UsePostSelectReturn, resetPostCache } from './usePostSelect';

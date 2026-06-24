@@ -17,6 +17,7 @@ import DoneTaskListView from '@/modules/workflow/views/DoneTaskListView.vue';
 import InstanceListView from '@/modules/workflow/views/InstanceListView.vue';
 import CCListView from '@/modules/workflow/views/CCListView.vue';
 import DefinitionEditorView from '@/modules/workflow/views/DefinitionEditorView.vue';
+import DefinitionDesignerView from '@/modules/workflow/views/DefinitionDesignerView.vue';
 import RepairOrderListView from '@/modules/demo/views/RepairOrderListView.vue';
 import FileListView from '@/modules/file/views/FileListView.vue';
 import UserListView from '@/modules/iam/views/UserListView.vue';
@@ -48,6 +49,7 @@ const componentMap: Record<string, RouteRecordRaw['component']> = {
   'workflow/InstanceListView': InstanceListView,
   'workflow/CCListView': CCListView,
   'workflow/DefinitionEditorView': DefinitionEditorView,
+  'workflow/DefinitionDesignerView': DefinitionDesignerView,
   'demo/RepairOrderListView': RepairOrderListView,
   'file/FileListView': FileListView,
   'iam/UserListView': UserListView,
@@ -103,6 +105,15 @@ export const routes: RouteRecordRaw[] = [
         component: DefinitionEditorView,
         meta: {
           title: '流程节点编辑',
+          permissions: ['workflow:definition:update'],
+        },
+      },
+      {
+        path: 'workflow/definition/:id/designer',
+        name: 'definition-designer',
+        component: DefinitionDesignerView,
+        meta: {
+          title: '流程画板设计',
           permissions: ['workflow:definition:update'],
         },
       },

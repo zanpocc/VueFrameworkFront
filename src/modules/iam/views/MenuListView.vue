@@ -2,32 +2,36 @@
   <section class="page">
     <header class="page__header">
       <div>
-        <h1>菜单管理</h1>
-        <p>维护路由、组件、菜单权限和按钮权限编码。</p>
+        <h1>{{ t('iam.menu.title') }}</h1>
+        <p>{{ t('iam.menu.subtitle') }}</p>
       </div>
       <QfPermissionButton code="system:menu:view" type="primary" @click="openCreate">
-        新增菜单
+        {{ t('iam.menu.create') }}
       </QfPermissionButton>
     </header>
 
     <el-table v-loading="loading" :data="menuTree" border default-expand-all row-key="id">
-      <el-table-column prop="title" label="名称" min-width="160" />
-      <el-table-column prop="menuType" label="类型" width="100" />
-      <el-table-column prop="routePath" label="路由" min-width="160" />
-      <el-table-column prop="component" label="组件" min-width="180" />
-      <el-table-column prop="permissionCode" label="权限编码" min-width="180" />
-      <el-table-column prop="status" label="状态" width="110">
+      <el-table-column prop="title" :label="t('iam.menu.columns.name')" min-width="160" />
+      <el-table-column prop="menuType" :label="t('iam.menu.columns.type')" width="100" />
+      <el-table-column prop="routePath" :label="t('iam.menu.columns.route')" min-width="160" />
+      <el-table-column prop="component" :label="t('iam.menu.columns.component')" min-width="180" />
+      <el-table-column
+        prop="permissionCode"
+        :label="t('iam.menu.columns.permissionCode')"
+        min-width="180"
+      />
+      <el-table-column prop="status" :label="t('iam.menu.columns.status')" width="110">
         <template #default="{ row }">
           <QfStatusTag :status="row.status" />
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="160">
+      <el-table-column :label="t('common.button.more')" width="160">
         <template #default="{ row }">
           <QfPermissionButton code="system:menu:view" text type="primary" @click="openEdit(row)">
-            编辑
+            {{ t('common.button.edit') }}
           </QfPermissionButton>
           <QfPermissionButton code="system:menu:view" text type="danger" @click="deleteMenu(row)">
-            删除
+            {{ t('common.button.delete') }}
           </QfPermissionButton>
         </template>
       </el-table-column>
@@ -35,19 +39,19 @@
 
     <QfFormDialog
       v-model="dialogVisible"
-      :title="editingMenu ? '编辑菜单' : '新增菜单'"
+      :title="editingMenu ? t('iam.menu.editTitle') : t('iam.menu.createTitle')"
       :model="form"
       :rules="rules"
       :loading="submitting"
       width="620px"
       @submit="submit"
     >
-      <el-form-item label="名称" prop="title">
+      <el-form-item :label="t('iam.menu.form.name')" prop="title">
         <el-input v-model="form.title" />
       </el-form-item>
-      <el-form-item label="上级菜单" prop="parentId">
+      <el-form-item :label="t('iam.menu.form.parent')" prop="parentId">
         <el-select v-model="form.parentId">
-          <el-option label="根菜单" :value="0" />
+          <el-option :label="t('iam.menu.form.parentRoot')" :value="0" />
           <el-option
             v-for="menu in menus"
             :key="menu.id"
@@ -57,37 +61,37 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="类型" prop="menuType">
+      <el-form-item :label="t('iam.menu.form.type')" prop="menuType">
         <el-select v-model="form.menuType">
-          <el-option label="菜单" value="MENU" />
-          <el-option label="按钮" value="BUTTON" />
+          <el-option :label="t('iam.menu.form.typeMenu')" value="MENU" />
+          <el-option :label="t('iam.menu.form.typeButton')" value="BUTTON" />
         </el-select>
       </el-form-item>
-      <el-form-item label="路由名称" prop="routeName">
+      <el-form-item :label="t('iam.menu.form.routeName')" prop="routeName">
         <el-input v-model="form.routeName" />
       </el-form-item>
-      <el-form-item label="路由路径" prop="routePath">
+      <el-form-item :label="t('iam.menu.form.routePath')" prop="routePath">
         <el-input v-model="form.routePath" />
       </el-form-item>
-      <el-form-item label="组件路径" prop="component">
+      <el-form-item :label="t('iam.menu.form.component')" prop="component">
         <el-input v-model="form.component" />
       </el-form-item>
-      <el-form-item label="图标" prop="icon">
+      <el-form-item :label="t('iam.menu.form.icon')" prop="icon">
         <QfIconSelect v-model="form.icon" />
       </el-form-item>
-      <el-form-item label="权限编码" prop="permissionCode">
+      <el-form-item :label="t('iam.menu.form.permissionCode')" prop="permissionCode">
         <el-input v-model="form.permissionCode" />
       </el-form-item>
-      <el-form-item label="排序" prop="sortOrder">
+      <el-form-item :label="t('iam.menu.form.sortOrder')" prop="sortOrder">
         <el-input-number v-model="form.sortOrder" :min="0" />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item :label="t('iam.menu.form.status')" prop="status">
         <el-select v-model="form.status">
-          <el-option label="启用" value="ENABLED" />
-          <el-option label="禁用" value="DISABLED" />
+          <el-option :label="t('common.status.enabled')" value="ENABLED" />
+          <el-option :label="t('common.status.disabled')" value="DISABLED" />
         </el-select>
       </el-form-item>
-      <el-form-item label="显示" prop="visible">
+      <el-form-item :label="t('iam.menu.form.visible')" prop="visible">
         <el-switch v-model="form.visible" />
       </el-form-item>
     </QfFormDialog>
@@ -97,12 +101,14 @@
 <script setup lang="ts">
 defineOptions({ name: 'MenuList' });
 import { computed, onMounted, reactive, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import type { FormRules } from 'element-plus';
 import { iamApi, type MenuCommand, type SysMenu } from '@/api/iam';
 import { QfFormDialog, QfIconSelect, QfPermissionButton, QfStatusTag } from '@/shared';
 import { buildTree } from '@/shared/utils/tree';
 
+const { t } = useI18n();
 const loading = ref(false);
 const submitting = ref(false);
 const dialogVisible = ref(false);
@@ -122,13 +128,17 @@ const form = reactive<MenuCommand>({
   status: 'ENABLED',
 });
 
-const rules: FormRules<MenuCommand> = {
-  title: [{ required: true, message: '请输入名称', trigger: 'blur' }],
-  menuType: [{ required: true, message: '请选择类型', trigger: 'change' }],
-  routeName: [{ required: true, message: '请输入路由名称', trigger: 'blur' }],
-  routePath: [{ required: true, message: '请输入路由路径', trigger: 'blur' }],
-  status: [{ required: true, message: '请选择状态', trigger: 'change' }],
-};
+const rules = computed<FormRules<MenuCommand>>(() => ({
+  title: [{ required: true, message: t('iam.menu.validation.titleRequired'), trigger: 'blur' }],
+  menuType: [{ required: true, message: t('iam.menu.validation.menuTypeRequired'), trigger: 'change' }],
+  routeName: [
+    { required: true, message: t('iam.menu.validation.routeNameRequired'), trigger: 'blur' },
+  ],
+  routePath: [
+    { required: true, message: t('iam.menu.validation.routePathRequired'), trigger: 'blur' },
+  ],
+  status: [{ required: true, message: t('iam.menu.validation.statusRequired'), trigger: 'change' }],
+}));
 
 const menuTree = computed(() =>
   buildTree<SysMenu>(menus.value, { idKey: 'id', parentKey: 'parentId', sortKey: 'sortOrder' }),
@@ -184,10 +194,10 @@ async function submit() {
   try {
     if (editingMenu.value) {
       await iamApi.updateMenu(editingMenu.value.id, form);
-      ElMessage.success('菜单已更新');
+      ElMessage.success(t('iam.menu.toast.updated'));
     } else {
       await iamApi.createMenu(form);
-      ElMessage.success('菜单已创建');
+      ElMessage.success(t('iam.menu.toast.created'));
     }
     dialogVisible.value = false;
     await loadMenus();
@@ -197,9 +207,13 @@ async function submit() {
 }
 
 async function deleteMenu(row: SysMenu) {
-  await ElMessageBox.confirm(`确认删除菜单 ${row.title}？`, '删除菜单', { type: 'warning' });
+  await ElMessageBox.confirm(
+    t('iam.menu.deleteConfirm', { name: row.title }),
+    t('iam.menu.deleteTitle'),
+    { type: 'warning' },
+  );
   await iamApi.deleteMenu(row.id);
-  ElMessage.success('菜单已删除');
+  ElMessage.success(t('iam.menu.toast.deleted'));
   await loadMenus();
 }
 

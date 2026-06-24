@@ -2,11 +2,16 @@
   <el-container class="app-shell">
     <el-aside class="app-shell__aside" :width="isCollapsed ? '64px' : '232px'">
       <div class="app-shell__brand">
-        <span v-if="!isCollapsed" class="app-shell__brand-text">QuickFramework</span>
+        <span v-if="!isCollapsed" class="app-shell__brand-text">{{ t('layout.brand') }}</span>
         <span v-else class="app-shell__brand-icon">QF</span>
       </div>
       <div v-if="!isCollapsed" class="app-shell__menu-search">
-        <el-input v-model="menuKeyword" clearable placeholder="搜索菜单" size="small" />
+        <el-input
+          v-model="menuKeyword"
+          clearable
+          :placeholder="t('layout.sidebar.searchMenu')"
+          size="small"
+        />
       </div>
       <el-menu router :default-active="activeMenu" :collapse="isCollapsed">
         <MenuNode v-for="item in filteredMenus" :key="item.id" :menu="item" />
@@ -21,18 +26,23 @@
           </el-icon>
           <AppBreadcrumb />
         </div>
-        <el-dropdown trigger="click" @command="handleCommand">
-          <el-button text>
-            <el-icon><User /></el-icon>
-            <span>{{ authStore.displayName }}</span>
-            <el-icon><ArrowDown /></el-icon>
-          </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="logout"> 退出登录 </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+        <div class="app-shell__header-right">
+          <LocaleSwitcher />
+          <el-dropdown trigger="click" @command="handleCommand">
+            <el-button text>
+              <el-icon><User /></el-icon>
+              <span>{{ authStore.displayName }}</span>
+              <el-icon><ArrowDown /></el-icon>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="logout">
+                  {{ t('layout.topbar.logout') }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
       </el-header>
       <AppTabNav />
       <div v-if="isGlobalLoading" class="app-shell__loading-bar" />
@@ -50,6 +60,7 @@
 <script setup lang="ts">
 import { computed, defineComponent, h, ref } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import {
   ArrowDown,
   Briefcase,
@@ -79,7 +90,9 @@ import { globalLoading } from '@/stores/global-loading';
 import { useTabStore } from '@/stores/tabs';
 import AppBreadcrumb from '@/components/AppBreadcrumb.vue';
 import AppTabNav from '@/components/AppTabNav.vue';
+import LocaleSwitcher from '@/shared/LocaleSwitcher.vue';
 
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
@@ -232,6 +245,12 @@ async function handleCommand(command: string) {
 .app-shell__header-left {
   display: flex;
   gap: var(--qf-spacing-md);
+  align-items: center;
+}
+
+.app-shell__header-right {
+  display: flex;
+  gap: var(--qf-spacing-sm);
   align-items: center;
 }
 

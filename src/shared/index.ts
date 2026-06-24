@@ -12,6 +12,7 @@ export { default as QfTableActions } from './components/QfTableActions.vue';
 export { default as QfDeptSelect } from './components/QfDeptSelect.vue';
 export { default as QfUserSelect } from './components/QfUserSelect.vue';
 export { default as QfRoleSelect } from './components/QfRoleSelect.vue';
+export { default as QfPostSelect } from './components/QfPostSelect.vue';
 
 export type {
   QfTableColumn,
@@ -34,6 +35,7 @@ export {
   useDeptSelect,
   useUserSelect,
   useRoleSelect,
+  usePostSelect,
 } from './composables';
 export type {
   UseTableOptions,
@@ -46,4 +48,5 @@ export type {
   UseDeptSelectReturn,
   UseUserSelectReturn,
   UseRoleSelectReturn,
+  UsePostSelectReturn,
 } from './composables';

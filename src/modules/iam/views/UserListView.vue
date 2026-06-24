@@ -3,7 +3,7 @@
     <!-- 左侧部门树 -->
     <aside class="user-page__dept-sidebar">
       <div class="user-page__dept-header">
-        <span>部门</span>
+        <span>{{ t('iam.user.deptSidebar') }}</span>
         <el-button
           v-if="selectedDeptId !== null"
           text
@@ -11,7 +11,7 @@
           size="small"
           @click="clearDeptFilter"
         >
-          全部
+          {{ t('common.button.all') }}
         </el-button>
       </div>
       <el-tree
@@ -26,7 +26,7 @@
         @node-click="onDeptClick"
       >
         <template #empty>
-          <el-empty description="暂无部门" :image-size="40" />
+          <el-empty :description="t('iam.user.deptEmpty')" :image-size="40" />
         </template>
       </el-tree>
     </aside>
@@ -35,38 +35,45 @@
     <section class="user-page__content">
       <header class="user-page__header">
         <div>
-          <h1>用户管理</h1>
+          <h1>{{ t('iam.user.title') }}</h1>
           <p>
-            维护账号、状态、部门和角色绑定
-            <span v-if="selectedDeptId !== null"> · 当前部门：{{ selectedDeptName }}</span>
+            {{ t('iam.user.subtitle') }}
+            <span v-if="selectedDeptId !== null">
+              · {{ t('iam.user.currentDept', { name: selectedDeptName }) }}
+            </span>
           </p>
         </div>
       </header>
 
       <QfSearchPanel @search="searchUsers" @reset="resetUserSearch">
-        <el-form-item label="关键字">
+        <el-form-item :label="t('iam.user.form.keyword')">
           <el-input
             v-model="table.filters.keyword"
             clearable
-            placeholder="账号或姓名"
+            :placeholder="t('iam.user.form.keywordPlaceholder')"
             class="user-page__filter"
             @keyup.enter="searchUsers"
           />
         </el-form-item>
         <template #more>
-          <el-form-item label="状态">
-            <el-select v-model="userStatus" clearable placeholder="请选择" class="user-page__filter">
-              <el-option label="启用" value="ENABLED" />
-              <el-option label="禁用" value="DISABLED" />
+          <el-form-item :label="t('iam.user.form.status')">
+            <el-select
+              v-model="userStatus"
+              clearable
+              :placeholder="t('common.placeholder.select')"
+              class="user-page__filter"
+            >
+              <el-option :label="t('common.status.enabled')" value="ENABLED" />
+              <el-option :label="t('common.status.disabled')" value="DISABLED" />
             </el-select>
           </el-form-item>
         </template>
       </QfSearchPanel>
 
-      <QfTablePanel title="用户列表" description="查询结果和账号操作">
+      <QfTablePanel :title="t('iam.user.listTitle')" :description="t('iam.user.listDescription')">
         <template #actions>
           <QfPermissionButton code="system:user:create" type="success" @click="openCreate">
-            新增用户
+            {{ t('iam.user.create') }}
           </QfPermissionButton>
         </template>
         <QfDataTable
@@ -88,62 +95,73 @@
 
       <QfFormDialog
         v-model="dialogVisible"
-        :title="editingUser ? '编辑用户' : '新增用户'"
+        :title="editingUser ? t('iam.user.editTitle') : t('iam.user.createTitle')"
         :model="form"
         :rules="rules"
         :loading="submitting"
         width="520px"
         @submit="submit"
       >
-        <el-form-item label="账号" prop="username">
+        <el-form-item :label="t('iam.user.form.username')" prop="username">
           <el-input v-model="form.username" />
         </el-form-item>
-        <el-form-item :label="editingUser ? '新密码' : '初始密码'" prop="password">
+        <el-form-item
+          :label="editingUser ? t('iam.user.form.newPassword') : t('iam.user.form.initialPassword')"
+          prop="password"
+        >
           <el-input
             v-model="form.password"
             type="password"
             show-password
-            :placeholder="editingUser ? '留空则保持原密码' : '请输入初始密码'"
+            :placeholder="
+              editingUser
+                ? t('iam.user.form.passwordPlaceholderEdit')
+                : t('iam.user.form.passwordPlaceholderCreate')
+            "
           />
         </el-form-item>
-        <el-form-item label="姓名" prop="nickname">
+        <el-form-item :label="t('iam.user.form.nickname')" prop="nickname">
           <el-input v-model="form.nickname" />
         </el-form-item>
-        <el-form-item label="部门" prop="deptId">
-          <QfDeptSelect v-model="form.deptId" placeholder="请选择部门" />
+        <el-form-item :label="t('iam.user.form.dept')" prop="deptId">
+          <QfDeptSelect v-model="form.deptId" :placeholder="t('iam.user.form.deptPlaceholder')" />
         </el-form-item>
-        <el-form-item label="角色" prop="roleIds">
-          <QfRoleSelect v-model="form.roleIds" multiple placeholder="请选择角色" />
+        <el-form-item :label="t('iam.user.form.role')" prop="roleIds">
+          <QfRoleSelect
+            v-model="form.roleIds"
+            multiple
+            :placeholder="t('iam.user.form.rolePlaceholder')"
+          />
         </el-form-item>
-        <el-form-item label="邮箱" prop="email">
+        <el-form-item :label="t('iam.user.form.email')" prop="email">
           <el-input v-model="form.email" />
         </el-form-item>
-        <el-form-item label="手机号" prop="mobile">
+        <el-form-item :label="t('iam.user.form.mobile')" prop="mobile">
           <el-input v-model="form.mobile" />
         </el-form-item>
       </QfFormDialog>
 
-      <QfDetailDrawer v-model="detailVisible" title="用户详情" width="520px">
+      <QfDetailDrawer v-model="detailVisible" :title="t('iam.user.detailTitle')" width="520px">
         <el-descriptions v-if="detailUser" :column="1" border>
-          <el-descriptions-item label="账号">
+          <el-descriptions-item :label="t('iam.user.columns.username')">
             {{ detailUser.username }}
           </el-descriptions-item>
-          <el-descriptions-item label="姓名">
+          <el-descriptions-item :label="t('iam.user.columns.nickname')">
             {{ detailUser.nickname }}
           </el-descriptions-item>
-          <el-descriptions-item label="部门">
+          <el-descriptions-item :label="t('iam.user.columns.dept')">
             {{ detailUser.deptId ? getDeptName(detailUser.deptId) : '-' }}
           </el-descriptions-item>
-          <el-descriptions-item label="角色">
+          <el-descriptions-item :label="t('iam.user.columns.role')">
             {{ findRoleNames(detailUser.roleIds) }}
           </el-descriptions-item>
-          <el-descriptions-item label="邮箱">
+          <el-descriptions-item :label="t('iam.user.columns.email')">
             {{ detailUser.email || '-' }}
           </el-descriptions-item>
-          <el-descriptions-item label="手机号">
+          <el-descriptions-item :label="t('iam.user.columns.mobile')">
             {{ detailUser.mobile || '-' }}
           </el-descriptions-item>
-          <el-descriptions-item label="状态">
+          <el-descriptions-item :label="t('iam.user.columns.status')">
             {{ detailUser.status }}
           </el-descriptions-item>
         </el-descriptions>
@@ -155,6 +173,7 @@
 <script setup lang="ts">
 defineOptions({ name: 'UserList' });
 import { reactive, ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import type { FormRules } from 'element-plus';
 import { iamApi, type SysDept, type SysRole, type SysUser, type UserCommand } from '@/api/iam';
@@ -174,6 +193,7 @@ import type { QfTableColumn, QfActionItem } from '@/shared';
 import { useTable, useDeptSelect } from '@/shared';
 import type { TreeNode } from '@/shared/utils/tree';
 
+const { t } = useI18n();
 const submitting = ref(false);
 const dialogVisible = ref(false);
 const detailVisible = ref(false);
@@ -192,17 +212,18 @@ const form = reactive<UserCommand>({
   roleIds: [],
 });
 
-const rules: FormRules<UserCommand> = {
-  username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
+// rules 走 computed 以响应 locale 切换；validator 内同样调 t() 拿当前 locale 文案。
+const rules = computed<FormRules<UserCommand>>(() => ({
+  username: [{ required: true, message: t('iam.user.validation.usernameRequired'), trigger: 'blur' }],
   password: [
     {
       validator: (_rule, value, callback) => {
         if (!editingUser.value && !value) {
-          callback(new Error('请输入密码'));
+          callback(new Error(t('iam.user.validation.passwordRequired')));
           return;
         }
         if (value && value.length < 6) {
-          callback(new Error('至少 6 个字符'));
+          callback(new Error(t('iam.user.validation.passwordMinLength')));
           return;
         }
         callback();
@@ -210,11 +231,19 @@ const rules: FormRules<UserCommand> = {
       trigger: 'blur',
     },
   ],
-  nickname: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
-  deptId: [{ required: true, message: '请选择部门', trigger: 'change' }],
-  roleIds: [{ type: 'array', required: true, min: 1, message: '请选择角色', trigger: 'change' }],
-  email: [{ type: 'email', message: '邮箱格式不正确', trigger: 'blur' }],
-};
+  nickname: [{ required: true, message: t('iam.user.validation.nicknameRequired'), trigger: 'blur' }],
+  deptId: [{ required: true, message: t('iam.user.validation.deptRequired'), trigger: 'change' }],
+  roleIds: [
+    {
+      type: 'array',
+      required: true,
+      min: 1,
+      message: t('iam.user.validation.roleRequired'),
+      trigger: 'change',
+    },
+  ],
+  email: [{ type: 'email', message: t('iam.user.validation.emailInvalid'), trigger: 'blur' }],
+}));
 
 const table = useTable<SysUser, { keyword: string }>({
   fetcher: (f) => iamApi.users(f.keyword),
@@ -257,14 +286,14 @@ const selectedDeptName = computed(() =>
   selectedDeptId.value === null ? '' : getDeptName(selectedDeptId.value),
 );
 
-// ---- Table ----
-const columns: QfTableColumn<SysUser>[] = [
-  { prop: 'username', label: '账号', minWidth: 140 },
-  { prop: 'nickname', label: '姓名', minWidth: 140 },
-  { prop: 'email', label: '邮箱', minWidth: 180 },
-  { prop: 'mobile', label: '手机号', minWidth: 140 },
-  { prop: 'status', label: '状态', width: 120, slot: 'status' },
-];
+// columns 走 computed 让 label 跟随 locale 切换。
+const columns = computed<QfTableColumn<SysUser>[]>(() => [
+  { prop: 'username', label: t('iam.user.columns.username'), minWidth: 140 },
+  { prop: 'nickname', label: t('iam.user.columns.nickname'), minWidth: 140 },
+  { prop: 'email', label: t('iam.user.columns.email'), minWidth: 180 },
+  { prop: 'mobile', label: t('iam.user.columns.mobile'), minWidth: 140 },
+  { prop: 'status', label: t('iam.user.columns.status'), width: 120, slot: 'status' },
+]);
 
 async function searchUsers() {
   await table.reload();
@@ -277,16 +306,20 @@ async function resetUserSearch() {
 
 function getActions(row: SysUser): QfActionItem[] {
   return [
-    { label: '编辑', permission: 'system:user:update', handler: () => openEdit(row) },
-    { label: '详情', permission: 'system:user:view', handler: () => openDetail(row) },
-    { label: '重置密码', permission: 'system:user:update', handler: () => resetPassword(row) },
+    { label: t('common.button.edit'), permission: 'system:user:update', handler: () => openEdit(row) },
+    { label: t('common.button.detail'), permission: 'system:user:view', handler: () => openDetail(row) },
     {
-      label: row.status === 'ENABLED' ? '禁用' : '启用',
+      label: t('common.button.resetPassword'),
+      permission: 'system:user:update',
+      handler: () => resetPassword(row),
+    },
+    {
+      label: row.status === 'ENABLED' ? t('common.button.disable') : t('common.button.enable'),
       permission: 'system:user:disable',
       handler: () => toggleStatus(row),
     },
     {
-      label: '删除',
+      label: t('common.button.delete'),
       type: 'danger',
       permission: 'system:user:update',
       handler: () => deleteUser(row),
@@ -338,10 +371,10 @@ async function submit() {
   try {
     if (editingUser.value) {
       await iamApi.updateUser(editingUser.value.id, form);
-      ElMessage.success('用户已更新');
+      ElMessage.success(t('iam.user.toast.updated'));
     } else {
       await iamApi.createUser(form);
-      ElMessage.success('用户已创建');
+      ElMessage.success(t('iam.user.toast.created'));
     }
     dialogVisible.value = false;
     await table.reload();
@@ -351,26 +384,34 @@ async function submit() {
 }
 
 async function resetPassword(row: SysUser) {
-  const result = await ElMessageBox.prompt(`请输入 ${row.username} 的新密码`, '重置密码', {
-    inputType: 'password',
-    inputPattern: /^.{6,}$/,
-    inputErrorMessage: '至少 6 个字符',
-  });
+  const result = await ElMessageBox.prompt(
+    t('iam.user.resetPasswordPrompt', { name: row.username }),
+    t('iam.user.resetPasswordTitle'),
+    {
+      inputType: 'password',
+      inputPattern: /^.{6,}$/,
+      inputErrorMessage: t('iam.user.validation.passwordMinLength'),
+    },
+  );
   await iamApi.resetPassword(row.id, result.value);
-  ElMessage.success('密码已重置');
+  ElMessage.success(t('iam.user.toast.passwordReset'));
 }
 
 async function toggleStatus(row: SysUser) {
   const nextStatus = row.status === 'ENABLED' ? 'DISABLED' : 'ENABLED';
   await iamApi.updateUserStatus(row.id, nextStatus);
-  ElMessage.success('状态已更新');
+  ElMessage.success(t('iam.user.toast.statusUpdated'));
   await table.reload();
 }
 
 async function deleteUser(row: SysUser) {
-  await ElMessageBox.confirm(`确认删除用户 ${row.username}？`, '删除用户', { type: 'warning' });
+  await ElMessageBox.confirm(
+    t('iam.user.deleteConfirm', { name: row.username }),
+    t('iam.user.deleteTitle'),
+    { type: 'warning' },
+  );
   await iamApi.deleteUser(row.id);
-  ElMessage.success('用户已删除');
+  ElMessage.success(t('iam.user.toast.deleted'));
   await table.reload();
 }
 

@@ -76,6 +76,8 @@ export interface DefinitionNode {
   assigneeType: string;
   assigneeValue: string | null;
   sortOrder: number;
+  posX: number | null;
+  posY: number | null;
   createdAt: string;
 }
 
@@ -86,6 +88,8 @@ export interface NodeCommand {
   assigneeType?: string;
   assigneeValue?: string;
   sortOrder?: number;
+  posX?: number | null;
+  posY?: number | null;
 }
 
 export interface DefinitionTransition {
@@ -252,6 +256,16 @@ export const workflowApi = {
   deleteDefinitionNode(definitionId: number, nodeKey: string) {
     return http
       .delete<ApiResult<void>>(`/workflow/definitions/${definitionId}/nodes/${nodeKey}`)
+      .then(unwrap);
+  },
+  updateNodePositions(
+    definitionId: number,
+    positions: Array<{ nodeKey: string; posX: number; posY: number }>,
+  ) {
+    return http
+      .patch<
+        ApiResult<void>
+      >(`/workflow/definitions/${definitionId}/nodes/positions`, { positions })
       .then(unwrap);
   },
   getDefinitionTransitions(definitionId: number) {

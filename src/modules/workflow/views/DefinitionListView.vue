@@ -21,7 +21,7 @@
         <QfStatusTag :status="row.status" :mapping="WORKFLOW_STATUS_MAP" />
       </template>
       <template #actions="{ row }">
-        <QfTableActions :actions="getActions(row)" :max-inline="3" />
+        <QfTableActions :actions="getActions(row)" :max-inline="2" />
       </template>
     </QfDataTable>
 
@@ -175,6 +175,17 @@ function getActions(row: unknown): QfActionItem[] {
       handler: () => {
         router.push({
           path: `/workflow/definition/${r.id}/editor`,
+          query: { from: router.currentRoute.value.name as string },
+        });
+      },
+    },
+    {
+      label: '画板设计',
+      type: 'primary',
+      permission: 'workflow:definition:update',
+      handler: () => {
+        router.push({
+          path: `/workflow/definition/${r.id}/designer`,
           query: { from: router.currentRoute.value.name as string },
         });
       },

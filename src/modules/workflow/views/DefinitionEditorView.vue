@@ -119,6 +119,9 @@
               >
                 删除
               </el-button>
+              <div v-if="transition.conditionExpression" class="def-editor__transition-cond">
+                条件：{{ transition.conditionExpression }}
+              </div>
             </div>
           </div>
 
@@ -138,6 +141,7 @@
       v-model="transitionDialogVisible"
       :definition-id="definitionId"
       :nodes="nodes"
+      :form-id="definition?.formId"
       @saved="loadTransitions"
     />
   </div>
@@ -562,6 +566,16 @@ onMounted(loadData);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.def-editor__transition-cond {
+  grid-column: 1 / -1;
+  padding-top: 4px;
+  border-top: 1px dashed var(--el-border-color-lighter);
+  color: var(--el-text-color-secondary);
+  font-family: var(--el-font-family-mono, monospace);
+  font-size: 12px;
+  word-break: break-all;
 }
 
 @media (max-width: 1100px) {

@@ -2,11 +2,11 @@
   <section class="page">
     <header class="page__header">
       <div>
-        <h1>角色管理</h1>
-        <p>维护角色、菜单、按钮权限和数据范围。</p>
+        <h1>{{ t('iam.role.title') }}</h1>
+        <p>{{ t('iam.role.subtitle') }}</p>
       </div>
       <QfPermissionButton code="system:role:update" type="primary" @click="openCreate">
-        新增角色
+        {{ t('iam.role.create') }}
       </QfPermissionButton>
     </header>
 
@@ -26,40 +26,40 @@
 
     <QfFormDialog
       v-model="roleDialogVisible"
-      :title="editingRole ? '编辑角色' : '新增角色'"
+      :title="editingRole ? t('iam.role.editTitle') : t('iam.role.createTitle')"
       :model="roleForm"
       :rules="roleRules"
       :loading="roleSubmitting"
       width="480px"
       @submit="submitRole"
     >
-      <el-form-item label="角色编码" prop="roleCode">
+      <el-form-item :label="t('iam.role.form.code')" prop="roleCode">
         <el-input v-model="roleForm.roleCode" />
       </el-form-item>
-      <el-form-item label="角色名称" prop="roleName">
+      <el-form-item :label="t('iam.role.form.name')" prop="roleName">
         <el-input v-model="roleForm.roleName" />
       </el-form-item>
-      <el-form-item label="排序" prop="sortOrder">
+      <el-form-item :label="t('iam.role.form.sortOrder')" prop="sortOrder">
         <el-input-number v-model="roleForm.sortOrder" :min="0" />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item :label="t('iam.role.form.status')" prop="status">
         <el-select v-model="roleForm.status">
-          <el-option label="启用" value="ENABLED" />
-          <el-option label="禁用" value="DISABLED" />
+          <el-option :label="t('common.status.enabled')" value="ENABLED" />
+          <el-option :label="t('common.status.disabled')" value="DISABLED" />
         </el-select>
       </el-form-item>
     </QfFormDialog>
 
-    <el-dialog v-model="dialogVisible" title="角色授权" width="620px">
+    <el-dialog v-model="dialogVisible" :title="t('iam.role.authorize')" width="620px">
       <el-tabs>
-        <el-tab-pane label="菜单">
+        <el-tab-pane :label="t('iam.role.tabs.menu')">
           <el-checkbox-group v-model="selectedMenuIds">
             <el-checkbox v-for="menu in menus" :key="menu.id" :value="menu.id">
               {{ menu.title }}
             </el-checkbox>
           </el-checkbox-group>
         </el-tab-pane>
-        <el-tab-pane label="按钮权限">
+        <el-tab-pane :label="t('iam.role.tabs.permission')">
           <el-checkbox-group v-model="selectedPermissionIds">
             <el-checkbox
               v-for="permission in permissions"
@@ -70,39 +70,45 @@
             </el-checkbox>
           </el-checkbox-group>
         </el-tab-pane>
-        <el-tab-pane label="数据范围">
+        <el-tab-pane :label="t('iam.role.tabs.dataScope')">
           <el-form
             ref="dataScopeFormRef"
             :model="dataScope"
             :rules="dataScopeRules"
             label-position="top"
           >
-            <el-form-item label="范围类型" prop="scopeType">
+            <el-form-item :label="t('iam.role.dataScope.type')" prop="scopeType">
               <el-select v-model="dataScope.scopeType">
-                <el-option label="全部数据" value="ALL" />
-                <el-option label="部门数据" value="DEPT" />
-                <el-option label="本人数据" value="SELF" />
-                <el-option label="自定义" value="CUSTOM" />
+                <el-option :label="t('iam.role.dataScope.typeAll')" value="ALL" />
+                <el-option :label="t('iam.role.dataScope.typeDept')" value="DEPT" />
+                <el-option :label="t('iam.role.dataScope.typeSelf')" value="SELF" />
+                <el-option :label="t('iam.role.dataScope.typeCustom')" value="CUSTOM" />
               </el-select>
             </el-form-item>
-            <el-form-item label="范围值" prop="scopeValue">
+            <el-form-item :label="t('iam.role.dataScope.value')" prop="scopeValue">
               <el-input
                 v-model="dataScope.scopeValue"
-                placeholder="部门 ID 或自定义表达式；全部/本人数据可留空"
+                :placeholder="t('iam.role.dataScope.valuePlaceholder')"
               />
             </el-form-item>
           </el-form>
         </el-tab-pane>
       </el-tabs>
       <template #footer>
-        <el-button @click="dialogVisible = false"> 取消 </el-button>
-        <el-button type="primary" :loading="submitting" @click="submitAuthorize"> 保存 </el-button>
+        <el-button @click="dialogVisible = false">{{ t('common.button.cancel') }}</el-button>
+        <el-button type="primary" :loading="submitting" @click="submitAuthorize">
+          {{ t('common.button.save') }}
+        </el-button>
       </template>
     </el-dialog>
 
     <QfDetailDrawer
       v-model="relatedUsersVisible"
-      :title="currentRole ? `关联用户 - ${currentRole.roleName}` : '关联用户'"
+      :title="
+        currentRole
+          ? t('iam.role.relatedUsersOf', { name: currentRole.roleName })
+          : t('iam.role.relatedUsers')
+      "
       width="720px"
       :loading="relatedUsersLoading"
     >
@@ -113,7 +119,8 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'RoleList' });
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import {
@@ -135,19 +142,22 @@ import {
   type SysUser,
 } from '@/api/iam';
 
-const columns: QfTableColumn<SysRole>[] = [
-  { prop: 'roleCode', label: '角色编码', minWidth: 160 },
-  { prop: 'roleName', label: '角色名称', minWidth: 160 },
-  { prop: 'status', label: '状态', width: 120, slot: 'status' },
-];
+const { t } = useI18n();
 
-const relatedUserColumns: QfTableColumn<SysUser>[] = [
-  { prop: 'username', label: '账号', minWidth: 150 },
-  { prop: 'nickname', label: '姓名', minWidth: 140 },
-  { prop: 'mobile', label: '手机', minWidth: 140 },
-  { prop: 'email', label: '邮箱', minWidth: 180 },
-  { prop: 'status', label: '状态', width: 100 },
-];
+// columns / 表单 rules 全部走 computed，让 locale 切换可以重新计算 label/message。
+const columns = computed<QfTableColumn<SysRole>[]>(() => [
+  { prop: 'roleCode', label: t('iam.role.columns.code'), minWidth: 160 },
+  { prop: 'roleName', label: t('iam.role.columns.name'), minWidth: 160 },
+  { prop: 'status', label: t('iam.role.columns.status'), width: 120, slot: 'status' },
+]);
+
+const relatedUserColumns = computed<QfTableColumn<SysUser>[]>(() => [
+  { prop: 'username', label: t('iam.user.columns.username'), minWidth: 150 },
+  { prop: 'nickname', label: t('iam.user.columns.nickname'), minWidth: 140 },
+  { prop: 'mobile', label: t('iam.user.columns.mobile'), minWidth: 140 },
+  { prop: 'email', label: t('iam.user.columns.email'), minWidth: 180 },
+  { prop: 'status', label: t('iam.user.columns.status'), width: 100 },
+]);
 
 const table = useTable<SysRole>({ fetcher: () => iamApi.roles() });
 
@@ -176,15 +186,17 @@ const roleForm = ref<Omit<SysRole, 'id'>>({
   status: 'ENABLED',
 });
 
-const roleRules: FormRules<Omit<SysRole, 'id'>> = {
-  roleCode: [{ required: true, message: '请输入角色编码', trigger: 'blur' }],
-  roleName: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
-  status: [{ required: true, message: '请选择状态', trigger: 'change' }],
-};
+const roleRules = computed<FormRules<Omit<SysRole, 'id'>>>(() => ({
+  roleCode: [{ required: true, message: t('iam.role.validation.codeRequired'), trigger: 'blur' }],
+  roleName: [{ required: true, message: t('iam.role.validation.nameRequired'), trigger: 'blur' }],
+  status: [{ required: true, message: t('iam.role.validation.statusRequired'), trigger: 'change' }],
+}));
 
-const dataScopeRules: FormRules<RoleDataScope> = {
-  scopeType: [{ required: true, message: '请选择范围类型', trigger: 'change' }],
-};
+const dataScopeRules = computed<FormRules<RoleDataScope>>(() => ({
+  scopeType: [
+    { required: true, message: t('iam.role.validation.scopeTypeRequired'), trigger: 'change' },
+  ],
+}));
 
 async function loadOptions() {
   [menus.value, permissions.value] = await Promise.all([iamApi.menus(), iamApi.permissions()]);
@@ -217,10 +229,10 @@ async function submitRole() {
   try {
     if (editingRole.value) {
       await iamApi.updateRole(editingRole.value.id, roleForm.value);
-      ElMessage.success('角色已更新');
+      ElMessage.success(t('iam.role.toast.updated'));
     } else {
       await iamApi.createRole(roleForm.value);
-      ElMessage.success('角色已创建');
+      ElMessage.success(t('iam.role.toast.created'));
     }
     roleDialogVisible.value = false;
     await table.reload();
@@ -230,32 +242,40 @@ async function submitRole() {
 }
 
 async function deleteRole(role: SysRole) {
-  await ElMessageBox.confirm(`确认删除角色 ${role.roleName}？`, '删除角色', { type: 'warning' });
+  await ElMessageBox.confirm(
+    t('iam.role.deleteConfirm', { name: role.roleName }),
+    t('iam.role.deleteTitle'),
+    { type: 'warning' },
+  );
   await iamApi.deleteRole(role.id);
-  ElMessage.success('角色已删除');
+  ElMessage.success(t('iam.role.toast.deleted'));
   await table.reload();
 }
 
 async function toggleStatus(role: SysRole) {
   const nextStatus = role.status === 'ENABLED' ? 'DISABLED' : 'ENABLED';
   await iamApi.updateRoleStatus(role.id, nextStatus);
-  ElMessage.success('角色状态已更新');
+  ElMessage.success(t('iam.role.toast.statusUpdated'));
   await table.reload();
 }
 
 function getActions(row: SysRole): QfActionItem[] {
   return [
-    { label: '编辑', permission: 'system:role:update', handler: () => openEdit(row) },
-    { label: '授权', permission: 'system:role:update', handler: () => openAuthorize(row) },
-    { label: '用户', handler: () => openRelatedUsers(row) },
+    { label: t('common.button.edit'), permission: 'system:role:update', handler: () => openEdit(row) },
     {
-      label: '删除',
+      label: t('iam.role.actions.authorize'),
+      permission: 'system:role:update',
+      handler: () => openAuthorize(row),
+    },
+    { label: t('iam.role.actions.users'), handler: () => openRelatedUsers(row) },
+    {
+      label: t('common.button.delete'),
       type: 'danger',
       permission: 'system:role:update',
       handler: () => deleteRole(row),
     },
     {
-      label: row.status === 'ENABLED' ? '禁用' : '启用',
+      label: row.status === 'ENABLED' ? t('common.button.disable') : t('common.button.enable'),
       permission: 'system:role:update',
       handler: () => toggleStatus(row),
     },
@@ -284,7 +304,7 @@ async function submitAuthorize() {
       iamApi.assignRolePermissions(currentRole.value.id, selectedPermissionIds.value),
       iamApi.assignRoleDataScopes(currentRole.value.id, [dataScope.value]),
     ]);
-    ElMessage.success('授权已保存');
+    ElMessage.success(t('iam.role.toast.authorizeSaved'));
     dialogVisible.value = false;
   } finally {
     submitting.value = false;

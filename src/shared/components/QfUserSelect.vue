@@ -16,7 +16,7 @@
       v-for="user in options"
       :key="user.id"
       :label="`${user.nickname}（${user.username}）`"
-      :value="user.id"
+      :value="valueKey === 'username' ? user.username : user.id"
     />
   </el-select>
 </template>
@@ -28,25 +28,30 @@ import { useUserSelect } from '@/shared/composables/useUserSelect';
 
 withDefaults(
   defineProps<{
-    /** v-model binding: single id or array of ids when multiple. */
-    modelValue?: number | number[] | null;
+    /** v-model binding: single value or array when multiple. Type follows valueKey. */
+    modelValue?: number | number[] | string | string[] | null;
     /** Placeholder text. */
     placeholder?: string;
     /** Whether the select is disabled. */
     disabled?: boolean;
     /** Whether to allow selecting multiple items. */
     multiple?: boolean;
+    /** Which user field to use as the option value. Workflow nodes assign users
+     *  by username (Flowable taskAssignee), so pass 'username' there; the default
+     *  'id' suits generic id-based bindings. */
+    valueKey?: 'id' | 'username';
   }>(),
   {
     modelValue: null,
     placeholder: '请选择用户',
     disabled: false,
     multiple: false,
+    valueKey: 'id',
   },
 );
 
 const emit = defineEmits<{
-  'update:modelValue': [value: number | number[] | null];
+  'update:modelValue': [value: number | number[] | string | string[] | null];
 }>();
 
 defineOptions({ name: 'QfUserSelect' });

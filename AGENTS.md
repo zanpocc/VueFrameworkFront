@@ -66,6 +66,7 @@ tests/
 - Store 只保存跨页面状态；页面局部状态不要塞进全局 store。
 - 表单 schema、流程 schema 必须有类型定义和版本号。
 - 不把后端返回的菜单、按钮权限当作安全边界，前端只负责体验。
+- **国际化**：迁移过 i18n 的页面里禁止裸中文，全部走 `t('namespace.xxx')`；新增 key 必须同时更新 `src/locales/zh-CN/<ns>.ts` 和 `src/locales/en-US/<ns>.ts`。表单 `rules` / 表格 `columns` 这些常量必须包 `computed()`，否则切换语言时 label / message 不更新。可切换语言的覆盖范围与加 locale 步骤见 `JavaFrameworkBackend/docs/i18n.md`。
 
 ## 共享层 src/shared/
 
