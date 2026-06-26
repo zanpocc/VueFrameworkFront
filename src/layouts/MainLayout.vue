@@ -28,6 +28,34 @@
         </div>
         <div class="app-shell__header-right">
           <LocaleSwitcher />
+          <el-dropdown trigger="click" @command="handleCommand" @visible-change="handleNotificationDropdown">
+            <el-badge :value="notificationStore.unreadCount" :hidden="!notificationStore.hasUnread">
+              <el-button text :title="t('layout.notifications.title')">
+                <el-icon><Bell /></el-icon>
+              </el-button>
+            </el-badge>
+            <template #dropdown>
+              <el-dropdown-menu class="app-shell__notifications">
+                <el-dropdown-item disabled>
+                  {{ notificationStore.connected ? t('layout.notifications.connected') : t('layout.notifications.disconnected') }}
+                </el-dropdown-item>
+                <el-dropdown-item v-if="notificationStore.notices.length === 0" disabled>
+                  {{ t('layout.notifications.empty') }}
+                </el-dropdown-item>
+                <el-dropdown-item
+                  v-for="notice in notificationStore.notices"
+                  :key="notice.eventId"
+                  class="app-shell__notification-item"
+                  disabled
+                >
+                  <span>{{ notificationActionText(notice.action, notice.title) }}</span>
+                </el-dropdown-item>
+                <el-dropdown-item v-if="authStore.hasPermission('system:notice:view')" command="notices">
+                  {{ t('layout.notifications.viewAll') }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
           <el-dropdown trigger="click" @command="handleCommand">
             <el-button text>
               <el-icon><User /></el-icon>
@@ -58,11 +86,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineComponent, h, ref } from 'vue';
+import { computed, defineComponent, h, onBeforeUnmount, ref, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import {
   ArrowDown,
+  Bell,
   Briefcase,
   Checked,
   Collection,
@@ -87,6 +116,7 @@ import { ElIcon, ElMenuItem, ElSubMenu } from 'element-plus';
 import type { MenuTreeNode } from '@/api/auth';
 import { useAuthStore } from '@/stores/auth';
 import { globalLoading } from '@/stores/global-loading';
+import { useNotificationStore, type NoticeNotification } from '@/stores/notifications';
 import { useTabStore } from '@/stores/tabs';
 import AppBreadcrumb from '@/components/AppBreadcrumb.vue';
 import AppTabNav from '@/components/AppTabNav.vue';
@@ -96,6 +126,7 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
+const notificationStore = useNotificationStore();
 const tabStore = useTabStore();
 const activeMenu = computed(() => route.path);
 const isCollapsed = ref(false);
@@ -185,8 +216,39 @@ const MenuNode = defineComponent({
   },
 });
 
+watch(
+  () => authStore.token,
+  (token) => {
+    if (token) {
+      notificationStore.connect();
+    } else {
+      notificationStore.disconnect();
+    }
+  },
+  { immediate: true },
+);
+
+onBeforeUnmount(() => {
+  notificationStore.disconnect();
+});
+
+function handleNotificationDropdown(visible: boolean) {
+  if (visible) {
+    notificationStore.markAllRead();
+  }
+}
+
+function notificationActionText(action: NoticeNotification['action'], title: string) {
+  return t(`layout.notifications.actions.${action.toLowerCase()}`, { title });
+}
+
 async function handleCommand(command: string) {
+  if (command === 'notices') {
+    await router.push('/system/notices');
+    return;
+  }
   if (command === 'logout') {
+    notificationStore.disconnect();
     await authStore.logout();
     await router.replace('/login');
   }
@@ -268,6 +330,16 @@ async function handleCommand(command: string) {
   display: inline-flex;
   gap: 6px;
   align-items: center;
+}
+
+.app-shell__notification-item {
+  max-width: 320px;
+}
+
+.app-shell__notification-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .app-shell__main {

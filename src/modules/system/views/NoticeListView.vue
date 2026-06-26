@@ -132,12 +132,16 @@
 <script setup lang="ts">
 defineOptions({ name: 'NoticeList' });
 
+import { watch } from 'vue';
 import type { FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import { QfDataTable, QfFormDialog, QfPermissionButton } from '@/shared';
 import type { QfTableColumn } from '@/shared';
 import { useConfirmDelete, useDialogForm, useTable } from '@/shared';
 import { systemApi, type Notice, type NoticeCommand } from '@/api/system';
+import { useNotificationStore } from '@/stores/notifications';
+
+const notificationStore = useNotificationStore();
 
 const columns: QfTableColumn<Notice>[] = [
   { prop: 'title', label: '标题', minWidth: 220, showOverflowTooltip: true },
@@ -179,6 +183,15 @@ const dialog = useDialogForm<NoticeCommand>({
 });
 
 const { confirmDelete } = useConfirmDelete();
+
+watch(
+  () => notificationStore.lastNoticeSequence,
+  async (sequence, previous) => {
+    if (sequence > previous) {
+      await table.reload();
+    }
+  },
+);
 
 function openEdit(row: Notice) {
   dialog.openEdit(row, {
