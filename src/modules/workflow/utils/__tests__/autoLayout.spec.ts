@@ -15,6 +15,7 @@ function buildNode(
     nodeType,
     assigneeType: 'USER',
     assigneeValue: null,
+    multiMode: null,
     sortOrder,
     posX: null,
     posY: null,

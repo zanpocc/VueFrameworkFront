@@ -29,6 +29,10 @@
           <span class="drawer__label">审批人</span>
           <span class="drawer__value">{{ node.assigneeValue ?? '-' }}</span>
         </div>
+        <div class="drawer__field">
+          <span class="drawer__label">会签模式</span>
+          <span class="drawer__value">{{ multiModeLabel }}</span>
+        </div>
       </template>
 
       <div class="drawer__field">
@@ -64,8 +68,16 @@ const assigneeTypeLabel = computed(() => {
     ROLE: '角色',
     DEPT: '部门',
     POST: '岗位',
+    ALL: '全部',
   };
   return map[props.node.assigneeType] ?? props.node.assigneeType;
+});
+
+const multiModeLabel = computed(() => {
+  const map: Record<string, string> = {
+    COUNTERSIGN: '会签',
+  };
+  return map[props.node.multiMode ?? ''] ?? '-';
 });
 
 const typeLabel = computed(() => {

@@ -75,6 +75,7 @@ export interface DefinitionNode {
   nodeType: string;
   assigneeType: string;
   assigneeValue: string | null;
+  multiMode: string | null;
   sortOrder: number;
   posX: number | null;
   posY: number | null;
@@ -87,6 +88,7 @@ export interface NodeCommand {
   nodeType: string;
   assigneeType?: string;
   assigneeValue?: string;
+  multiMode?: string;
   sortOrder?: number;
   posX?: number | null;
   posY?: number | null;

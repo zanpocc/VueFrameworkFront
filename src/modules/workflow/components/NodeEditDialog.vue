@@ -30,6 +30,13 @@
           <el-option label="指定角色" value="ROLE" />
           <el-option label="指定部门" value="DEPT" />
           <el-option label="指定岗位" value="POST" />
+          <el-option label="全部 (用于会签)" value="ALL" />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="form.nodeType === 'APPROVAL' && form.assigneeType === 'ALL'" label="会签模式" prop="multiMode">
+        <el-select v-model="form.multiMode" style="width: 100%" placeholder="请选择会签模式">
+          <el-option label="无" value="" />
+          <el-option label="会签" value="COUNTERSIGN" />
         </el-select>
       </el-form-item>
       <el-form-item v-if="form.nodeType === 'APPROVAL'" label="审批人" prop="assigneeValue">
@@ -95,6 +102,7 @@ const form = ref<NodeCommand>({
   nodeType: 'APPROVAL',
   assigneeType: 'USER',
   assigneeValue: '',
+  multiMode: '',
 });
 
 const rules: FormRules = {
@@ -134,6 +142,7 @@ function onOpen() {
       nodeType: props.editNode.nodeType,
       assigneeType: props.editNode.assigneeType || 'USER',
       assigneeValue: props.editNode.assigneeValue || '',
+      multiMode: props.editNode.multiMode || '',
     };
   } else {
     form.value = {
@@ -142,6 +151,7 @@ function onOpen() {
       nodeType: 'APPROVAL',
       assigneeType: 'USER',
       assigneeValue: '',
+      multiMode: '',
     };
   }
 }
