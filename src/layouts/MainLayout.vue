@@ -27,6 +27,7 @@
           <AppBreadcrumb />
         </div>
         <div class="app-shell__header-right">
+          <ThemeSwitcher />
           <LocaleSwitcher />
           <el-dropdown trigger="click" @command="handleCommand" @visible-change="handleNotificationDropdown">
             <el-badge :value="notificationStore.unreadCount" :hidden="!notificationStore.hasUnread">
@@ -121,6 +122,7 @@ import { useTabStore } from '@/stores/tabs';
 import AppBreadcrumb from '@/components/AppBreadcrumb.vue';
 import AppTabNav from '@/components/AppTabNav.vue';
 import LocaleSwitcher from '@/shared/LocaleSwitcher.vue';
+import ThemeSwitcher from '@/shared/ThemeSwitcher.vue';
 
 const { t } = useI18n();
 const route = useRoute();

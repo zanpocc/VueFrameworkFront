@@ -6,6 +6,12 @@ export default {
   topbar: {
     logout: '退出登录',
     language: '语言',
+    theme: {
+      label: '主题',
+      light: '浅色',
+      dark: '深色',
+      system: '跟随系统',
+    },
   },
   notifications: {
     title: '实时通知',

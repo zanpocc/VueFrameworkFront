@@ -6,6 +6,12 @@ export default {
   topbar: {
     logout: 'Logout',
     language: 'Language',
+    theme: {
+      label: 'Theme',
+      light: 'Light',
+      dark: 'Dark',
+      system: 'System',
+    },
   },
   notifications: {
     title: 'Realtime notifications',

@@ -4,6 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QuickFramework</title>
+    <script>
+      // 首屏防闪烁(FOUC): 在 CSS/应用加载前同步给 <html> 定调暗色。
+      // 逻辑必须与 src/stores/theme.ts 一致, store 启动后接管。
+      (function () {
+        try {
+          var mode = localStorage.getItem('qf-theme') || 'system';
+          var dark =
+            mode === 'dark' ||
+            (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {
+          /* ignore */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>

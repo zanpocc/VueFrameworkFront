@@ -2,11 +2,13 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
+import 'element-plus/theme-chalk/dark/css-vars.css';
 import App from './App.vue';
 import { router } from './router';
 import { permissionDirective } from './permissions/directive';
 import { i18n } from './locales';
 import { useLocaleStore } from './stores/locale';
+import { useThemeStore } from './stores/theme';
 import './assets/tokens/index.css';
 import './styles/base.css';
 
@@ -22,5 +24,8 @@ app.directive('permission', permissionDirective);
 // Initialize locale store eagerly so axios Accept-Language is set before the
 // first request (router guards may call protected APIs immediately on boot).
 useLocaleStore();
+// Initialize theme store eagerly so the dark class is reconciled before mount
+// (index.html already applied it pre-paint to avoid FOUC).
+useThemeStore();
 
 app.mount('#app');

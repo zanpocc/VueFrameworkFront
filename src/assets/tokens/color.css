@@ -6,3 +6,14 @@
   --qf-color-border: #e5e7eb;
   --qf-color-bg-login: #eef2f7;
 }
+
+/* 暗色覆盖: <html class="dark"> 同时由 theme store 与 Element Plus 暗色机制切换,
+   --qf-border-color (border.css) 引用 --qf-color-border 会自动跟随, 无需在此重声明。 */
+html.dark {
+  --qf-color-text-primary: #e5e7eb;
+  --qf-color-text-secondary: #94a3b8;
+  --qf-color-bg-page: #0f172a;
+  --qf-color-bg-surface: #1e293b;
+  --qf-color-border: #334155;
+  --qf-color-bg-login: #0b1220;
+}
