@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $repoRoot = "C:\Users\Administrator\Desktop\QuickFramework\JavaFrameworkBackend"
 $jdkHome = Join-Path $repoRoot ".jdks\jdk-17"
-$jarFile = Join-Path $repoRoot "platform-server-monolith\target\platform-server-monolith-0.1.0-SNAPSHOT-exec.jar"
+$jarFile = Join-Path $repoRoot "starters\platform-server-monolith\target\platform-server-monolith-0.1.0-SNAPSHOT-exec.jar"
 $runDir = Join-Path $repoRoot ".run\monolith"
 $logFile = Join-Path $runDir "monolith.log"
 
