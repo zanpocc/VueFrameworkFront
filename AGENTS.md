@@ -129,7 +129,7 @@ yarn build
 - 异步任务重试。
 - 工作流发起和审批。
 - 表单渲染器。
-- 真实后端联调 smoke 使用 `yarn test:e2e:live:monolith-vm`，该命令依赖 `JavaFrameworkBackend/scripts/run-monolith-vm.ps1` 和 Ubuntu VM 中间件，默认会重置 VM MySQL 的 `quickframework` schema。
+- 真实后端联调 smoke 使用 `yarn test:e2e:live:monolith-vm`，该命令依赖 `JavaFrameworkBackend/ops/scripts/run-monolith-vm.ps1` 和 Ubuntu VM 中间件，默认会重置 VM MySQL 的 `quickframework` schema。
 
 E2E 使用 Playwright。测试数据应通过后端测试接口、fixture 或数据库迁移初始化，避免依赖手工环境。
 本地联调默认使用 Vite 代理，`VITE_API_BASE_URL=/api`，`VITE_API_PROXY_TARGET` 指向后端单体 `http://127.0.0.1:8080` 或云网关 `http://127.0.0.1:9000`。
