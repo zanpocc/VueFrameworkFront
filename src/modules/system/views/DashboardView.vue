@@ -1,38 +1,55 @@
 <template>
-  <section class="dashboard">
-    <header class="dashboard__header">
-      <div>
-        <h1>工作台</h1>
-        <p>待处理事项、运行异常和平台基础数据的当前概览。</p>
+  <QfPageShell class="dashboard">
+    <section class="dashboard__welcome">
+      <div class="dashboard__welcome-copy">
+        <div class="dashboard__eyebrow">
+          <span class="dashboard__eyebrow-mark" />
+          <span>QUICKFRAMEWORK</span>
+          <span class="dashboard__eyebrow-divider">/</span>
+          <span>运营概览</span>
+        </div>
+        <QfPageHeader title="工作台" description="待处理事项、运行异常和平台基础数据的当前概览。">
+          <template #actions>
+            <el-button type="primary" :icon="Refresh" :loading="loading" @click="loadDashboard">
+              刷新数据
+            </el-button>
+          </template>
+        </QfPageHeader>
       </div>
-      <el-button :icon="Refresh" :loading="loading" @click="loadDashboard">刷新</el-button>
-    </header>
+      <div class="dashboard__welcome-meta">
+        <span>概览日期</span>
+        <strong>{{ todayLabel }}</strong>
+        <small>数据自动同步</small>
+      </div>
+    </section>
 
-    <div class="dashboard__metrics">
-      <div
+    <section class="dashboard__metrics" aria-label="平台关键指标">
+      <QfMetricCard
         v-for="metric in metrics"
         :key="metric.key"
-        class="dashboard__metric"
-        :class="`dashboard__metric--${metric.tone}`"
-      >
-        <el-icon class="dashboard__metric-icon">
-          <component :is="metric.icon" />
-        </el-icon>
-        <div>
-          <span>{{ metric.label }}</span>
-          <strong>{{ metric.loading ? '...' : metric.value }}</strong>
-          <small>{{ metric.error ? '加载失败' : metric.caption }}</small>
-        </div>
-      </div>
-    </div>
+        :label="metric.label"
+        :value="metric.value"
+        :caption="metric.caption"
+        :tone="metric.tone"
+        :icon="metric.icon"
+        :loading="metric.loading"
+        :error="metric.error"
+      />
+    </section>
 
-    <div class="dashboard__content">
-      <section class="dashboard__panel dashboard__panel--wide">
-        <div class="dashboard__panel-header">
-          <h2>待处理任务</h2>
-          <span>{{ taskSummary }}</span>
-        </div>
-        <el-table :data="recentTasks" size="small" empty-text="暂无待处理任务">
+    <section class="dashboard__content">
+      <QfCard
+        class="dashboard__panel dashboard__tasks-panel"
+        title="待处理任务"
+        description="优先关注异常与运行中的异步任务"
+      >
+        <template #actions>
+          <span class="dashboard__summary">
+            <span class="dashboard__summary-dot" />
+            {{ taskSummary }}
+          </span>
+        </template>
+        <el-table v-if="recentTasks.length > 0" :data="recentTasks" size="small">
           <el-table-column prop="taskName" label="任务" min-width="160" />
           <el-table-column prop="taskType" label="类型" width="140" />
           <el-table-column prop="status" label="状态" width="110">
@@ -46,56 +63,97 @@
           </el-table-column>
           <el-table-column prop="updatedAt" label="更新时间" width="170" />
         </el-table>
-      </section>
+        <div v-else class="dashboard__empty">
+          <span class="dashboard__empty-icon"
+            ><el-icon><CircleCheck /></el-icon
+          ></span>
+          <div>
+            <strong>暂无待处理任务</strong>
+            <span class="dashboard__empty-caption">新的异步任务会显示在这里</span>
+          </div>
+        </div>
+      </QfCard>
 
       <div class="dashboard__side">
-        <section class="dashboard__panel">
-          <div class="dashboard__panel-header">
-            <h2>公告</h2>
-            <span>{{ publishedNotices.length }} 条已发布</span>
-          </div>
+        <QfCard class="dashboard__panel dashboard__notice-panel" title="公告">
+          <template #actions
+            ><span>{{ publishedNotices.length }} 条已发布</span></template
+          >
           <div class="dashboard__notice-list">
-            <div v-for="notice in latestNotices" :key="notice.id" class="dashboard__notice">
-              <strong>{{ notice.title }}</strong>
-              <span>{{ notice.publishedAt ?? notice.updatedAt }}</span>
+            <div
+              v-for="(notice, index) in latestNotices"
+              :key="notice.id"
+              class="dashboard__notice"
+            >
+              <span class="dashboard__notice-index">{{ String(index + 1).padStart(2, '0') }}</span>
+              <div class="dashboard__notice-copy">
+                <strong>{{ notice.title }}</strong>
+                <span>{{ notice.publishedAt ?? notice.updatedAt }}</span>
+              </div>
+              <el-icon class="dashboard__notice-arrow"><ArrowRight /></el-icon>
             </div>
-            <el-empty v-if="latestNotices.length === 0" description="暂无公告" :image-size="52" />
+            <div
+              v-if="latestNotices.length === 0"
+              class="dashboard__empty dashboard__empty--compact"
+            >
+              <span class="dashboard__empty-icon"
+                ><el-icon><Bell /></el-icon
+              ></span>
+              <div>
+                <strong>暂无公告</strong>
+                <span class="dashboard__empty-caption">发布后的公告会显示在这里</span>
+              </div>
+            </div>
           </div>
-        </section>
+        </QfCard>
 
-        <section class="dashboard__panel">
-          <div class="dashboard__panel-header">
-            <h2>平台基础</h2>
-            <span>配置与权限</span>
-          </div>
+        <QfCard class="dashboard__panel dashboard__facts-panel" title="平台基础">
+          <template #actions><span>实时数据</span></template>
           <dl class="dashboard__facts">
             <div>
               <dt>系统配置</dt>
-              <dd>{{ configs.length }}</dd>
+              <dd>
+                <strong>{{ configs.length }}</strong
+                ><small>项</small>
+              </dd>
             </div>
             <div>
               <dt>启用菜单</dt>
-              <dd>{{ enabledMenus }}</dd>
+              <dd>
+                <strong>{{ enabledMenus }}</strong
+                ><small>项</small>
+              </dd>
             </div>
             <div>
               <dt>Outbox 待发布</dt>
-              <dd>{{ pendingOutbox }}</dd>
+              <dd>
+                <strong>{{ pendingOutbox }}</strong
+                ><small>条</small>
+              </dd>
             </div>
           </dl>
-        </section>
+        </QfCard>
       </div>
-    </div>
-  </section>
+    </section>
+  </QfPageShell>
 </template>
 
 <script setup lang="ts">
 import { computed, markRaw, onMounted, reactive, ref } from 'vue';
-import { Bell, Menu as MenuIcon, Refresh, Tickets, Warning } from '@element-plus/icons-vue';
+import {
+  ArrowRight,
+  Bell,
+  CircleCheck,
+  Menu as MenuIcon,
+  Refresh,
+  Tickets,
+  Warning,
+} from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { iamApi, type SysMenu } from '@/api/iam';
 import { systemApi, type Notice, type SysConfig } from '@/api/system';
 import { taskApi, type AsyncTask, type OutboxMessage } from '@/api/task';
-import { QfStatusTag } from '@/shared';
+import { QfCard, QfMetricCard, QfPageHeader, QfPageShell, QfStatusTag } from '@/shared';
 
 defineOptions({ name: 'DashboardView' });
 
@@ -201,6 +259,11 @@ const latestNotices = computed(() =>
     .sort((a, b) => (b.publishedAt ?? b.updatedAt).localeCompare(a.publishedAt ?? a.updatedAt))
     .slice(0, 5),
 );
+const todayLabel = new Intl.DateTimeFormat('zh-CN', {
+  month: 'long',
+  day: 'numeric',
+  weekday: 'short',
+}).format(new Date());
 const taskSummary = computed(
   () => `${manualTasks.value.length} 个异常，${runningTasks.value.length} 个运行中`,
 );
@@ -275,113 +338,127 @@ onMounted(loadDashboard);
 <style scoped>
 .dashboard {
   display: grid;
-  gap: 18px;
-}
-
-.dashboard__header {
-  display: flex;
   gap: var(--qf-spacing-lg);
-  align-items: flex-start;
+}
+
+.dashboard__welcome {
+  position: relative;
+  display: flex;
+  gap: var(--qf-spacing-xl);
+  align-items: stretch;
   justify-content: space-between;
+  min-height: 128px;
+  padding: var(--qf-spacing-xl) 28px;
+  overflow: hidden;
+  background: var(--qf-color-dashboard-welcome);
+  border: 1px solid var(--qf-color-border-soft);
+  border-radius: var(--qf-border-radius-lg);
+  box-shadow: var(--qf-shadow-panel);
 }
 
-.dashboard__header h1 {
-  margin: 0 0 6px;
-  color: var(--qf-color-text-primary);
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+.dashboard__welcome::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--qf-color-primary);
+  content: '';
 }
 
-.dashboard__header p {
-  margin: 0;
+.dashboard__welcome::after {
+  position: absolute;
+  top: -74px;
+  right: 160px;
+  width: 190px;
+  height: 190px;
+  border: 1px solid var(--qf-color-brand-highlight);
+  border-radius: var(--qf-border-radius-round);
+  content: '';
+  opacity: 0.7;
+}
+
+.dashboard__welcome-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+  min-width: 0;
+}
+
+.dashboard__eyebrow {
+  display: flex;
+  gap: var(--qf-spacing-xs);
+  align-items: center;
+  margin-bottom: var(--qf-spacing-sm);
+  color: var(--qf-color-primary-strong);
+  font-size: var(--qf-font-size-caption);
+  font-weight: var(--qf-font-weight-semibold);
+  letter-spacing: 0.08em;
+}
+
+.dashboard__eyebrow-mark {
+  width: 7px;
+  height: 7px;
+  margin-right: 2px;
+  background: var(--qf-color-primary);
+  border-radius: var(--qf-border-radius-round);
+  box-shadow: 0 0 0 4px var(--qf-color-primary-soft);
+}
+
+.dashboard__eyebrow-divider {
+  color: var(--qf-color-text-placeholder);
+}
+
+.dashboard__welcome :deep(.qf-page-header) {
+  align-items: center;
+}
+
+.dashboard__welcome :deep(.qf-page-header h1) {
+  margin-bottom: var(--qf-spacing-xs);
+  font-size: 28px;
+  letter-spacing: -0.03em;
+}
+
+.dashboard__welcome-meta {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+  min-width: 160px;
+  padding-left: var(--qf-spacing-xl);
+  border-left: 1px solid var(--qf-color-border);
+}
+
+.dashboard__welcome-meta span,
+.dashboard__welcome-meta small {
   color: var(--qf-color-text-secondary);
+}
+
+.dashboard__welcome-meta span {
+  font-size: var(--qf-font-size-caption);
+}
+
+.dashboard__welcome-meta strong {
+  margin: 3px 0;
+  color: var(--qf-color-text-primary);
+  font-size: var(--qf-font-size-subtitle);
+  font-weight: var(--qf-font-weight-heading);
+}
+
+.dashboard__welcome-meta small {
+  font-size: var(--qf-font-size-caption);
 }
 
 .dashboard__metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.dashboard__metric {
-  position: relative;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: 44px 1fr;
   gap: var(--qf-spacing-md);
-  align-items: center;
-  min-height: 112px;
-  padding: 18px;
-  background: var(--qf-color-bg-surface);
-  border: 1px solid var(--qf-color-border-soft);
-  border-radius: var(--qf-border-radius);
-  box-shadow: 0 1px 2px rgb(15 23 42 / 3%);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.dashboard__metric::after {
-  position: absolute;
-  right: -26px;
-  bottom: -34px;
-  width: 110px;
-  height: 110px;
-  background: currentcolor;
-  border-radius: 50%;
-  content: '';
-  opacity: 0.035;
-}
-
-.dashboard__metric:hover {
-  box-shadow: 0 8px 22px rgb(15 23 42 / 8%);
-  transform: translateY(-2px);
-}
-
-.dashboard__metric--primary {
-  color: var(--el-color-primary);
-}
-
-.dashboard__metric--success {
-  color: var(--el-color-success);
-}
-
-.dashboard__metric--warning {
-  color: var(--el-color-warning);
-}
-
-.dashboard__metric--danger {
-  color: var(--el-color-danger);
-}
-
-.dashboard__metric-icon {
-  width: 44px;
-  height: 44px;
-  color: currentcolor;
-  background: color-mix(in srgb, currentcolor 12%, transparent);
-  border-radius: 12px;
-  font-size: 21px;
-}
-
-.dashboard__metric span,
-.dashboard__metric small {
-  display: block;
-  color: var(--qf-color-text-secondary);
-}
-
-.dashboard__metric strong {
-  display: block;
-  margin: 4px 0;
-  color: var(--qf-color-text-primary);
-  font-size: 26px;
-  line-height: 1;
 }
 
 .dashboard__content {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.75fr);
   gap: var(--qf-spacing-md);
+  align-items: start;
 }
 
 .dashboard__side {
@@ -392,43 +469,78 @@ onMounted(loadDashboard);
 
 .dashboard__panel {
   min-width: 0;
-  padding: 16px;
-  background: var(--qf-color-bg-surface);
-  border: 1px solid var(--qf-color-border-soft);
-  border-radius: var(--qf-border-radius);
-  box-shadow: 0 1px 2px rgb(15 23 42 / 3%);
 }
 
-.dashboard__panel-header {
+.dashboard__tasks-panel :deep(.qf-card__body) {
+  padding-top: var(--qf-spacing-sm);
+}
+
+.dashboard__summary {
+  display: inline-flex;
+  gap: var(--qf-spacing-xs);
+  align-items: center;
+  color: var(--qf-color-text-secondary);
+  font-size: var(--qf-font-size-caption);
+}
+
+.dashboard__summary-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--qf-color-primary);
+  border-radius: var(--qf-border-radius-round);
+}
+
+.dashboard__empty {
   display: flex;
   gap: var(--qf-spacing-md);
   align-items: center;
-  justify-content: space-between;
-  min-height: 28px;
-  margin-bottom: 14px;
-}
-
-.dashboard__panel-header h2 {
-  margin: 0;
-  color: var(--qf-color-text-primary);
-  font-size: 15px;
-  font-weight: 650;
-}
-
-.dashboard__panel-header span {
+  justify-content: center;
+  min-height: 166px;
   color: var(--qf-color-text-secondary);
-  font-size: 13px;
+}
+
+.dashboard__empty--compact {
+  min-height: 132px;
+}
+
+.dashboard__empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  color: var(--qf-color-primary);
+  background: var(--qf-color-primary-soft);
+  border-radius: var(--qf-border-radius-round);
+  font-size: 19px;
+}
+
+.dashboard__empty div {
+  display: grid;
+  gap: var(--qf-spacing-2xs);
+}
+
+.dashboard__empty strong {
+  color: var(--qf-color-text-primary);
+  font-weight: var(--qf-font-weight-semibold);
+}
+
+.dashboard__empty-caption {
+  font-size: var(--qf-font-size-caption);
 }
 
 .dashboard__notice-list {
   display: grid;
-  gap: 10px;
+  gap: var(--qf-spacing-sm);
 }
 
 .dashboard__notice {
   display: grid;
-  gap: 3px;
-  padding-bottom: 10px;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: var(--qf-spacing-sm);
+  align-items: center;
+  min-height: 48px;
+  padding-bottom: var(--qf-spacing-sm);
   border-bottom: 1px solid var(--qf-border-color);
 }
 
@@ -437,18 +549,38 @@ onMounted(loadDashboard);
   border-bottom: 0;
 }
 
-.dashboard__notice strong {
+.dashboard__notice-index {
+  color: var(--qf-color-primary);
+  font-size: var(--qf-font-size-caption);
   font-weight: var(--qf-font-weight-semibold);
+}
+
+.dashboard__notice-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.dashboard__notice strong {
+  overflow: hidden;
+  font-weight: var(--qf-font-weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dashboard__notice span {
   color: var(--qf-color-text-secondary);
-  font-size: 12px;
+  font-size: var(--qf-font-size-caption);
+}
+
+.dashboard__notice-arrow {
+  color: var(--qf-color-text-placeholder);
+  font-size: 14px;
 }
 
 .dashboard__facts {
   display: grid;
-  gap: 12px;
+  gap: 0;
   margin: 0;
 }
 
@@ -456,6 +588,12 @@ onMounted(loadDashboard);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-height: 40px;
+  border-bottom: 1px solid var(--qf-color-border-soft);
+}
+
+.dashboard__facts div:last-child {
+  border-bottom: 0;
 }
 
 .dashboard__facts dt,
@@ -468,7 +606,20 @@ onMounted(loadDashboard);
 }
 
 .dashboard__facts dd {
+  display: inline-flex;
+  gap: 3px;
+  align-items: baseline;
+}
+
+.dashboard__facts dd strong {
+  color: var(--qf-color-text-primary);
+  font-size: var(--qf-font-size-subtitle);
   font-weight: var(--qf-font-weight-heading);
+}
+
+.dashboard__facts dd small {
+  color: var(--qf-color-text-secondary);
+  font-size: var(--qf-font-size-caption);
 }
 
 @media (width <= 1180px) {
@@ -484,13 +635,21 @@ onMounted(loadDashboard);
 }
 
 @media (width <= 640px) {
-  .dashboard__metrics {
-    grid-template-columns: 1fr;
+  .dashboard__welcome {
+    min-height: 0;
+    padding: var(--qf-spacing-lg);
   }
 
-  .dashboard__header {
-    align-items: stretch;
-    flex-direction: column;
+  .dashboard__welcome-meta {
+    display: none;
+  }
+
+  .dashboard__welcome :deep(.qf-page-header__actions) {
+    justify-content: flex-start;
+  }
+
+  .dashboard__metrics {
+    grid-template-columns: 1fr;
   }
 }
 </style>

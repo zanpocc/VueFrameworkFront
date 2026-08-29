@@ -1,46 +1,46 @@
 <template>
-  <section class="page">
-    <header class="page__header">
-      <div>
-        <h1>Demo CRUD 验证页</h1>
-        <p>
-          演示 useTable + useDialogForm + useConfirmDelete + QfDataTable + QfFormDialog +
-          QfStatusTag + QfPermissionButton 全套共享层组件。
-        </p>
-      </div>
-      <QfPermissionButton code="demo:item:update" type="primary" @click="dialog.openCreate()">
-        新增项目
-      </QfPermissionButton>
-    </header>
-
-    <QfDataTable
-      :columns="columns"
-      :data="table.allRows.value"
-      :loading="table.loading.value"
-      :actions-width="200"
+  <QfPageShell>
+    <QfPageHeader
+      title="Demo CRUD 验证页"
+      description="演示 useTable、useDialogForm、useConfirmDelete 和共享组件的组合方式。"
     >
-      <template #status="{ row }">
-        <QfStatusTag :status="row.status" />
-      </template>
-      <template #actions="{ row }">
-        <QfPermissionButton
-          code="demo:item:update"
-          text
-          type="primary"
-          @click="openEdit(row as DemoItem)"
-        >
-          编辑
-        </QfPermissionButton>
-        <QfPermissionButton
-          code="demo:item:update"
-          text
-          type="danger"
-          @click="handleDelete(row as DemoItem)"
-        >
-          删除
+      <template #actions>
+        <QfPermissionButton code="demo:item:update" type="primary" @click="dialog.openCreate()">
+          新增项目
         </QfPermissionButton>
       </template>
-    </QfDataTable>
+    </QfPageHeader>
+
+    <QfTablePanel title="项目列表" description="用于验证通用列表、表单和权限组件。">
+      <QfDataTable
+        :columns="columns"
+        :data="table.allRows.value"
+        :loading="table.loading.value"
+        :actions-width="200"
+      >
+        <template #status="{ row }">
+          <QfStatusTag :status="row.status" />
+        </template>
+        <template #actions="{ row }">
+          <QfPermissionButton
+            code="demo:item:update"
+            text
+            type="primary"
+            @click="openEdit(row as DemoItem)"
+          >
+            编辑
+          </QfPermissionButton>
+          <QfPermissionButton
+            code="demo:item:update"
+            text
+            type="danger"
+            @click="handleDelete(row as DemoItem)"
+          >
+            删除
+          </QfPermissionButton>
+        </template>
+      </QfDataTable>
+    </QfTablePanel>
 
     <QfFormDialog
       v-model="dialog.visible.value"
@@ -64,14 +64,22 @@
         </el-select>
       </el-form-item>
     </QfFormDialog>
-  </section>
+  </QfPageShell>
 </template>
 
 <script setup lang="ts">
 defineOptions({ name: 'DemoCrud' });
 import { ref } from 'vue';
 import type { FormRules } from 'element-plus';
-import { QfDataTable, QfFormDialog, QfStatusTag, QfPermissionButton } from '@/shared';
+import {
+  QfDataTable,
+  QfFormDialog,
+  QfPageHeader,
+  QfPageShell,
+  QfTablePanel,
+  QfStatusTag,
+  QfPermissionButton,
+} from '@/shared';
 import type { QfTableColumn } from '@/shared';
 import { useTable, useDialogForm, useConfirmDelete } from '@/shared';
 

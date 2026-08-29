@@ -1,11 +1,10 @@
 <template>
-  <section class="page">
-    <header class="page__header">
-      <div>
-        <h1>文件管理</h1>
-        <p>管理平台文件元数据，上传、预览和下载本地或对象存储中的文件。</p>
-      </div>
-      <div class="file-actions">
+  <QfPageShell>
+    <QfPageHeader
+      title="文件管理"
+      description="管理平台文件元数据，上传、预览和下载本地或对象存储中的文件。"
+    >
+      <template #actions>
         <el-button :loading="diagnosticLoading" @click="loadStorageDiagnostics">
           <el-icon><Refresh /></el-icon>
           <span>刷新诊断</span>
@@ -16,8 +15,8 @@
             <span>上传文件</span>
           </el-button>
         </el-upload>
-      </div>
-    </header>
+      </template>
+    </QfPageHeader>
 
     <div class="storage-diagnostic">
       <el-descriptions v-if="storageDiagnostic" :column="3" border>
@@ -54,48 +53,50 @@
       <el-empty v-else description="暂无存储诊断信息" :image-size="48" />
     </div>
 
-    <QfDataTable
-      :columns="columns"
-      :data="table.allRows.value"
-      :loading="table.loading.value"
-      :page-size="20"
-      :actions-width="220"
-    >
-      <template #filters="{ reload, reset }">
-        <el-form-item label="状态">
-          <el-select
-            v-model="table.filters.status"
-            clearable
-            placeholder="全部"
-            style="width: 180px"
-          >
-            <el-option label="有效" value="ACTIVE" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="reload()">
-            <el-icon><Search /></el-icon>
-            <span>查询</span>
-          </el-button>
-          <el-button @click="reset()">
-            <el-icon><Refresh /></el-icon>
-            <span>重置</span>
-          </el-button>
-        </el-form-item>
-      </template>
+    <QfTablePanel title="文件列表" description="查看文件元数据，并执行详情、预览和下载操作。">
+      <QfDataTable
+        :columns="columns"
+        :data="table.allRows.value"
+        :loading="table.loading.value"
+        :page-size="20"
+        :actions-width="220"
+      >
+        <template #filters="{ reload, reset }">
+          <el-form-item label="状态">
+            <el-select
+              v-model="table.filters.status"
+              clearable
+              placeholder="全部"
+              class="qf-field--lg"
+            >
+              <el-option label="有效" value="ACTIVE" />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="reload()">
+              <el-icon><Search /></el-icon>
+              <span>查询</span>
+            </el-button>
+            <el-button @click="reset()">
+              <el-icon><Refresh /></el-icon>
+              <span>重置</span>
+            </el-button>
+          </el-form-item>
+        </template>
 
-      <template #fileSize="{ row }">
-        {{ formatSize(row.fileSize) }}
-      </template>
+        <template #fileSize="{ row }">
+          {{ formatSize(row.fileSize) }}
+        </template>
 
-      <template #status="{ row }">
-        <QfStatusTag :status="row.status" />
-      </template>
+        <template #status="{ row }">
+          <QfStatusTag :status="row.status" />
+        </template>
 
-      <template #actions="{ row }">
-        <QfTableActions :actions="getFileActions(row as FileObject)" :max-inline="2" />
-      </template>
-    </QfDataTable>
+        <template #actions="{ row }">
+          <QfTableActions :actions="getFileActions(row as FileObject)" :max-inline="2" />
+        </template>
+      </QfDataTable>
+    </QfTablePanel>
 
     <el-dialog v-model="detailVisible" title="文件详情" width="720px">
       <el-descriptions v-if="currentFile" :column="1" border>
@@ -179,7 +180,7 @@
         </div>
       </div>
     </el-dialog>
-  </section>
+  </QfPageShell>
 </template>
 
 <script setup lang="ts">
@@ -188,7 +189,15 @@ defineOptions({ name: 'FileList' });
 import { ref } from 'vue';
 import { ElMessage, type UploadFile } from 'element-plus';
 import { Refresh, Search, Upload } from '@element-plus/icons-vue';
-import { QfDataTable, QfStatusTag, QfTableActions, formatSize } from '@/shared';
+import {
+  QfDataTable,
+  QfPageHeader,
+  QfPageShell,
+  QfStatusTag,
+  QfTableActions,
+  QfTablePanel,
+  formatSize,
+} from '@/shared';
 import type { QfTableColumn, QfActionItem } from '@/shared';
 import { useTable } from '@/shared';
 import {
@@ -319,23 +328,10 @@ void loadStorageDiagnostics();
 </script>
 
 <style scoped>
-.file-actions {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.file-actions :deep(.el-button) {
-  display: inline-flex;
-  gap: 6px;
-  align-items: center;
-}
-
 .storage-diagnostic {
-  padding: 16px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  background: var(--qf-color-bg-surface);
+  border: 1px solid var(--qf-color-border-soft);
+  border-radius: var(--qf-border-radius);
 }
 
 .file-sha {
@@ -345,19 +341,19 @@ void loadStorageDiagnostics();
 
 .preview-panel {
   display: grid;
-  gap: 12px;
+  gap: var(--qf-spacing-md);
 }
 
 .preview-panel__status {
   display: flex;
-  gap: 8px;
+  gap: var(--qf-spacing-sm);
   align-items: center;
 }
 
 .preview-content {
   min-height: 220px;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
+  border: 1px solid var(--qf-color-border);
+  border-radius: var(--qf-border-radius);
 }
 
 .preview-image {
@@ -373,7 +369,7 @@ void loadStorageDiagnostics();
 
 .preview-text {
   max-height: 520px;
-  padding: 12px;
+  padding: var(--qf-spacing-md);
   margin: 0;
   overflow: auto;
   white-space: pre-wrap;

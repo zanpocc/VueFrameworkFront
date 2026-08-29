@@ -1,9 +1,19 @@
 :root {
+  --qf-spacing-2xs: 2px;
   --qf-spacing-xs: 4px;
   --qf-spacing-sm: 8px;
   --qf-spacing-md: 12px;
   --qf-spacing-lg: 16px;
   --qf-spacing-xl: 24px;
+  --qf-spacing-2xl: 32px;
+  --qf-page-padding-x: 20px;
+  --qf-page-padding-y: 18px;
+  --qf-card-padding: 16px;
+  --qf-control-height: 34px;
+  --qf-field-width-sm: 140px;
+  --qf-field-width-md: 160px;
+  --qf-field-width-lg: 200px;
+  --qf-field-width-xl: 220px;
   --qf-layout-sidebar-width: 224px;
   --qf-layout-sidebar-collapsed-width: 64px;
   --qf-layout-header-height: 56px;

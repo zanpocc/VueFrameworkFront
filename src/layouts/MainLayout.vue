@@ -323,7 +323,7 @@ async function handleCommand(command: string) {
   z-index: 100;
   flex-shrink: 0;
   overflow: hidden;
-  background: var(--qf-color-bg-surface);
+  background: var(--qf-color-bg-sidebar);
   border-right: 1px solid var(--qf-color-border-soft);
   transition:
     width 0.22s ease,
@@ -348,10 +348,10 @@ async function handleCommand(command: string) {
   justify-content: center;
   width: 30px;
   height: 30px;
-  color: #fff;
-  background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);
-  border-radius: 9px;
-  box-shadow: 0 5px 12px rgb(37 99 235 / 25%);
+  color: var(--qf-color-on-primary);
+  background: var(--qf-color-brand-gradient);
+  border-radius: var(--qf-border-radius-lg);
+  box-shadow: var(--qf-shadow-brand);
   font-size: 17px;
   font-weight: 800;
 }
@@ -383,7 +383,7 @@ async function handleCommand(command: string) {
 
 .app-shell__menu-search :deep(.el-input__wrapper) {
   background: var(--qf-color-bg-muted);
-  box-shadow: none;
+  box-shadow: var(--qf-shadow-none);
 }
 
 .app-shell__menu {
@@ -398,8 +398,8 @@ async function handleCommand(command: string) {
   margin: 3px 0;
   padding: 0 12px !important;
   overflow: hidden;
-  color: var(--qf-color-text-secondary);
-  border-radius: 8px;
+  color: var(--qf-color-sidebar-text);
+  border-radius: var(--qf-border-radius-lg);
   line-height: 40px;
   transition:
     color 0.18s ease,
@@ -415,14 +415,14 @@ async function handleCommand(command: string) {
 
 .app-shell__menu :deep(.el-menu-item:hover),
 .app-shell__menu :deep(.el-sub-menu__title:hover) {
-  color: var(--el-color-primary);
-  background: var(--qf-color-primary-soft);
+  color: var(--qf-color-sidebar-active-text);
+  background: var(--qf-color-sidebar-active);
 }
 
 .app-shell__menu :deep(.el-menu-item.is-active) {
   position: relative;
-  color: var(--el-color-primary);
-  background: var(--qf-color-primary-soft);
+  color: var(--qf-color-sidebar-active-text);
+  background: var(--qf-color-sidebar-active);
   font-weight: 600;
 }
 
@@ -516,9 +516,9 @@ async function handleCommand(command: string) {
   justify-content: center;
   width: 26px;
   height: 26px;
-  color: #fff;
-  background: linear-gradient(135deg, #0ea5e9, #2563eb);
-  border-radius: 50%;
+  color: var(--qf-color-on-primary);
+  background: var(--qf-color-brand-gradient);
+  border-radius: var(--qf-border-radius-round);
   font-size: 12px;
   font-weight: 700;
 }
@@ -578,7 +578,7 @@ async function handleCommand(command: string) {
     left: 0;
     width: var(--qf-layout-sidebar-width) !important;
     transform: translateX(-100%);
-    box-shadow: 12px 0 32px rgb(15 23 42 / 15%);
+    box-shadow: var(--qf-shadow-sidebar);
   }
 
   .app-shell--mobile .app-shell__aside.is-mobile-open {
@@ -590,7 +590,7 @@ async function handleCommand(command: string) {
     z-index: 90;
     inset: 0;
     display: block;
-    background: rgb(15 23 42 / 45%);
+    background: var(--qf-color-scrim);
   }
 
   .app-shell__header {

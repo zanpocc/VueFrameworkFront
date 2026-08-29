@@ -1,0 +1,12 @@
+:root {
+  --qf-shadow-panel: 0 1px 2px rgb(15 23 42 / 3%);
+  --qf-shadow-panel-hover: 0 8px 22px rgb(15 23 42 / 8%);
+  --qf-shadow-popover: 0 18px 48px rgb(15 23 42 / 15%);
+  --qf-shadow-sidebar: 12px 0 32px rgb(15 23 42 / 15%);
+  --qf-shadow-brand: 0 5px 12px rgb(37 99 235 / 25%);
+  --qf-shadow-login-brand: 0 10px 22px rgb(15 23 42 / 20%);
+  --qf-shadow-node: 0 1px 4px rgb(0 0 0 / 8%);
+  --qf-shadow-focus-primary-soft: 0 0 0 2px var(--el-color-primary-light-9);
+  --qf-shadow-focus-primary: 0 0 0 2px var(--el-color-primary-light-8);
+  --qf-shadow-none: none;
+}

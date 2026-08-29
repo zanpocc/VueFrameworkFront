@@ -1,7 +1,9 @@
 :root {
+  --qf-font-size-caption: 12px;
   --qf-font-size-heading: 22px;
   --qf-font-size-subtitle: 16px;
   --qf-font-size-body: 13px;
   --qf-font-weight-heading: 700;
   --qf-font-weight-semibold: 600;
+  --qf-line-height-body: 1.5;
 }

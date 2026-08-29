@@ -1,60 +1,58 @@
 <template>
-  <section class="page">
-    <header class="page__header">
-      <div>
-        <h1>系统配置</h1>
-        <p>维护平台参数，敏感配置默认脱敏展示。</p>
-      </div>
-      <div class="page__actions">
+  <QfPageShell>
+    <QfPageHeader title="系统配置" description="维护平台参数，敏感配置默认脱敏展示。">
+      <template #actions>
         <QfPermissionButton code="system:config:update" :loading="refreshing" @click="refreshCache">
           刷新缓存
         </QfPermissionButton>
         <QfPermissionButton code="system:config:update" type="primary" @click="dialog.openCreate()">
           新增配置
         </QfPermissionButton>
-      </div>
-    </header>
+      </template>
+    </QfPageHeader>
 
-    <QfDataTable
-      :columns="columns"
-      :data="table.allRows.value"
-      :loading="table.loading.value"
-      :actions-width="160"
-    >
-      <template #filters="{ filters, reload: doReload }">
-        <el-input
-          v-model="filters.keyword"
-          clearable
-          placeholder="分组或 key"
-          style="width: 200px"
-          @clear="doReload"
-          @keyup.enter="doReload"
-        />
-        <el-button type="primary" @click="doReload">查询</el-button>
-      </template>
-      <template #attrs="{ row }">
-        <el-tag v-if="row.sensitive" type="warning"> 敏感 </el-tag>
-        <el-tag v-if="!row.editable" type="info"> 只读 </el-tag>
-      </template>
-      <template #actions="{ row }">
-        <QfPermissionButton
-          code="system:config:update"
-          text
-          type="primary"
-          @click="openEditConfig(row as SysConfig)"
-        >
-          编辑
-        </QfPermissionButton>
-        <QfPermissionButton
-          code="system:config:update"
-          text
-          type="danger"
-          @click="handleDelete(row as SysConfig)"
-        >
-          删除
-        </QfPermissionButton>
-      </template>
-    </QfDataTable>
+    <QfTablePanel title="配置列表" description="敏感值默认脱敏，只有可编辑配置允许修改。">
+      <QfDataTable
+        :columns="columns"
+        :data="table.allRows.value"
+        :loading="table.loading.value"
+        :actions-width="160"
+      >
+        <template #filters="{ filters, reload: doReload }">
+          <el-input
+            v-model="filters.keyword"
+            clearable
+            placeholder="分组或 key"
+            class="qf-field--lg"
+            @clear="doReload"
+            @keyup.enter="doReload"
+          />
+          <el-button type="primary" @click="doReload">查询</el-button>
+        </template>
+        <template #attrs="{ row }">
+          <el-tag v-if="row.sensitive" type="warning"> 敏感 </el-tag>
+          <el-tag v-if="!row.editable" type="info"> 只读 </el-tag>
+        </template>
+        <template #actions="{ row }">
+          <QfPermissionButton
+            code="system:config:update"
+            text
+            type="primary"
+            @click="openEditConfig(row as SysConfig)"
+          >
+            编辑
+          </QfPermissionButton>
+          <QfPermissionButton
+            code="system:config:update"
+            text
+            type="danger"
+            @click="handleDelete(row as SysConfig)"
+          >
+            删除
+          </QfPermissionButton>
+        </template>
+      </QfDataTable>
+    </QfTablePanel>
 
     <QfFormDialog
       v-model="dialog.visible.value"
@@ -91,7 +89,7 @@
         <el-input v-model="dialog.form.remark" />
       </el-form-item>
     </QfFormDialog>
-  </section>
+  </QfPageShell>
 </template>
 
 <script setup lang="ts">
@@ -99,7 +97,14 @@ defineOptions({ name: 'ConfigList' });
 import { ref } from 'vue';
 import type { FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
-import { QfDataTable, QfFormDialog, QfPermissionButton } from '@/shared';
+import {
+  QfDataTable,
+  QfFormDialog,
+  QfPageHeader,
+  QfPageShell,
+  QfPermissionButton,
+  QfTablePanel,
+} from '@/shared';
 import type { QfTableColumn } from '@/shared';
 import { useTable, useDialogForm, useConfirmDelete } from '@/shared';
 import { systemApi, type ConfigCommand, type SysConfig } from '@/api/system';

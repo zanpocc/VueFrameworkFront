@@ -8,7 +8,7 @@
     remote
     :remote-method="handleSearch"
     :loading="searching"
-    style="width: 100%"
+    class="qf-field--full"
     @update:model-value="emit('update:modelValue', $event)"
     @visible-change="onVisibleChange"
   >
@@ -36,9 +36,7 @@ withDefaults(
     disabled?: boolean;
     /** Whether to allow selecting multiple items. */
     multiple?: boolean;
-    /** Which user field to use as the option value. Workflow nodes assign users
-     *  by username (Flowable taskAssignee), so pass 'username' there; the default
-     *  'id' suits generic id-based bindings. */
+    /** Which user field to use as the option value. */
     valueKey?: 'id' | 'username';
   }>(),
   {

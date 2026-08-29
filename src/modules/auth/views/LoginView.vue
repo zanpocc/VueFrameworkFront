@@ -131,17 +131,17 @@ async function submit() {
   min-height: 100vh;
   padding: 48px clamp(32px, 6vw, 92px);
   overflow: hidden;
-  color: #fff;
+  color: var(--qf-color-on-primary);
   background:
-    radial-gradient(circle at 85% 14%, rgb(96 165 250 / 32%) 0, transparent 28%),
-    linear-gradient(145deg, #0f2d63 0%, #153d82 52%, #1d4ed8 100%);
+    radial-gradient(circle at 85% 14%, var(--qf-color-brand-highlight) 0, transparent 28%),
+    var(--qf-color-login-gradient);
 }
 
 .login-view__aside::before,
 .login-view__aside::after {
   position: absolute;
-  border: 1px solid rgb(255 255 255 / 12%);
-  border-radius: 50%;
+  border: 1px solid var(--qf-color-brand-outline);
+  border-radius: var(--qf-border-radius-round);
   content: '';
 }
 
@@ -157,7 +157,7 @@ async function submit() {
   bottom: 70px;
   width: 160px;
   height: 160px;
-  background: rgb(255 255 255 / 5%);
+  background: var(--qf-color-brand-wash);
 }
 
 .login-view__brand,
@@ -179,10 +179,10 @@ async function submit() {
   justify-content: center;
   width: 38px;
   height: 38px;
-  color: #1d4ed8;
-  background: #fff;
-  border-radius: 11px;
-  box-shadow: 0 10px 22px rgb(15 23 42 / 20%);
+  color: var(--qf-color-primary-strong);
+  background: var(--qf-color-on-primary);
+  border-radius: var(--qf-border-radius-lg);
+  box-shadow: var(--qf-shadow-login-brand);
   font-size: 21px;
   font-weight: 800;
 }
@@ -197,7 +197,7 @@ async function submit() {
 }
 
 .login-view__brand small {
-  color: rgb(255 255 255 / 65%);
+  color: var(--qf-color-on-brand-dim);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -218,7 +218,7 @@ async function submit() {
 }
 
 .login-view__eyebrow {
-  color: rgb(191 219 254 / 82%);
+  color: var(--qf-color-on-brand-label);
 }
 
 .login-view__message h2 {
@@ -233,13 +233,13 @@ async function submit() {
 .login-view__message p {
   max-width: 330px;
   margin: 0;
-  color: rgb(219 234 254 / 76%);
+  color: var(--qf-color-on-brand-soft);
   font-size: 14px;
   line-height: 1.8;
 }
 
 .login-view__footer {
-  color: rgb(219 234 254 / 62%);
+  color: var(--qf-color-on-brand-muted);
   font-size: 12px;
 }
 
@@ -283,7 +283,7 @@ async function submit() {
   width: 100%;
   height: 38px;
   margin-top: 4px;
-  border-radius: 6px;
+  border-radius: var(--qf-border-radius);
 }
 
 .login-panel__copyright {

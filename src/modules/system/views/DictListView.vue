@@ -1,11 +1,6 @@
 <template>
-  <section class="page">
-    <header class="page__header">
-      <div>
-        <h1>字典管理</h1>
-        <p>维护字典类型和字典项，供前端通用选项复用。</p>
-      </div>
-    </header>
+  <QfPageShell>
+    <QfPageHeader title="字典管理" description="维护字典类型和字典项，供前端通用选项复用。" />
 
     <QfSearchPanel @search="searchDicts" @reset="resetSearch">
       <el-form-item label="类型">
@@ -28,13 +23,23 @@
       </el-form-item>
       <template #more>
         <el-form-item label="类型状态">
-          <el-select v-model="typeQuery.status" clearable placeholder="请选择" class="dict-page__filter">
+          <el-select
+            v-model="typeQuery.status"
+            clearable
+            placeholder="请选择"
+            class="dict-page__filter"
+          >
             <el-option label="启用" value="ENABLED" />
             <el-option label="禁用" value="DISABLED" />
           </el-select>
         </el-form-item>
         <el-form-item label="字典项状态">
-          <el-select v-model="itemQuery.status" clearable placeholder="请选择" class="dict-page__filter">
+          <el-select
+            v-model="itemQuery.status"
+            clearable
+            placeholder="请选择"
+            class="dict-page__filter"
+          >
             <el-option label="启用" value="ENABLED" />
             <el-option label="禁用" value="DISABLED" />
           </el-select>
@@ -45,7 +50,12 @@
     <div class="dict-page__tables">
       <QfTablePanel title="字典类型" description="选择类型后维护右侧字典项">
         <template #actions>
-          <QfPermissionButton code="system:dict:update" type="primary" :icon="Plus" @click="openTypeCreate">
+          <QfPermissionButton
+            code="system:dict:update"
+            type="primary"
+            :icon="Plus"
+            @click="openTypeCreate"
+          >
             新增类型
           </QfPermissionButton>
           <QfPermissionButton
@@ -205,7 +215,7 @@
         <el-input v-model="itemForm.remark" />
       </el-form-item>
     </QfFormDialog>
-  </section>
+  </QfPageShell>
 </template>
 
 <script setup lang="ts">
@@ -217,6 +227,8 @@ import { Delete, Edit, Plus } from '@element-plus/icons-vue';
 import {
   QfDataTable,
   QfFormDialog,
+  QfPageHeader,
+  QfPageShell,
   QfPermissionButton,
   QfSearchPanel,
   QfStatusTag,
@@ -473,13 +485,13 @@ async function deleteItem(row: DictItem) {
 
 <style scoped>
 .dict-page__filter {
-  width: 220px;
+  width: var(--qf-field-width-xl);
 }
 
 .dict-page__tables {
   display: grid;
   grid-template-columns: minmax(420px, 0.42fr) minmax(640px, 0.58fr);
-  gap: 16px;
+  gap: var(--qf-spacing-lg);
   align-items: start;
 }
 

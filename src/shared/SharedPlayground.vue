@@ -33,7 +33,7 @@
             v-model="(filters as Record<string, string>).keyword"
             placeholder="输入关键字"
             clearable
-            style="width: 220px"
+            class="qf-field--xl"
           />
           <el-button type="primary" @click="reload">查询</el-button>
           <el-button @click="reset">重置</el-button>
@@ -156,7 +156,7 @@ const fileId = ref<number | number[] | null>(null);
   padding: 16px;
   background: var(--el-fill-color-blank);
   border: 1px solid var(--el-border-color-lighter);
-  border-radius: 4px;
+  border-radius: var(--qf-border-radius-sm);
 }
 
 .playground__section h2 {

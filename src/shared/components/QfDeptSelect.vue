@@ -9,7 +9,7 @@
     :render-after-expand="false"
     node-key="id"
     :props="treeProps"
-    style="width: 100%"
+    class="qf-field--full"
     @update:model-value="emit('update:modelValue', $event)"
     @visible-change="onVisibleChange"
   />

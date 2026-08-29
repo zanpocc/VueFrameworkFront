@@ -1,8 +1,13 @@
 <template>
   <section class="qf-table-panel">
-    <div class="qf-table-panel__toolbar">
+    <div
+      v-if="title || description || $slots.title || $slots.actions"
+      class="qf-table-panel__toolbar"
+    >
       <div class="qf-table-panel__title">
-        <h2>{{ title }}</h2>
+        <h2 v-if="title || $slots.title">
+          <slot name="title">{{ title }}</slot>
+        </h2>
         <p v-if="description">{{ description }}</p>
       </div>
       <div v-if="$slots.actions" class="qf-table-panel__actions">
@@ -15,7 +20,7 @@
 
 <script setup lang="ts">
 defineProps<{
-  title: string;
+  title?: string;
   description?: string;
 }>();
 </script>
@@ -29,16 +34,16 @@ defineProps<{
   background: var(--qf-color-bg-surface);
   border: 1px solid var(--qf-color-border-soft);
   border-radius: var(--qf-border-radius);
-  box-shadow: 0 1px 2px rgb(15 23 42 / 3%);
+  box-shadow: var(--qf-shadow-panel);
 }
 
 .qf-table-panel__toolbar {
   display: flex;
-  gap: 16px;
+  gap: var(--qf-spacing-lg);
   align-items: center;
   justify-content: space-between;
   min-height: 58px;
-  padding: 14px 16px 12px;
+  padding: var(--qf-spacing-md) var(--qf-card-padding) var(--qf-spacing-sm);
   border-bottom: 1px solid var(--qf-color-border-soft);
 }
 
@@ -50,7 +55,7 @@ defineProps<{
   margin: 0;
   overflow: hidden;
   color: var(--qf-color-text-primary);
-  font-size: 15px;
+  font-size: var(--qf-font-size-subtitle);
   font-weight: 700;
   line-height: 1.4;
   text-overflow: ellipsis;
@@ -58,10 +63,10 @@ defineProps<{
 }
 
 .qf-table-panel__title p {
-  margin: 2px 0 0;
+  margin: var(--qf-spacing-2xs) 0 0;
   overflow: hidden;
   color: var(--qf-color-text-secondary);
-  font-size: 12px;
+  font-size: var(--qf-font-size-caption);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -70,7 +75,7 @@ defineProps<{
   display: flex;
   flex-shrink: 0;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--qf-spacing-sm);
   align-items: center;
   justify-content: flex-end;
 }
@@ -80,16 +85,16 @@ defineProps<{
 }
 
 .qf-table-panel :deep(.qf-data-table__scroll) {
-  padding: 0 16px;
+  padding: 0 var(--qf-card-padding);
 }
 
 .qf-table-panel :deep(.qf-data-table__pagination) {
-  padding: 12px 16px 14px;
+  padding: var(--qf-spacing-md) var(--qf-card-padding) var(--qf-spacing-lg);
   border-top: 1px solid var(--qf-color-border-soft);
 }
 
 .qf-table-panel :deep(.el-table) {
-  border-radius: 4px;
+  border-radius: var(--qf-border-radius-sm);
 }
 
 @media (width <= 640px) {

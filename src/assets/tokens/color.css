@@ -1,15 +1,32 @@
 :root {
   --qf-color-primary: #2563eb;
   --qf-color-primary-soft: #eff6ff;
+  --qf-color-primary-strong: #1d4ed8;
+  --qf-color-on-primary: #fff;
+  --qf-color-brand-gradient: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);
+  --qf-color-login-gradient: linear-gradient(145deg, #0f2d63 0%, #153d82 52%, #1d4ed8 100%);
+  --qf-color-scrim: rgb(15 23 42 / 45%);
+  --qf-color-brand-highlight: rgb(96 165 250 / 32%);
+  --qf-color-brand-outline: rgb(255 255 255 / 12%);
+  --qf-color-brand-wash: rgb(255 255 255 / 5%);
+  --qf-color-on-brand-dim: rgb(255 255 255 / 65%);
+  --qf-color-on-brand-soft: rgb(219 234 254 / 76%);
+  --qf-color-on-brand-muted: rgb(219 234 254 / 62%);
+  --qf-color-on-brand-label: rgb(191 219 254 / 82%);
   --qf-color-text-primary: #1f2937;
   --qf-color-text-secondary: #64748b;
   --qf-color-text-placeholder: #94a3b8;
   --qf-color-bg-page: #f5f7fa;
   --qf-color-bg-surface: #fff;
   --qf-color-bg-muted: #f8fafc;
+  --qf-color-bg-sidebar: #fff;
+  --qf-color-sidebar-text: #64748b;
+  --qf-color-sidebar-active: #eff6ff;
+  --qf-color-sidebar-active-text: #2563eb;
   --qf-color-border: #e5e7eb;
   --qf-color-border-soft: #eef2f6;
   --qf-color-bg-login: #eff4fb;
+  --qf-color-dashboard-welcome: linear-gradient(135deg, #eef5ff 0%, #fff 52%, #f8fafc 100%);
 }
 
 /* 暗色覆盖: <html class="dark"> 同时由 theme store 与 Element Plus 暗色机制切换,
@@ -17,13 +34,22 @@
 html.dark {
   --qf-color-primary: #60a5fa;
   --qf-color-primary-soft: rgb(96 165 250 / 14%);
+  --qf-color-primary-strong: #3b82f6;
+  --qf-color-brand-gradient: linear-gradient(135deg, #2563eb 0%, #93c5fd 100%);
+  --qf-color-login-gradient: linear-gradient(145deg, #0b1220 0%, #10234a 52%, #1d4ed8 100%);
+  --qf-color-scrim: rgb(2 6 23 / 60%);
   --qf-color-text-primary: #e5e7eb;
   --qf-color-text-secondary: #94a3b8;
   --qf-color-text-placeholder: #64748b;
   --qf-color-bg-page: #0f172a;
   --qf-color-bg-surface: #1e293b;
   --qf-color-bg-muted: #172235;
+  --qf-color-bg-sidebar: #111c2e;
+  --qf-color-sidebar-text: #94a3b8;
+  --qf-color-sidebar-active: rgb(96 165 250 / 14%);
+  --qf-color-sidebar-active-text: #93c5fd;
   --qf-color-border: #334155;
   --qf-color-border-soft: #26364d;
   --qf-color-bg-login: #0b1220;
+  --qf-color-dashboard-welcome: linear-gradient(135deg, #172a4a 0%, #1e293b 58%, #172235 100%);
 }

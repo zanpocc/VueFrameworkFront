@@ -143,7 +143,7 @@ onUnmounted(() => {
 <style scoped>
 .app-tab-nav {
   display: flex;
-  gap: 4px;
+  gap: var(--qf-spacing-xs);
   height: var(--qf-layout-tabs-height);
   padding: 6px 20px;
   overflow: auto hidden;
@@ -162,7 +162,7 @@ onUnmounted(() => {
   color: var(--qf-color-text-secondary);
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: var(--qf-border-radius);
   font-size: 13px;
   white-space: nowrap;
   cursor: pointer;
@@ -197,12 +197,12 @@ onUnmounted(() => {
   font-size: 12px;
   line-height: 1;
   color: var(--qf-color-text-secondary);
-  border-radius: 50%;
+  border-radius: var(--qf-border-radius-round);
   transition: all 0.15s;
 }
 
 .app-tab-nav__close:hover {
-  color: #fff;
+  color: var(--qf-color-on-primary);
   background: var(--el-color-danger);
 }
 
@@ -213,8 +213,8 @@ onUnmounted(() => {
   padding: 4px 0;
   background: var(--qf-color-bg-surface);
   border: 1px solid var(--qf-color-border-soft);
-  border-radius: 8px;
-  box-shadow: 0 10px 28px rgb(15 23 42 / 14%);
+  border-radius: var(--qf-border-radius-lg);
+  box-shadow: var(--qf-shadow-popover);
 }
 
 .app-tab-nav__context-item {

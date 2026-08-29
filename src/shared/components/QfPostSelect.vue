@@ -5,16 +5,11 @@
     :disabled="disabled"
     :multiple="multiple"
     filterable
-    style="width: 100%"
+    class="qf-field--full"
     @update:model-value="emit('update:modelValue', $event)"
     @visible-change="onVisibleChange"
   >
-    <el-option
-      v-for="post in postList"
-      :key="post.id"
-      :label="post.postName"
-      :value="post.id"
-    />
+    <el-option v-for="post in postList" :key="post.id" :label="post.postName" :value="post.id" />
   </el-select>
 </template>
 

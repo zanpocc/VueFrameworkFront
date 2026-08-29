@@ -1,41 +1,45 @@
 <template>
-  <section class="page">
-    <header class="page__header">
-      <div>
-        <h1>{{ t('iam.menu.title') }}</h1>
-        <p>{{ t('iam.menu.subtitle') }}</p>
-      </div>
-      <QfPermissionButton code="system:menu:view" type="primary" @click="openCreate">
-        {{ t('iam.menu.create') }}
-      </QfPermissionButton>
-    </header>
+  <QfPageShell>
+    <QfPageHeader :title="t('iam.menu.title')" :description="t('iam.menu.subtitle')">
+      <template #actions>
+        <QfPermissionButton code="system:menu:view" type="primary" @click="openCreate">
+          {{ t('iam.menu.create') }}
+        </QfPermissionButton>
+      </template>
+    </QfPageHeader>
 
-    <el-table v-loading="loading" :data="menuTree" border default-expand-all row-key="id">
-      <el-table-column prop="title" :label="t('iam.menu.columns.name')" min-width="160" />
-      <el-table-column prop="menuType" :label="t('iam.menu.columns.type')" width="100" />
-      <el-table-column prop="routePath" :label="t('iam.menu.columns.route')" min-width="160" />
-      <el-table-column prop="component" :label="t('iam.menu.columns.component')" min-width="180" />
-      <el-table-column
-        prop="permissionCode"
-        :label="t('iam.menu.columns.permissionCode')"
-        min-width="180"
-      />
-      <el-table-column prop="status" :label="t('iam.menu.columns.status')" width="110">
-        <template #default="{ row }">
-          <QfStatusTag :status="row.status" />
-        </template>
-      </el-table-column>
-      <el-table-column :label="t('common.button.more')" width="160">
-        <template #default="{ row }">
-          <QfPermissionButton code="system:menu:view" text type="primary" @click="openEdit(row)">
-            {{ t('common.button.edit') }}
-          </QfPermissionButton>
-          <QfPermissionButton code="system:menu:view" text type="danger" @click="deleteMenu(row)">
-            {{ t('common.button.delete') }}
-          </QfPermissionButton>
-        </template>
-      </el-table-column>
-    </el-table>
+    <QfTablePanel title="菜单列表" description="维护目录、菜单和按钮权限节点。">
+      <el-table v-loading="loading" :data="menuTree" border default-expand-all row-key="id">
+        <el-table-column prop="title" :label="t('iam.menu.columns.name')" min-width="160" />
+        <el-table-column prop="menuType" :label="t('iam.menu.columns.type')" width="100" />
+        <el-table-column prop="routePath" :label="t('iam.menu.columns.route')" min-width="160" />
+        <el-table-column
+          prop="component"
+          :label="t('iam.menu.columns.component')"
+          min-width="180"
+        />
+        <el-table-column
+          prop="permissionCode"
+          :label="t('iam.menu.columns.permissionCode')"
+          min-width="180"
+        />
+        <el-table-column prop="status" :label="t('iam.menu.columns.status')" width="110">
+          <template #default="{ row }">
+            <QfStatusTag :status="row.status" />
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('common.button.more')" width="160">
+          <template #default="{ row }">
+            <QfPermissionButton code="system:menu:view" text type="primary" @click="openEdit(row)">
+              {{ t('common.button.edit') }}
+            </QfPermissionButton>
+            <QfPermissionButton code="system:menu:view" text type="danger" @click="deleteMenu(row)">
+              {{ t('common.button.delete') }}
+            </QfPermissionButton>
+          </template>
+        </el-table-column>
+      </el-table>
+    </QfTablePanel>
 
     <QfFormDialog
       v-model="dialogVisible"
@@ -95,7 +99,7 @@
         <el-switch v-model="form.visible" />
       </el-form-item>
     </QfFormDialog>
-  </section>
+  </QfPageShell>
 </template>
 
 <script setup lang="ts">
@@ -105,7 +109,15 @@ import { useI18n } from 'vue-i18n';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import type { FormRules } from 'element-plus';
 import { iamApi, type MenuCommand, type SysMenu } from '@/api/iam';
-import { QfFormDialog, QfIconSelect, QfPermissionButton, QfStatusTag } from '@/shared';
+import {
+  QfFormDialog,
+  QfIconSelect,
+  QfPageHeader,
+  QfPageShell,
+  QfPermissionButton,
+  QfStatusTag,
+  QfTablePanel,
+} from '@/shared';
 import { buildTree } from '@/shared/utils/tree';
 
 const { t } = useI18n();
@@ -130,7 +142,9 @@ const form = reactive<MenuCommand>({
 
 const rules = computed<FormRules<MenuCommand>>(() => ({
   title: [{ required: true, message: t('iam.menu.validation.titleRequired'), trigger: 'blur' }],
-  menuType: [{ required: true, message: t('iam.menu.validation.menuTypeRequired'), trigger: 'change' }],
+  menuType: [
+    { required: true, message: t('iam.menu.validation.menuTypeRequired'), trigger: 'change' },
+  ],
   routeName: [
     { required: true, message: t('iam.menu.validation.routeNameRequired'), trigger: 'blur' },
   ],

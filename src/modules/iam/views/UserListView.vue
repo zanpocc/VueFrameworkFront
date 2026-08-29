@@ -1,5 +1,5 @@
 <template>
-  <div class="user-page">
+  <QfPageShell class="user-page">
     <!-- 左侧部门树 -->
     <aside class="user-page__dept-sidebar">
       <div class="user-page__dept-header">
@@ -33,17 +33,14 @@
 
     <!-- 右侧用户列表 -->
     <section class="user-page__content">
-      <header class="user-page__header">
-        <div>
-          <h1>{{ t('iam.user.title') }}</h1>
-          <p>
-            {{ t('iam.user.subtitle') }}
-            <span v-if="selectedDeptId !== null">
-              · {{ t('iam.user.currentDept', { name: selectedDeptName }) }}
-            </span>
-          </p>
-        </div>
-      </header>
+      <QfPageHeader :title="t('iam.user.title')">
+        <template #description>
+          {{ t('iam.user.subtitle') }}
+          <span v-if="selectedDeptId !== null">
+            · {{ t('iam.user.currentDept', { name: selectedDeptName }) }}
+          </span>
+        </template>
+      </QfPageHeader>
 
       <QfSearchPanel @search="searchUsers" @reset="resetUserSearch">
         <el-form-item :label="t('iam.user.form.keyword')">
@@ -167,7 +164,7 @@
         </el-descriptions>
       </QfDetailDrawer>
     </section>
-  </div>
+  </QfPageShell>
 </template>
 
 <script setup lang="ts">
@@ -185,6 +182,8 @@ import {
   QfDeptSelect,
   QfRoleSelect,
   QfFormDialog,
+  QfPageHeader,
+  QfPageShell,
   QfDetailDrawer,
   QfSearchPanel,
   QfTablePanel,
@@ -214,7 +213,9 @@ const form = reactive<UserCommand>({
 
 // rules 走 computed 以响应 locale 切换；validator 内同样调 t() 拿当前 locale 文案。
 const rules = computed<FormRules<UserCommand>>(() => ({
-  username: [{ required: true, message: t('iam.user.validation.usernameRequired'), trigger: 'blur' }],
+  username: [
+    { required: true, message: t('iam.user.validation.usernameRequired'), trigger: 'blur' },
+  ],
   password: [
     {
       validator: (_rule, value, callback) => {
@@ -231,7 +232,9 @@ const rules = computed<FormRules<UserCommand>>(() => ({
       trigger: 'blur',
     },
   ],
-  nickname: [{ required: true, message: t('iam.user.validation.nicknameRequired'), trigger: 'blur' }],
+  nickname: [
+    { required: true, message: t('iam.user.validation.nicknameRequired'), trigger: 'blur' },
+  ],
   deptId: [{ required: true, message: t('iam.user.validation.deptRequired'), trigger: 'change' }],
   roleIds: [
     {
@@ -306,8 +309,16 @@ async function resetUserSearch() {
 
 function getActions(row: SysUser): QfActionItem[] {
   return [
-    { label: t('common.button.edit'), permission: 'system:user:update', handler: () => openEdit(row) },
-    { label: t('common.button.detail'), permission: 'system:user:view', handler: () => openDetail(row) },
+    {
+      label: t('common.button.edit'),
+      permission: 'system:user:update',
+      handler: () => openEdit(row),
+    },
+    {
+      label: t('common.button.detail'),
+      permission: 'system:user:view',
+      handler: () => openDetail(row),
+    },
     {
       label: t('common.button.resetPassword'),
       permission: 'system:user:update',
@@ -438,7 +449,7 @@ loadOptions();
   min-height: 0;
   background: var(--qf-color-bg-surface);
   border: 1px solid var(--el-border-color-lighter);
-  border-radius: 6px;
+  border-radius: var(--qf-border-radius);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -464,7 +475,7 @@ loadOptions();
 
 .user-page__dept-tree :deep(.el-tree-node__content) {
   height: 30px;
-  border-radius: 4px;
+  border-radius: var(--qf-border-radius-sm);
 }
 
 .user-page__content {
@@ -475,27 +486,8 @@ loadOptions();
   min-width: 0;
 }
 
-.user-page__header {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.user-page__header h1 {
-  margin: 0 0 4px;
-  font-size: 22px;
-  line-height: 1.25;
-}
-
-.user-page__header p {
-  margin: 0;
-  color: var(--qf-color-text-secondary);
-  font-size: 13px;
-}
-
 .user-page__filter {
-  width: 220px;
+  width: var(--qf-field-width-xl);
 }
 
 @media (width <= 900px) {
@@ -511,11 +503,6 @@ loadOptions();
 }
 
 @media (width <= 640px) {
-  .user-page__header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
   .user-page__filter {
     width: 100%;
   }

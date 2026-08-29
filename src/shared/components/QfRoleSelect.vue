@@ -5,7 +5,7 @@
     :disabled="disabled"
     :multiple="multiple"
     filterable
-    style="width: 100%"
+    class="qf-field--full"
     @update:model-value="emit('update:modelValue', $event)"
     @visible-change="onVisibleChange"
   >

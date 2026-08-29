@@ -1,5 +1,7 @@
 :root {
+  --qf-border-radius-sm: 4px;
   --qf-border-radius: 6px;
-  --qf-border-radius-lg: 10px;
+  --qf-border-radius-lg: 8px;
+  --qf-border-radius-round: 999px;
   --qf-border-color: var(--qf-color-border);
 }

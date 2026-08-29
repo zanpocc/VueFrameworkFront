@@ -9,15 +9,6 @@ import DictListView from '@/modules/system/views/DictListView.vue';
 import LogListView from '@/modules/system/views/LogListView.vue';
 import NoticeListView from '@/modules/system/views/NoticeListView.vue';
 import TaskListView from '@/modules/async-task/views/TaskListView.vue';
-import WorkflowCenterView from '@/modules/workflow/views/WorkflowCenterView.vue';
-import FormListView from '@/modules/workflow/views/FormListView.vue';
-import DefinitionListView from '@/modules/workflow/views/DefinitionListView.vue';
-import TodoTaskListView from '@/modules/workflow/views/TodoTaskListView.vue';
-import DoneTaskListView from '@/modules/workflow/views/DoneTaskListView.vue';
-import InstanceListView from '@/modules/workflow/views/InstanceListView.vue';
-import CCListView from '@/modules/workflow/views/CCListView.vue';
-import DefinitionEditorView from '@/modules/workflow/views/DefinitionEditorView.vue';
-import DefinitionDesignerView from '@/modules/workflow/views/DefinitionDesignerView.vue';
 import RepairOrderListView from '@/modules/demo/views/RepairOrderListView.vue';
 import FileListView from '@/modules/file/views/FileListView.vue';
 import UserListView from '@/modules/iam/views/UserListView.vue';
@@ -41,15 +32,6 @@ const componentMap: Record<string, RouteRecordRaw['component']> = {
   'system/LogListView': LogListView,
   'system/NoticeListView': NoticeListView,
   'system/TaskListView': TaskListView,
-  'workflow/WorkflowCenterView': WorkflowCenterView,
-  'workflow/FormListView': FormListView,
-  'workflow/DefinitionListView': DefinitionListView,
-  'workflow/TodoTaskListView': TodoTaskListView,
-  'workflow/DoneTaskListView': DoneTaskListView,
-  'workflow/InstanceListView': InstanceListView,
-  'workflow/CCListView': CCListView,
-  'workflow/DefinitionEditorView': DefinitionEditorView,
-  'workflow/DefinitionDesignerView': DefinitionDesignerView,
   'demo/RepairOrderListView': RepairOrderListView,
   'file/FileListView': FileListView,
   'iam/UserListView': UserListView,
@@ -97,24 +79,6 @@ export const routes: RouteRecordRaw[] = [
         meta: {
           title: '工作台',
           permissions: ['dashboard:view'],
-        },
-      },
-      {
-        path: 'workflow/definition/:id/editor',
-        name: 'definition-editor',
-        component: DefinitionEditorView,
-        meta: {
-          title: '流程节点编辑',
-          permissions: ['workflow:definition:update'],
-        },
-      },
-      {
-        path: 'workflow/definition/:id/designer',
-        name: 'definition-designer',
-        component: DefinitionDesignerView,
-        meta: {
-          title: '流程画板设计',
-          permissions: ['workflow:definition:update'],
         },
       },
       // Dev-only Demo CRUD page — showcases the full shared layer

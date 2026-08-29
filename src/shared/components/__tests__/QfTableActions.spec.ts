@@ -51,20 +51,20 @@ describe('QfTableActions', () => {
 
   it('filters actions by permissions', () => {
     const store = useAuthStore();
-    store.permissions = ['workflow:form:view'];
+    store.permissions = ['system:user:view'];
 
     const wrapper = mount(QfTableActions, {
       props: {
         actions: [
-          { label: '预览', permission: 'workflow:form:view', handler: vi.fn() },
-          { label: '删除', permission: 'workflow:form:update', handler: vi.fn() },
+          { label: '查看', permission: 'system:user:view', handler: vi.fn() },
+          { label: '删除', permission: 'system:user:update', handler: vi.fn() },
         ],
         maxInline: 2,
       },
       global: { plugins: [ElementPlus] },
     });
 
-    expect(wrapper.text()).toContain('预览');
+    expect(wrapper.text()).toContain('查看');
     expect(wrapper.text()).not.toContain('删除');
   });
 

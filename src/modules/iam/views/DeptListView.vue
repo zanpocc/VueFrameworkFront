@@ -1,58 +1,58 @@
 <template>
-  <section class="page">
-    <header class="page__header">
-      <div>
-        <h1>部门管理</h1>
-        <p>维护组织树、排序和部门启用状态。</p>
-      </div>
-      <QfPermissionButton code="system:dept:update" type="primary" @click="dialog.openCreate()">
-        新增部门
-      </QfPermissionButton>
-    </header>
+  <QfPageShell>
+    <QfPageHeader title="部门管理" description="维护组织树、排序和部门启用状态。">
+      <template #actions>
+        <QfPermissionButton code="system:dept:update" type="primary" @click="dialog.openCreate()">
+          新增部门
+        </QfPermissionButton>
+      </template>
+    </QfPageHeader>
 
-    <el-table
-      v-loading="table.loading.value"
-      :data="deptTree"
-      border
-      default-expand-all
-      row-key="id"
-    >
-      <el-table-column prop="deptName" label="部门名称" min-width="180" />
-      <el-table-column prop="parentId" label="上级 ID" width="110" />
-      <el-table-column prop="sortOrder" label="排序" width="100" />
-      <el-table-column prop="status" label="状态" width="120">
-        <template #default="{ row }">
-          <QfStatusTag :status="row.status" />
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="180">
-        <template #default="{ row }">
-          <QfPermissionButton
-            code="system:dept:update"
-            text
-            type="primary"
-            @click="
-              dialog.openEdit(row, {
-                parentId: row.parentId,
-                deptName: row.deptName,
-                sortOrder: row.sortOrder,
-                status: row.status,
-              })
-            "
-          >
-            编辑
-          </QfPermissionButton>
-          <QfPermissionButton
-            code="system:dept:update"
-            text
-            type="danger"
-            @click="handleDelete(row)"
-          >
-            删除
-          </QfPermissionButton>
-        </template>
-      </el-table-column>
-    </el-table>
+    <QfTablePanel title="部门列表" description="按组织层级维护部门节点。">
+      <el-table
+        v-loading="table.loading.value"
+        :data="deptTree"
+        border
+        default-expand-all
+        row-key="id"
+      >
+        <el-table-column prop="deptName" label="部门名称" min-width="180" />
+        <el-table-column prop="parentId" label="上级 ID" width="110" />
+        <el-table-column prop="sortOrder" label="排序" width="100" />
+        <el-table-column prop="status" label="状态" width="120">
+          <template #default="{ row }">
+            <QfStatusTag :status="row.status" />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="180">
+          <template #default="{ row }">
+            <QfPermissionButton
+              code="system:dept:update"
+              text
+              type="primary"
+              @click="
+                dialog.openEdit(row, {
+                  parentId: row.parentId,
+                  deptName: row.deptName,
+                  sortOrder: row.sortOrder,
+                  status: row.status,
+                })
+              "
+            >
+              编辑
+            </QfPermissionButton>
+            <QfPermissionButton
+              code="system:dept:update"
+              text
+              type="danger"
+              @click="handleDelete(row)"
+            >
+              删除
+            </QfPermissionButton>
+          </template>
+        </el-table-column>
+      </el-table>
+    </QfTablePanel>
 
     <QfFormDialog
       v-model="dialog.visible.value"
@@ -90,14 +90,21 @@
         </el-select>
       </el-form-item>
     </QfFormDialog>
-  </section>
+  </QfPageShell>
 </template>
 
 <script setup lang="ts">
 defineOptions({ name: 'DeptList' });
 import { computed } from 'vue';
 import type { FormRules } from 'element-plus';
-import { QfFormDialog, QfStatusTag, QfPermissionButton } from '@/shared';
+import {
+  QfFormDialog,
+  QfPageHeader,
+  QfPageShell,
+  QfTablePanel,
+  QfStatusTag,
+  QfPermissionButton,
+} from '@/shared';
 import { useTable, useDialogForm, useConfirmDelete } from '@/shared';
 import { buildTree } from '@/shared/utils/tree';
 import { iamApi, type DeptCommand, type SysDept } from '@/api/iam';

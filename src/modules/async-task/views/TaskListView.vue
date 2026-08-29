@@ -1,50 +1,50 @@
 <template>
-  <section class="page">
-    <header class="page__header">
-      <div>
-        <h1>异步任务</h1>
-        <p>查看本地消息、任务状态、执行日志，并处理失败任务。</p>
-      </div>
-      <div class="task-actions">
+  <QfPageShell>
+    <QfPageHeader title="异步任务" description="查看本地消息、任务状态、执行日志，并处理失败任务。">
+      <template #actions>
         <QfPermissionButton code="system:task:update" @click="dispatchTasks">
           执行待处理
         </QfPermissionButton>
         <QfPermissionButton code="system:task:update" type="primary" @click="openCreate">
           新建任务
         </QfPermissionButton>
-      </div>
-    </header>
+      </template>
+    </QfPageHeader>
 
     <el-tabs v-model="activeTab">
       <el-tab-pane label="任务" name="tasks">
-        <QfDataTable
-          :columns="taskColumns"
-          :data="taskTable.allRows.value"
-          :loading="taskTable.loading.value"
-          :page-size="20"
-        >
-          <template #status="{ row }">
-            <QfStatusTag :status="row.status" :mapping="statusMapping" />
-          </template>
-          <template #retryInfo="{ row }"> {{ row.retryCount }}/{{ row.maxRetries }} </template>
-          <template #actions="{ row }">
-            <QfTableActions :actions="getTaskActions(row as AsyncTask)" :max-inline="2" />
-          </template>
-        </QfDataTable>
+        <QfTablePanel title="任务列表">
+          <QfDataTable
+            :columns="taskColumns"
+            :data="taskTable.allRows.value"
+            :loading="taskTable.loading.value"
+            :page-size="20"
+          >
+            <template #status="{ row }">
+              <QfStatusTag :status="row.status" :mapping="statusMapping" />
+            </template>
+            <template #retryInfo="{ row }"> {{ row.retryCount }}/{{ row.maxRetries }} </template>
+            <template #actions="{ row }">
+              <QfTableActions :actions="getTaskActions(row as AsyncTask)" :max-inline="2" />
+            </template>
+          </QfDataTable>
+        </QfTablePanel>
       </el-tab-pane>
 
       <el-tab-pane label="本地消息" name="outbox">
-        <QfDataTable
-          :columns="outboxColumns"
-          :data="outboxTable.allRows.value"
-          :loading="outboxTable.loading.value"
-          :page-size="20"
-          :actions-width="140"
-        >
-          <template #actions="{ row }">
-            <QfTableActions :actions="getOutboxActions(row as OutboxMessage)" />
-          </template>
-        </QfDataTable>
+        <QfTablePanel title="本地消息列表">
+          <QfDataTable
+            :columns="outboxColumns"
+            :data="outboxTable.allRows.value"
+            :loading="outboxTable.loading.value"
+            :page-size="20"
+            :actions-width="140"
+          >
+            <template #actions="{ row }">
+              <QfTableActions :actions="getOutboxActions(row as OutboxMessage)" />
+            </template>
+          </QfDataTable>
+        </QfTablePanel>
       </el-tab-pane>
     </el-tabs>
 
@@ -138,7 +138,7 @@
     >
       <QfDataTable :columns="logColumns" :data="taskLogs" :loading="loadingLogs" :page-size="10" />
     </QfDetailDrawer>
-  </section>
+  </QfPageShell>
 </template>
 
 <script setup lang="ts">
@@ -150,9 +150,12 @@ import {
   QfDataTable,
   QfDetailDrawer,
   QfFormDialog,
+  QfPageHeader,
+  QfPageShell,
   QfPermissionButton,
   QfStatusTag,
   QfTableActions,
+  QfTablePanel,
 } from '@/shared';
 import type { QfTableColumn, QfActionItem } from '@/shared';
 import { useTable } from '@/shared';
@@ -413,26 +416,20 @@ async function promptComment(title: string, message: string) {
 </script>
 
 <style scoped>
-.task-actions {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-}
-
 .detail-title {
-  margin: 16px 0 8px;
-  font-size: 14px;
+  margin: var(--qf-spacing-lg) 0 var(--qf-spacing-sm);
+  font-size: var(--qf-font-size-body);
   font-weight: 600;
 }
 
 .json-block {
   max-height: 280px;
-  padding: 12px;
+  padding: var(--qf-spacing-md);
   overflow: auto;
-  color: #1f2937;
+  color: var(--qf-color-text-primary);
   white-space: pre-wrap;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
+  background: var(--qf-color-bg-muted);
+  border: 1px solid var(--qf-color-border);
+  border-radius: var(--qf-border-radius);
 }
 </style>

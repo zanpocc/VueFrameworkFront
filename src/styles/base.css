@@ -8,7 +8,7 @@
   --el-color-primary-dark-2: #1d4ed8;
   --el-border-radius-base: var(--qf-border-radius);
   --el-border-radius-small: 5px;
-  --el-border-radius-round: 999px;
+  --el-border-radius-round: var(--qf-border-radius-round);
   --el-bg-color: var(--qf-color-bg-surface);
   --el-bg-color-page: var(--qf-color-bg-page);
   --el-bg-color-overlay: var(--qf-color-bg-surface);
@@ -114,7 +114,7 @@ select {
   background: var(--qf-color-bg-surface);
   border: 1px solid var(--qf-border-color);
   border-radius: var(--qf-border-radius);
-  box-shadow: 0 1px 2px rgb(15 23 42 / 3%);
+  box-shadow: var(--qf-shadow-panel);
 }
 
 .page__toolbar {
@@ -123,6 +123,35 @@ select {
   gap: var(--qf-spacing-sm);
   align-items: center;
   justify-content: space-between;
+}
+
+/* 业务页面的控件宽度只通过语义 class 选择，避免模板内出现散落的 style="width"。 */
+.qf-field--sm {
+  width: var(--qf-field-width-sm);
+}
+
+.qf-field--md {
+  width: var(--qf-field-width-md);
+}
+
+.qf-field--lg {
+  width: var(--qf-field-width-lg);
+}
+
+.qf-field--xl {
+  width: var(--qf-field-width-xl);
+}
+
+.qf-field--full {
+  width: 100%;
+}
+
+.qf-status-tag--offset {
+  margin-left: var(--qf-spacing-sm);
+}
+
+.task-action__loading {
+  min-height: 200px;
 }
 
 /* Element Plus 统一层：保持成熟后台常见的 34px 控件、轻边框和低阴影。 */

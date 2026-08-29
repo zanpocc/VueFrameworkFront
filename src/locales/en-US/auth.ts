@@ -4,7 +4,7 @@ export default {
     welcome: 'Welcome back',
     subtitle: 'Sign in to continue to the platform console',
     tagline: 'Make enterprise operations clear.',
-    description: 'Authentication, permissions, tasks and workflows in one place.',
+    description: 'Authentication, permissions, tasks and platform tools in one place.',
     footer: 'Secure · Clear · Extensible',
     username: 'Username',
     password: 'Password',

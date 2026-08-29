@@ -1,120 +1,131 @@
 <template>
-  <section class="page">
-    <header class="page__header">
-      <div>
-        <h1>日志查询</h1>
-        <p>查看登录、操作、审计和异常日志。</p>
-      </div>
-    </header>
+  <QfPageShell>
+    <QfPageHeader title="日志查询" description="查看登录、操作、审计和异常日志。" />
 
     <el-tabs v-model="activeTab">
       <el-tab-pane label="登录日志" name="login">
-        <QfDataTable
-          :columns="loginColumns"
-          :data="loginTable.allRows.value"
-          :loading="loginTable.loading.value"
-          :page-size="20"
-        >
-          <template #filters="{ reload }">
-            <el-form-item label="用户">
-              <el-input v-model="loginTable.filters.username" clearable placeholder="用户名" />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="reload()"> 查询 </el-button>
-            </el-form-item>
-          </template>
-          <template #success="{ row }">
-            <QfStatusTag
-              :status="row.success ? 'SUCCESS' : 'FAILED'"
-              :label="row.success ? '成功' : '失败'"
-            />
-          </template>
-        </QfDataTable>
+        <QfTablePanel title="登录日志">
+          <QfDataTable
+            :columns="loginColumns"
+            :data="loginTable.allRows.value"
+            :loading="loginTable.loading.value"
+            :page-size="20"
+          >
+            <template #filters="{ reload }">
+              <el-form-item label="用户">
+                <el-input v-model="loginTable.filters.username" clearable placeholder="用户名" />
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="reload()"> 查询 </el-button>
+              </el-form-item>
+            </template>
+            <template #success="{ row }">
+              <QfStatusTag
+                :status="row.success ? 'SUCCESS' : 'FAILED'"
+                :label="row.success ? '成功' : '失败'"
+              />
+            </template>
+          </QfDataTable>
+        </QfTablePanel>
       </el-tab-pane>
 
       <el-tab-pane label="操作日志" name="operation">
-        <QfDataTable
-          :columns="operationColumns"
-          :data="operationTable.allRows.value"
-          :loading="operationTable.loading.value"
-          :page-size="20"
-        >
-          <template #filters="{ reload }">
-            <el-form-item label="用户">
-              <el-input v-model="operationTable.filters.username" clearable placeholder="用户名" />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="reload()"> 查询 </el-button>
-            </el-form-item>
-          </template>
-          <template #success="{ row }">
-            <QfStatusTag
-              :status="row.success ? 'SUCCESS' : 'FAILED'"
-              :label="row.success ? '成功' : '失败'"
-            />
-          </template>
-        </QfDataTable>
+        <QfTablePanel title="操作日志">
+          <QfDataTable
+            :columns="operationColumns"
+            :data="operationTable.allRows.value"
+            :loading="operationTable.loading.value"
+            :page-size="20"
+          >
+            <template #filters="{ reload }">
+              <el-form-item label="用户">
+                <el-input
+                  v-model="operationTable.filters.username"
+                  clearable
+                  placeholder="用户名"
+                />
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="reload()"> 查询 </el-button>
+              </el-form-item>
+            </template>
+            <template #success="{ row }">
+              <QfStatusTag
+                :status="row.success ? 'SUCCESS' : 'FAILED'"
+                :label="row.success ? '成功' : '失败'"
+              />
+            </template>
+          </QfDataTable>
+        </QfTablePanel>
       </el-tab-pane>
 
       <el-tab-pane label="审计日志" name="audit">
-        <QfDataTable
-          :columns="auditColumns"
-          :data="auditTable.allRows.value"
-          :loading="auditTable.loading.value"
-          :page-size="20"
-        >
-          <template #filters="{ reload }">
-            <el-form-item label="模块">
-              <el-input v-model="auditTable.filters.module" clearable placeholder="模块" />
-            </el-form-item>
-            <el-form-item label="用户">
-              <el-input v-model="auditTable.filters.username" clearable placeholder="用户名" />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="reload()"> 查询 </el-button>
-            </el-form-item>
-          </template>
-          <template #success="{ row }">
-            <QfStatusTag
-              :status="row.success ? 'SUCCESS' : 'FAILED'"
-              :label="row.success ? '成功' : '失败'"
-            />
-          </template>
-        </QfDataTable>
+        <QfTablePanel title="审计日志">
+          <QfDataTable
+            :columns="auditColumns"
+            :data="auditTable.allRows.value"
+            :loading="auditTable.loading.value"
+            :page-size="20"
+          >
+            <template #filters="{ reload }">
+              <el-form-item label="模块">
+                <el-input v-model="auditTable.filters.module" clearable placeholder="模块" />
+              </el-form-item>
+              <el-form-item label="用户">
+                <el-input v-model="auditTable.filters.username" clearable placeholder="用户名" />
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="reload()"> 查询 </el-button>
+              </el-form-item>
+            </template>
+            <template #success="{ row }">
+              <QfStatusTag
+                :status="row.success ? 'SUCCESS' : 'FAILED'"
+                :label="row.success ? '成功' : '失败'"
+              />
+            </template>
+          </QfDataTable>
+        </QfTablePanel>
       </el-tab-pane>
 
       <el-tab-pane label="异常日志" name="exception">
-        <QfDataTable
-          :columns="exceptionColumns"
-          :data="exceptionTable.allRows.value"
-          :loading="exceptionTable.loading.value"
-          :page-size="20"
-        >
-          <template #filters="{ reload }">
-            <el-form-item label="异常类">
-              <el-input
-                v-model="exceptionTable.filters.exceptionClass"
-                clearable
-                placeholder="异常类"
-              />
-            </el-form-item>
-            <el-form-item label="用户">
-              <el-input v-model="exceptionTable.filters.username" clearable placeholder="用户名" />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="reload()"> 查询 </el-button>
-            </el-form-item>
-          </template>
-        </QfDataTable>
+        <QfTablePanel title="异常日志">
+          <QfDataTable
+            :columns="exceptionColumns"
+            :data="exceptionTable.allRows.value"
+            :loading="exceptionTable.loading.value"
+            :page-size="20"
+          >
+            <template #filters="{ reload }">
+              <el-form-item label="异常类">
+                <el-input
+                  v-model="exceptionTable.filters.exceptionClass"
+                  clearable
+                  placeholder="异常类"
+                />
+              </el-form-item>
+              <el-form-item label="用户">
+                <el-input
+                  v-model="exceptionTable.filters.username"
+                  clearable
+                  placeholder="用户名"
+                />
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="reload()"> 查询 </el-button>
+              </el-form-item>
+            </template>
+          </QfDataTable>
+        </QfTablePanel>
       </el-tab-pane>
     </el-tabs>
-  </section>
+  </QfPageShell>
 </template>
 
 <script setup lang="ts">
 defineOptions({ name: 'LogList' });
 import { ref, watch } from 'vue';
-import { QfDataTable, QfStatusTag } from '@/shared';
+import { QfDataTable, QfPageHeader, QfPageShell, QfStatusTag, QfTablePanel } from '@/shared';
 import type { QfTableColumn } from '@/shared';
 import { useTable } from '@/shared';
 import {

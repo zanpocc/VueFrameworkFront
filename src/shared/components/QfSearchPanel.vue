@@ -35,16 +35,16 @@ const emit = defineEmits<{
 
 <style scoped>
 .qf-search-panel {
-  padding: 14px 16px;
+  padding: var(--qf-spacing-md) var(--qf-card-padding);
   background: var(--qf-color-bg-surface);
   border: 1px solid var(--qf-color-border-soft);
   border-radius: var(--qf-border-radius);
-  box-shadow: 0 1px 2px rgb(15 23 42 / 3%);
+  box-shadow: var(--qf-shadow-panel);
 }
 
 .qf-search-panel__form {
   display: flex;
-  gap: 16px;
+  gap: var(--qf-spacing-lg);
   align-items: flex-start;
   justify-content: space-between;
 }
@@ -53,16 +53,16 @@ const emit = defineEmits<{
   display: flex;
   flex: 1;
   flex-wrap: wrap;
-  gap: 10px 22px;
+  gap: var(--qf-spacing-sm) var(--qf-spacing-2xl);
   min-width: 0;
 }
 
 .qf-search-panel__actions {
   display: flex;
   flex-shrink: 0;
-  gap: 8px;
+  gap: var(--qf-spacing-sm);
   align-items: center;
-  padding-left: 18px;
+  padding-left: var(--qf-spacing-lg);
   border-left: 1px solid var(--qf-color-border-soft);
 }
 

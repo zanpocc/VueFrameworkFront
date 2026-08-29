@@ -16,12 +16,6 @@ export interface RepairOrderView {
   description: string;
   applicant: string;
   equipmentCode: string;
-  wfInstanceId: number | null;
-  wfStatus: string;
-  wfCurrentNode: string | null;
-  wfStartedAt: string | null;
-  wfEndedAt: string | null;
-  wfBusinessKey: string | null;
   createdAt: string;
   updatedAt: string;
   attachments: RepairOrderAttachmentView[];
@@ -45,8 +39,5 @@ export const demoApi = {
   },
   submitRepairOrder(payload: RepairOrderSubmitCommand) {
     return http.post<ApiResult<RepairOrderView>>('/demo/repair-orders', payload).then(unwrap);
-  },
-  cancelRepairOrder(id: number) {
-    return http.post<ApiResult<RepairOrderView>>(`/demo/repair-orders/${id}/cancel`).then(unwrap);
   },
 };

@@ -1,91 +1,91 @@
 <template>
-  <section class="page">
-    <header class="page__header">
-      <div>
-        <h1>公告通知</h1>
-        <p>维护平台公告、发布状态和置顶顺序。</p>
-      </div>
-      <QfPermissionButton code="system:notice:update" type="primary" @click="dialog.openCreate()">
-        新增公告
-      </QfPermissionButton>
-    </header>
-
-    <QfDataTable
-      :columns="columns"
-      :data="table.allRows.value"
-      :loading="table.loading.value"
-      :actions-width="260"
-    >
-      <template #filters="{ filters, reload: doReload }">
-        <el-input
-          v-model="filters.keyword"
-          clearable
-          placeholder="标题或类型"
-          style="width: 200px"
-          @clear="doReload"
-          @keyup.enter="doReload"
-        />
-        <el-select
-          v-model="filters.status"
-          clearable
-          placeholder="发布状态"
-          style="width: 160px"
-          @change="doReload"
-        >
-          <el-option label="草稿" value="DRAFT" />
-          <el-option label="已发布" value="PUBLISHED" />
-        </el-select>
-        <el-button type="primary" @click="doReload">查询</el-button>
-      </template>
-
-      <template #status="{ row }">
-        <el-tag :type="(row as Notice).status === 'PUBLISHED' ? 'success' : 'info'">
-          {{ statusText((row as Notice).status) }}
-        </el-tag>
-      </template>
-
-      <template #attrs="{ row }">
-        <el-tag v-if="(row as Notice).pinned" type="warning">置顶</el-tag>
-        <el-tag>{{ typeText((row as Notice).noticeType) }}</el-tag>
-      </template>
-
-      <template #actions="{ row }">
-        <QfPermissionButton
-          code="system:notice:update"
-          text
-          type="primary"
-          @click="openEdit(row as Notice)"
-        >
-          编辑
-        </QfPermissionButton>
-        <QfPermissionButton
-          v-if="(row as Notice).status !== 'PUBLISHED'"
-          code="system:notice:publish"
-          text
-          type="success"
-          @click="publish(row as Notice)"
-        >
-          发布
-        </QfPermissionButton>
-        <QfPermissionButton
-          v-else
-          code="system:notice:publish"
-          text
-          type="warning"
-          @click="revoke(row as Notice)"
-        >
-          撤回
-        </QfPermissionButton>
-        <QfPermissionButton
-          code="system:notice:update"
-          text
-          type="danger"
-          @click="remove(row as Notice)"
-        >
-          删除
+  <QfPageShell>
+    <QfPageHeader title="公告通知" description="维护平台公告、发布状态和置顶顺序。">
+      <template #actions>
+        <QfPermissionButton code="system:notice:update" type="primary" @click="dialog.openCreate()">
+          新增公告
         </QfPermissionButton>
       </template>
-    </QfDataTable>
+    </QfPageHeader>
+
+    <QfTablePanel title="公告列表" description="维护公告内容、发布状态和置顶顺序。">
+      <QfDataTable
+        :columns="columns"
+        :data="table.allRows.value"
+        :loading="table.loading.value"
+        :actions-width="260"
+      >
+        <template #filters="{ filters, reload: doReload }">
+          <el-input
+            v-model="filters.keyword"
+            clearable
+            placeholder="标题或类型"
+            class="qf-field--lg"
+            @clear="doReload"
+            @keyup.enter="doReload"
+          />
+          <el-select
+            v-model="filters.status"
+            clearable
+            placeholder="发布状态"
+            class="qf-field--md"
+            @change="doReload"
+          >
+            <el-option label="草稿" value="DRAFT" />
+            <el-option label="已发布" value="PUBLISHED" />
+          </el-select>
+          <el-button type="primary" @click="doReload">查询</el-button>
+        </template>
+
+        <template #status="{ row }">
+          <el-tag :type="(row as Notice).status === 'PUBLISHED' ? 'success' : 'info'">
+            {{ statusText((row as Notice).status) }}
+          </el-tag>
+        </template>
+
+        <template #attrs="{ row }">
+          <el-tag v-if="(row as Notice).pinned" type="warning">置顶</el-tag>
+          <el-tag>{{ typeText((row as Notice).noticeType) }}</el-tag>
+        </template>
+
+        <template #actions="{ row }">
+          <QfPermissionButton
+            code="system:notice:update"
+            text
+            type="primary"
+            @click="openEdit(row as Notice)"
+          >
+            编辑
+          </QfPermissionButton>
+          <QfPermissionButton
+            v-if="(row as Notice).status !== 'PUBLISHED'"
+            code="system:notice:publish"
+            text
+            type="success"
+            @click="publish(row as Notice)"
+          >
+            发布
+          </QfPermissionButton>
+          <QfPermissionButton
+            v-else
+            code="system:notice:publish"
+            text
+            type="warning"
+            @click="revoke(row as Notice)"
+          >
+            撤回
+          </QfPermissionButton>
+          <QfPermissionButton
+            code="system:notice:update"
+            text
+            type="danger"
+            @click="remove(row as Notice)"
+          >
+            删除
+          </QfPermissionButton>
+        </template>
+      </QfDataTable>
+    </QfTablePanel>
 
     <QfFormDialog
       v-model="dialog.visible.value"
@@ -126,7 +126,7 @@
         />
       </el-form-item>
     </QfFormDialog>
-  </section>
+  </QfPageShell>
 </template>
 
 <script setup lang="ts">
@@ -135,7 +135,14 @@ defineOptions({ name: 'NoticeList' });
 import { watch } from 'vue';
 import type { FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
-import { QfDataTable, QfFormDialog, QfPermissionButton } from '@/shared';
+import {
+  QfDataTable,
+  QfFormDialog,
+  QfPageHeader,
+  QfPageShell,
+  QfPermissionButton,
+  QfTablePanel,
+} from '@/shared';
 import type { QfTableColumn } from '@/shared';
 import { useConfirmDelete, useDialogForm, useTable } from '@/shared';
 import { systemApi, type Notice, type NoticeCommand } from '@/api/system';
@@ -233,6 +240,6 @@ function typeText(type: string) {
 
 <style scoped>
 .notice-form__pinned {
-  margin-left: 16px;
+  margin-left: var(--qf-spacing-lg);
 }
 </style>

@@ -32,11 +32,8 @@ src/
 │   ├── auth
 │   ├── system
 │   ├── iam
-│   ├── workflow
 │   ├── async-task
 │   └── file
-├── form-engine
-├── workflow-designer
 └── utils
 tests/
 ├── unit
@@ -52,7 +49,6 @@ tests/
 - 用户、部门、角色、菜单、按钮权限管理。
 - 系统配置、字典、操作日志、登录日志。
 - 异步任务列表、任务详情、重试、终止、人工介入。
-- 工作流表单设计、流程发起、待办、已办、审批历史、流程图。
 - 文件上传、预览、下载。
 
 ## 编码规则
@@ -64,7 +60,7 @@ tests/
 - 权限判断集中在 `src/permissions`。
 - API 错误、token 过期、traceId、下载响应在请求层统一处理。
 - Store 只保存跨页面状态；页面局部状态不要塞进全局 store。
-- 表单 schema、流程 schema 必须有类型定义和版本号。
+- 业务表单 schema 必须有类型定义和版本号。
 - 不把后端返回的菜单、按钮权限当作安全边界，前端只负责体验。
 - **国际化**：迁移过 i18n 的页面里禁止裸中文，全部走 `t('namespace.xxx')`；新增 key 必须同时更新 `src/locales/zh-CN/<ns>.ts` 和 `src/locales/en-US/<ns>.ts`。表单 `rules` / 表格 `columns` 这些常量必须包 `computed()`，否则切换语言时 label / message 不更新。可切换语言的覆盖范围与加 locale 步骤见 `JavaFrameworkBackend/docs/i18n.md`。
 
@@ -104,7 +100,15 @@ tests/
 - 不做营销式首页；登录后第一屏应是工作台、待办或管理界面。
 - 表格、搜索区、弹窗、抽屉、详情页保持统一交互。
 - 按钮权限隐藏时页面布局不能跳动明显。
-- 工作流和表单设计器要优先保证可用性，再做视觉增强。
+- 业务页面要优先保证可用性，再做视觉增强。
+
+### 统一 UI 系统
+
+- 视觉基线、token、页面组合规则和例外说明见 `docs/ui-system.md`。
+- 标准业务视图必须组合 `QfPageShell`、`QfPageHeader`、`QfTablePanel` / `QfCard` 等共享组件；禁止自行复制页面骨架。
+- 颜色、阴影、圆角和字段宽度必须来自 `src/assets/tokens/` 或语义 class；禁止在 `src/modules` 使用内联 `style="..."`。
+- 提交前运行 `yarn lint:ui`。它是 UI 结构契约，不替代类型、ESLint、Stylelint 或单元测试。
+- 登录页属于已登记的特殊页面；特殊不等于可以绕过 token 约束。
 
 ## 测试要求
 
@@ -127,8 +131,6 @@ yarn build
 - 用户角色授权。
 - 系统配置编辑。
 - 异步任务重试。
-- 工作流发起和审批。
-- 表单渲染器。
 - 真实后端联调 smoke 使用 `yarn test:e2e:live:monolith-vm`，该命令依赖 `JavaFrameworkBackend/ops/scripts/run-monolith-vm.ps1` 和 Ubuntu VM 中间件，默认会重置 VM MySQL 的 `quickframework` schema。
 
 E2E 使用 Playwright。测试数据应通过后端测试接口、fixture 或数据库迁移初始化，避免依赖手工环境。

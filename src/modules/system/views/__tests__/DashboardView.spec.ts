@@ -33,6 +33,21 @@ vi.mock('element-plus', async (importOriginal) => ({
 }));
 
 vi.mock('@/shared', () => ({
+  QfPageShell: { template: '<section><slot /></section>' },
+  QfMetricCard: {
+    props: ['label', 'value', 'caption', 'tone', 'loading', 'error'],
+    template:
+      '<section><span>{{ label }}</span><strong>{{ loading ? "..." : value }}</strong></section>',
+  },
+  QfPageHeader: {
+    template:
+      '<header><h1>{{ title }}</h1><p>{{ description }}</p><slot name="actions" /></header>',
+    props: ['title', 'description'],
+  },
+  QfCard: {
+    template: '<section><slot name="actions" /><slot /></section>',
+    props: ['title', 'description'],
+  },
   QfStatusTag: {
     props: ['status', 'label'],
     template: '<span>{{ label || status }}</span>',

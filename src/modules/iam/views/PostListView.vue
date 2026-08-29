@@ -1,43 +1,43 @@
 <template>
-  <section class="page">
-    <header class="page__header">
-      <div>
-        <h1>岗位管理</h1>
-        <p>维护岗位编码、名称、排序和状态。</p>
-      </div>
-      <QfPermissionButton code="system:post:update" type="primary" @click="dialog.openCreate()">
-        新增岗位
-      </QfPermissionButton>
-    </header>
+  <QfPageShell>
+    <QfPageHeader title="岗位管理" description="维护岗位编码、名称、排序和状态。">
+      <template #actions>
+        <QfPermissionButton code="system:post:update" type="primary" @click="dialog.openCreate()">
+          新增岗位
+        </QfPermissionButton>
+      </template>
+    </QfPageHeader>
 
-    <QfDataTable
-      :columns="columns"
-      :data="table.allRows.value"
-      :loading="table.loading.value"
-      :actions-width="180"
-    >
-      <template #status="{ row }">
-        <QfStatusTag :status="row.status" />
-      </template>
-      <template #actions="{ row }">
-        <QfPermissionButton
-          code="system:post:update"
-          text
-          type="primary"
-          @click="openEditPost(row as SysPost)"
-        >
-          编辑
-        </QfPermissionButton>
-        <QfPermissionButton
-          code="system:post:update"
-          text
-          type="danger"
-          @click="handleDelete(row as SysPost)"
-        >
-          删除
-        </QfPermissionButton>
-      </template>
-    </QfDataTable>
+    <QfTablePanel title="岗位列表" description="维护岗位编码、名称、排序和状态。">
+      <QfDataTable
+        :columns="columns"
+        :data="table.allRows.value"
+        :loading="table.loading.value"
+        :actions-width="180"
+      >
+        <template #status="{ row }">
+          <QfStatusTag :status="row.status" />
+        </template>
+        <template #actions="{ row }">
+          <QfPermissionButton
+            code="system:post:update"
+            text
+            type="primary"
+            @click="openEditPost(row as SysPost)"
+          >
+            编辑
+          </QfPermissionButton>
+          <QfPermissionButton
+            code="system:post:update"
+            text
+            type="danger"
+            @click="handleDelete(row as SysPost)"
+          >
+            删除
+          </QfPermissionButton>
+        </template>
+      </QfDataTable>
+    </QfTablePanel>
 
     <QfFormDialog
       v-model="dialog.visible.value"
@@ -64,13 +64,21 @@
         </el-select>
       </el-form-item>
     </QfFormDialog>
-  </section>
+  </QfPageShell>
 </template>
 
 <script setup lang="ts">
 defineOptions({ name: 'PostList' });
 import type { FormRules } from 'element-plus';
-import { QfDataTable, QfFormDialog, QfStatusTag, QfPermissionButton } from '@/shared';
+import {
+  QfDataTable,
+  QfFormDialog,
+  QfPageHeader,
+  QfPageShell,
+  QfStatusTag,
+  QfPermissionButton,
+  QfTablePanel,
+} from '@/shared';
 import type { QfTableColumn } from '@/shared';
 import { useTable, useDialogForm, useConfirmDelete } from '@/shared';
 import { iamApi, type PostCommand, type SysPost } from '@/api/iam';

@@ -1,16 +1,14 @@
 <template>
-  <section class="page">
-    <header class="page__header">
-      <div>
-        <h1>数据治理</h1>
-        <p>查看数据源、分表路由、数据权限范围和近期慢 SQL。</p>
-      </div>
-      <el-button type="primary" @click="loadAll">刷新</el-button>
-    </header>
+  <QfPageShell>
+    <QfPageHeader title="数据治理" description="查看数据源、分表路由、数据权限范围和近期慢 SQL。">
+      <template #actions>
+        <el-button type="primary" @click="loadAll">刷新</el-button>
+      </template>
+    </QfPageHeader>
 
     <el-row :gutter="16">
       <el-col :span="12">
-        <div class="governance-panel">
+        <QfCard class="governance-panel">
           <h2>数据源</h2>
           <el-descriptions :column="1" border>
             <el-descriptions-item label="当前数据源">
@@ -20,11 +18,11 @@
               {{ readonlyProbe || '-' }}
             </el-descriptions-item>
           </el-descriptions>
-        </div>
+        </QfCard>
       </el-col>
 
       <el-col :span="12">
-        <div class="governance-panel">
+        <QfCard class="governance-panel">
           <h2>分表诊断</h2>
           <el-form
             :model="routeTable.filters"
@@ -50,17 +48,17 @@
             :loading="routeTable.loading.value"
             :page-size="20"
           />
-        </div>
+        </QfCard>
       </el-col>
     </el-row>
 
-    <div class="governance-panel">
+    <QfCard class="governance-panel">
       <div class="governance-panel__header">
         <h2>数据权限范围</h2>
         <el-select
           v-model="selectedRoleId"
           placeholder="选择角色"
-          style="width: 220px"
+          class="qf-field--xl"
           @change="loadRoleScopes"
         >
           <el-option v-for="role in roles" :key="role.id" :label="role.roleName" :value="role.id" />
@@ -76,9 +74,9 @@
           <el-tag>{{ scopeTypeText(row.scopeType) }}</el-tag>
         </template>
       </QfDataTable>
-    </div>
+    </QfCard>
 
-    <div class="governance-panel">
+    <QfCard class="governance-panel">
       <div class="governance-panel__header">
         <h2>近期慢 SQL</h2>
       </div>
@@ -88,9 +86,9 @@
         :loading="slowSqlTable.loading.value"
         :page-size="20"
       />
-    </div>
+    </QfCard>
 
-    <div class="governance-panel">
+    <QfCard class="governance-panel">
       <div class="governance-panel__header">
         <h2>数据源明细</h2>
       </div>
@@ -110,8 +108,8 @@
           />
         </template>
       </QfDataTable>
-    </div>
-  </section>
+    </QfCard>
+  </QfPageShell>
 </template>
 
 <script setup lang="ts">
@@ -125,7 +123,7 @@ import {
   type ShardRoute,
   type SlowSqlRecord,
 } from '@/api/data-governance';
-import { QfDataTable, QfStatusTag } from '@/shared';
+import { QfCard, QfDataTable, QfPageHeader, QfPageShell, QfStatusTag } from '@/shared';
 import type { QfTableColumn } from '@/shared';
 import { useTable } from '@/shared';
 
@@ -247,22 +245,18 @@ void loadRoleScopes();
 <style scoped>
 .governance-panel {
   display: grid;
-  gap: 12px;
-  padding: 16px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  gap: var(--qf-spacing-md);
 }
 
 .governance-panel__header {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--qf-spacing-md);
   align-items: center;
 }
 
 .governance-panel h2 {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--qf-font-size-subtitle);
 }
 </style>

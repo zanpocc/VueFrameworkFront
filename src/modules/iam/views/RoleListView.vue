@@ -1,28 +1,28 @@
 <template>
-  <section class="page">
-    <header class="page__header">
-      <div>
-        <h1>{{ t('iam.role.title') }}</h1>
-        <p>{{ t('iam.role.subtitle') }}</p>
-      </div>
-      <QfPermissionButton code="system:role:update" type="primary" @click="openCreate">
-        {{ t('iam.role.create') }}
-      </QfPermissionButton>
-    </header>
+  <QfPageShell>
+    <QfPageHeader :title="t('iam.role.title')" :description="t('iam.role.subtitle')">
+      <template #actions>
+        <QfPermissionButton code="system:role:update" type="primary" @click="openCreate">
+          {{ t('iam.role.create') }}
+        </QfPermissionButton>
+      </template>
+    </QfPageHeader>
 
-    <QfDataTable
-      :columns="columns"
-      :data="table.allRows.value"
-      :loading="table.loading.value"
-      :actions-width="200"
-    >
-      <template #status="{ row }">
-        <QfStatusTag :status="row.status" />
-      </template>
-      <template #actions="{ row }">
-        <QfTableActions :actions="getActions(row as SysRole)" :max-inline="2" />
-      </template>
-    </QfDataTable>
+    <QfTablePanel title="角色列表" description="维护角色状态和菜单、按钮、数据范围授权。">
+      <QfDataTable
+        :columns="columns"
+        :data="table.allRows.value"
+        :loading="table.loading.value"
+        :actions-width="200"
+      >
+        <template #status="{ row }">
+          <QfStatusTag :status="row.status" />
+        </template>
+        <template #actions="{ row }">
+          <QfTableActions :actions="getActions(row as SysRole)" :max-inline="2" />
+        </template>
+      </QfDataTable>
+    </QfTablePanel>
 
     <QfFormDialog
       v-model="roleDialogVisible"
@@ -114,7 +114,7 @@
     >
       <QfDataTable :columns="relatedUserColumns" :data="relatedUsers" :page-size="10" />
     </QfDetailDrawer>
-  </section>
+  </QfPageShell>
 </template>
 
 <script setup lang="ts">
@@ -130,6 +130,9 @@ import {
   QfTableActions,
   QfFormDialog,
   QfDetailDrawer,
+  QfPageHeader,
+  QfPageShell,
+  QfTablePanel,
 } from '@/shared';
 import type { QfTableColumn, QfActionItem } from '@/shared';
 import { useTable } from '@/shared';
@@ -261,7 +264,11 @@ async function toggleStatus(role: SysRole) {
 
 function getActions(row: SysRole): QfActionItem[] {
   return [
-    { label: t('common.button.edit'), permission: 'system:role:update', handler: () => openEdit(row) },
+    {
+      label: t('common.button.edit'),
+      permission: 'system:role:update',
+      handler: () => openEdit(row),
+    },
     {
       label: t('iam.role.actions.authorize'),
       permission: 'system:role:update',
