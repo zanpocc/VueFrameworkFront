@@ -35,11 +35,11 @@ const emit = defineEmits<{
 
 <style scoped>
 .qf-search-panel {
-  padding: 16px;
+  padding: 14px 16px;
   background: var(--qf-color-bg-surface);
-  border: 1px solid var(--el-border-color-lighter);
-  border-radius: 6px;
-  box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+  border: 1px solid var(--qf-color-border-soft);
+  border-radius: var(--qf-border-radius);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 3%);
 }
 
 .qf-search-panel__form {
@@ -53,7 +53,7 @@ const emit = defineEmits<{
   display: flex;
   flex: 1;
   flex-wrap: wrap;
-  gap: 12px 28px;
+  gap: 10px 22px;
   min-width: 0;
 }
 
@@ -62,8 +62,8 @@ const emit = defineEmits<{
   flex-shrink: 0;
   gap: 8px;
   align-items: center;
-  padding-left: 16px;
-  border-left: 1px solid var(--el-border-color-extra-light);
+  padding-left: 18px;
+  border-left: 1px solid var(--qf-color-border-soft);
 }
 
 .qf-search-panel__more-icon {
@@ -83,8 +83,8 @@ const emit = defineEmits<{
 :deep(.el-form-item__label) {
   height: 32px;
   padding-right: 10px;
-  color: var(--qf-color-text-primary);
-  font-weight: 600;
+  color: var(--qf-color-text-secondary);
+  font-weight: 500;
   line-height: 32px;
 }
 

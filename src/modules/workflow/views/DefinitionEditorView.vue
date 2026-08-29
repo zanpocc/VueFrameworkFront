@@ -578,7 +578,7 @@ onMounted(loadData);
   word-break: break-all;
 }
 
-@media (max-width: 1100px) {
+@media (width <= 1100px) {
   .def-editor__body {
     grid-template-columns: 1fr;
   }

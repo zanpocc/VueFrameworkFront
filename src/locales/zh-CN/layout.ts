@@ -1,5 +1,8 @@
 export default {
   brand: 'QuickFramework',
+  breadcrumb: {
+    home: '首页',
+  },
   sidebar: {
     searchMenu: '搜索菜单',
   },

@@ -44,7 +44,7 @@ function assigneeTypeLabel(type?: string | null): string {
   background: var(--el-fill-color-blank);
   border: 2px solid var(--el-color-warning);
   border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 8%);
   font-size: 13px;
 }
 

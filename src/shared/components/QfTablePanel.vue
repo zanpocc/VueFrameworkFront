@@ -24,12 +24,12 @@ defineProps<{
 .qf-table-panel {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0;
   min-width: 0;
   background: var(--qf-color-bg-surface);
-  border: 1px solid var(--el-border-color-lighter);
-  border-radius: 6px;
-  box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+  border: 1px solid var(--qf-color-border-soft);
+  border-radius: var(--qf-border-radius);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 3%);
 }
 
 .qf-table-panel__toolbar {
@@ -37,8 +37,9 @@ defineProps<{
   gap: 16px;
   align-items: center;
   justify-content: space-between;
-  min-height: 54px;
-  padding: 12px 14px 0;
+  min-height: 58px;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--qf-color-border-soft);
 }
 
 .qf-table-panel__title {
@@ -49,7 +50,7 @@ defineProps<{
   margin: 0;
   overflow: hidden;
   color: var(--qf-color-text-primary);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   line-height: 1.4;
   text-overflow: ellipsis;
@@ -79,12 +80,12 @@ defineProps<{
 }
 
 .qf-table-panel :deep(.qf-data-table__scroll) {
-  padding: 0 14px;
+  padding: 0 16px;
 }
 
 .qf-table-panel :deep(.qf-data-table__pagination) {
-  padding: 10px 14px 14px;
-  border-top: 1px solid var(--el-border-color-extra-light);
+  padding: 12px 16px 14px;
+  border-top: 1px solid var(--qf-color-border-soft);
 }
 
 .qf-table-panel :deep(.el-table) {
@@ -95,6 +96,7 @@ defineProps<{
   .qf-table-panel__toolbar {
     align-items: stretch;
     flex-direction: column;
+    padding-bottom: 14px;
   }
 
   .qf-table-panel__actions {

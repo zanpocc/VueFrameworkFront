@@ -8,6 +8,7 @@
       @click="navigateTo(tab)"
       @contextmenu.prevent="showContextMenu($event, tab)"
     >
+      <el-icon v-if="tab.path === '/'" class="app-tab-nav__home"><House /></el-icon>
       <span class="app-tab-nav__label">{{ tab.title }}</span>
       <span v-if="tab.closable" class="app-tab-nav__close" @click.stop="closeTab(tab)"
         >&times;</span
@@ -32,6 +33,7 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { House } from '@element-plus/icons-vue';
 import { useTabStore, type TabItem } from '@/stores/tabs';
 
 const route = useRoute();
@@ -142,43 +144,56 @@ onUnmounted(() => {
 .app-tab-nav {
   display: flex;
   gap: 4px;
-  padding: 6px 16px;
+  height: var(--qf-layout-tabs-height);
+  padding: 6px 20px;
+  overflow: auto hidden;
   background: var(--qf-color-bg-surface);
-  border-bottom: 1px solid var(--qf-border-color);
-  overflow-x: auto;
+  border-bottom: 1px solid var(--qf-color-border-soft);
 }
 
 .app-tab-nav__tab {
   display: inline-flex;
   gap: 4px;
   align-items: center;
-  padding: 6px 16px;
-  min-width: 80px;
-  font-size: 14px;
+  flex: 0 0 auto;
+  min-width: 86px;
+  height: 32px;
+  padding: 0 11px;
+  color: var(--qf-color-text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 13px;
   white-space: nowrap;
   cursor: pointer;
-  border: 1px solid var(--qf-border-color);
-  border-radius: 4px;
-  background: var(--qf-color-bg-page);
-  transition: all 0.15s;
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .app-tab-nav__tab:hover {
   color: var(--el-color-primary);
+  background: var(--qf-color-primary-soft);
 }
 
 .app-tab-nav__tab--active {
   color: var(--el-color-primary);
-  background: var(--qf-color-bg-surface);
-  border-color: var(--el-color-primary);
+  background: var(--qf-color-primary-soft);
+  border-color: var(--el-color-primary-light-8);
+  font-weight: 600;
+}
+
+.app-tab-nav__home {
+  font-size: 14px;
 }
 
 .app-tab-nav__close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   font-size: 12px;
   line-height: 1;
   color: var(--qf-color-text-secondary);
@@ -197,14 +212,15 @@ onUnmounted(() => {
   min-width: 120px;
   padding: 4px 0;
   background: var(--qf-color-bg-surface);
-  border: 1px solid var(--qf-border-color);
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
+  border: 1px solid var(--qf-color-border-soft);
+  border-radius: 8px;
+  box-shadow: 0 10px 28px rgb(15 23 42 / 14%);
 }
 
 .app-tab-nav__context-item {
-  padding: 8px 16px;
-  font-size: 14px;
+  padding: 8px 14px;
+  color: var(--qf-color-text-primary);
+  font-size: 13px;
   cursor: pointer;
   transition: background 0.1s;
 }

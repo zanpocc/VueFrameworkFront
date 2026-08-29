@@ -1,5 +1,8 @@
 export default {
   brand: 'QuickFramework',
+  breadcrumb: {
+    home: 'Home',
+  },
   sidebar: {
     searchMenu: 'Search menu',
   },

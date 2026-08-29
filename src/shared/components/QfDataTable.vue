@@ -8,7 +8,6 @@
       <el-table
         v-loading="effectiveLoading"
         :data="rows"
-        border
         row-key="id"
         v-bind="tableAttrs"
         :style="tableStyle"
@@ -272,8 +271,7 @@ defineExpose({ refresh, reload, reset, filters });
 
 .qf-data-table__scroll {
   min-width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: auto hidden;
 }
 
 .qf-data-table__pagination {

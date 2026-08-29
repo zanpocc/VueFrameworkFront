@@ -18,7 +18,8 @@ yarn build
 
 Use `yarn format` to apply Prettier formatting before committing.
 
-Copy `.env.example` to a local `.env.local` only when the API base URL needs to differ from `/api`.
+The repository includes non-sensitive `.env` defaults, so `yarn dev` can start against the local monolith without extra configuration.
+Use `.env.local` only for a machine-specific override; it is intentionally ignored by Git.
 The current Playwright E2E suite mocks backend API responses in the browser and can run without starting the backend.
 
 Run the live backend E2E when the Ubuntu VM middleware is available:
@@ -52,7 +53,6 @@ The frontend keeps `VITE_API_BASE_URL=/api` by default and uses the Vite dev pro
 Monolith backend:
 
 ```powershell
-Copy-Item .env.monolith.example .env.local
 yarn dev
 ```
 
@@ -66,8 +66,7 @@ cd ..\JavaFrameworkBackend
 Cloud Gateway backend:
 
 ```powershell
-Copy-Item .env.cloud.example .env.local
-yarn dev
+yarn dev --mode cloud
 ```
 
 Start the backend cloud mode with VM Nacos:
@@ -77,7 +76,7 @@ cd ..\JavaFrameworkBackend
 .\scripts\smoke-cloud-vm-nacos.ps1 -KeepRunning
 ```
 
-Use `VITE_API_PROXY_TARGET` in `.env.local` to switch the Vite proxy between `http://127.0.0.1:8080` and `http://127.0.0.1:9000` without changing source code.
+Use `VITE_API_PROXY_TARGET` in `.env.local` to override the Vite proxy without changing source code.
 
 ## Docker
 

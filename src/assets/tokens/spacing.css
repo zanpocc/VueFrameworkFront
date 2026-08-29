@@ -4,4 +4,8 @@
   --qf-spacing-md: 12px;
   --qf-spacing-lg: 16px;
   --qf-spacing-xl: 24px;
+  --qf-layout-sidebar-width: 224px;
+  --qf-layout-sidebar-collapsed-width: 64px;
+  --qf-layout-header-height: 56px;
+  --qf-layout-tabs-height: 44px;
 }

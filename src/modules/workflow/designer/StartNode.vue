@@ -27,7 +27,7 @@ defineProps<NodeProps<CanvasNodeData>>();
   background: var(--el-fill-color-blank);
   border: 2px solid var(--el-color-success);
   border-radius: 18px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 8%);
   font-size: 13px;
 }
 

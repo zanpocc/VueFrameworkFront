@@ -1,6 +1,11 @@
 export default {
   login: {
     title: 'QuickFramework',
+    welcome: 'Welcome back',
+    subtitle: 'Sign in to continue to the platform console',
+    tagline: 'Make enterprise operations clear.',
+    description: 'Authentication, permissions, tasks and workflows in one place.',
+    footer: 'Secure · Clear · Extensible',
     username: 'Username',
     password: 'Password',
     usernamePlaceholder: 'Enter your username',
