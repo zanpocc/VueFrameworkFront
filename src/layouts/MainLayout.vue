@@ -315,12 +315,16 @@ async function handleCommand(command: string) {
 
 <style scoped>
 .app-shell {
-  min-height: 100vh;
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
   background: var(--qf-color-bg-page);
 }
 
 .app-shell__aside {
   z-index: 100;
+  display: flex;
+  flex-direction: column;
   flex-shrink: 0;
   overflow: hidden;
   background: var(--qf-color-bg-sidebar);
@@ -387,6 +391,9 @@ async function handleCommand(command: string) {
 }
 
 .app-shell__menu {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   padding: 8px 8px 16px;
   border-right: 0;
   background: transparent;
@@ -448,6 +455,7 @@ async function handleCommand(command: string) {
 
 .app-shell__body {
   min-width: 0;
+  min-height: 0;
 }
 
 .app-shell__header {
@@ -542,8 +550,9 @@ async function handleCommand(command: string) {
 }
 
 .app-shell__main {
+  flex: 1;
   min-width: 0;
-  min-height: calc(100vh - var(--qf-layout-header-height) - var(--qf-layout-tabs-height));
+  min-height: 0;
   padding: 18px 20px 24px;
   overflow: auto;
   background: var(--qf-color-bg-page);
