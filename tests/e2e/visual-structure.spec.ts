@@ -221,6 +221,18 @@ test.beforeEach(async ({ page }) => {
       ),
     });
   });
+  await page.route('**/api/system/configs**', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(apiResult([])),
+    });
+  });
+  await page.route('**/api/system/notices**', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(apiResult([])),
+    });
+  });
 
   await page.route('**/api/tasks/*/logs', async (route) => {
     await route.fulfill({

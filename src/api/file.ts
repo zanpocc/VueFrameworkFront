@@ -110,15 +110,21 @@ export const fileApi = {
     const formData = new FormData();
     formData.append('file', part, `part-${partNumber}`);
     return http
-      .put<ApiResult<MultipartPartView>>(`/files/multipart/${uploadId}/parts/${partNumber}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      .put<ApiResult<MultipartPartView>>(
+        `/files/multipart/${uploadId}/parts/${partNumber}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
-      })
+      )
       .then(unwrap);
   },
   multipartStatus(uploadId: number) {
-    return http.get<ApiResult<MultipartUploadSessionView>>(`/files/multipart/${uploadId}`).then(unwrap);
+    return http
+      .get<ApiResult<MultipartUploadSessionView>>(`/files/multipart/${uploadId}`)
+      .then(unwrap);
   },
   completeMultipart(uploadId: number, fileSha256: string, parts: MultipartPartView[]) {
     return http
@@ -171,7 +177,11 @@ async function uploadMultipart(file: File) {
       }
       const start = (partNumber - 1) * session.partSize;
       const end = Math.min(start + session.partSize, file.size);
-      const uploaded = await fileApi.uploadPart(session.uploadId, partNumber, file.slice(start, end));
+      const uploaded = await fileApi.uploadPart(
+        session.uploadId,
+        partNumber,
+        file.slice(start, end),
+      );
       uploadedParts.set(partNumber, uploaded);
     }
     return await fileApi.completeMultipart(

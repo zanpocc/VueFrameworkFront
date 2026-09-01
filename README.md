@@ -1,6 +1,8 @@
 # VueFrameworkFront
 
-Vue 3 + TypeScript frontend scaffold for QuickFramework.
+Vue 3 + TypeScript administration console for QuickFramework. The current
+release line centers on the enterprise knowledge-base RAG journey while
+retaining the platform IAM, system, task and file-management pages.
 
 ## Commands
 
@@ -39,6 +41,9 @@ By default it resets the VM MySQL `quickframework` schema before startup, then l
 - **System**: configs, dictionaries, operation log, login log; notice publish/revoke/delete with realtime auto-refresh.
 - **Async tasks**: list, detail, retry, cancel, manual-intervention (retry / cancel / ignore / restore).
 - **File management**: upload, list, detail, preview-info, download (covered by Playwright E2E).
+- **RAG**: `知识库管理`负责知识库、文档、索引和检索试验台；`智能问答`面向
+  业务用户，基于选中的知识库提问并查看引用。See
+  `JavaFrameworkBackend/docs/rag-v1.md` for the backend contract.
 - **Realtime push (SSE)**: `src/api/realtime.ts` consumes `GET /api/realtime/events` via fetch stream (Authorization header, no query token); `src/stores/notifications.ts` tracks connection / unread count / recent events; the `MainLayout` top-bar notification bell; `NoticeListView` auto-refreshes on notice events. Backend contract: `JavaFrameworkBackend/docs/realtime-push.md`.
 - **i18n (bilingual)**: `src/locales/{zh-CN,en-US}`; `t('namespace.key')`; form `rules` and table `columns` wrapped in `computed()` so labels/messages react to locale. See `JavaFrameworkBackend/docs/i18n.md`.
 - **Shared component layer** (`src/shared`): `QfPermissionButton`, `QfDataTable`, `QfFormDrawer`, `QfFileUpload` — atomic, cross-module, prop/slot/event-only components. Dev-only `/shared/playground` route for manual verification.
@@ -61,7 +66,7 @@ Start the backend with:
 
 ```powershell
 cd ..\JavaFrameworkBackend
-.\scripts\run-monolith-vm.ps1
+.\ops\scripts\run-monolith-vm.ps1
 ```
 
 Cloud Gateway backend:
@@ -74,10 +79,15 @@ Start the backend cloud mode with VM Nacos:
 
 ```powershell
 cd ..\JavaFrameworkBackend
-.\scripts\smoke-cloud-vm-nacos.ps1 -KeepRunning
+.\ops\scripts\smoke-cloud-vm-nacos.ps1 -KeepRunning
 ```
 
 Use `VITE_API_PROXY_TARGET` in `.env.local` to override the Vite proxy without changing source code.
+
+For the shortest H2 + Ollama + Qdrant local path, follow the workspace
+[`docs/quick-start.md`](../docs/quick-start.md). The committed `.env` and
+`.env.monolith` files intentionally point the Vite proxy at the local
+monolith, so `yarn dev` works without creating a Run Configuration.
 
 ## Docker
 

@@ -59,9 +59,7 @@ for (const component of publicComponents) {
   if (!sharedIndex.includes(`as ${component}`)) fail(`共享组件未从 src/shared 导出：${component}`);
 }
 
-const customViewExemptions = new Set([
-  'src/modules/auth/views/LoginView.vue',
-]);
+const customViewExemptions = new Set(['src/modules/auth/views/LoginView.vue']);
 const viewFiles = walk(path.join(projectRoot, 'src/modules'), (filePath) =>
   filePath.endsWith('View.vue'),
 );

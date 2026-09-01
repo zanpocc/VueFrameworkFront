@@ -4,7 +4,7 @@
       <div class="login-view__brand">
         <span class="login-view__brand-mark">Q</span>
         <div>
-          <strong>{{ t('auth.login.title') }}</strong>
+          <h1>{{ t('auth.login.title') }}</h1>
           <small>Platform Console</small>
         </div>
       </div>
@@ -18,7 +18,7 @@
     <section class="login-panel">
       <div class="login-panel__header">
         <span class="login-panel__eyebrow">{{ t('auth.login.title') }}</span>
-        <h1>{{ t('auth.login.welcome') }}</h1>
+        <h2>{{ t('auth.login.welcome') }}</h2>
         <p>{{ t('auth.login.subtitle') }}</p>
       </div>
       <el-form
@@ -59,7 +59,6 @@
           native-type="submit"
           class="login-panel__submit"
           :loading="submitting"
-          @click="submit"
         >
           {{ t('auth.login.submit') }}
         </el-button>
@@ -192,7 +191,8 @@ async function submit() {
   gap: 2px;
 }
 
-.login-view__brand strong {
+.login-view__brand h1 {
+  margin: 0;
   font-size: 16px;
 }
 
@@ -258,7 +258,7 @@ async function submit() {
   margin-bottom: 30px;
 }
 
-.login-panel__header h1 {
+.login-panel__header h2 {
   margin: 10px 0 7px;
   color: var(--qf-color-text-primary);
   font-size: 28px;

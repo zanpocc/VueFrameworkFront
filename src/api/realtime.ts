@@ -82,7 +82,11 @@ export class RealtimeClient {
           return;
         }
         const parsed = JSON.parse(frame.data) as RealtimeEvent;
-        this.options.onEvent({ ...parsed, type: frame.event || parsed.type, id: frame.id || parsed.id });
+        this.options.onEvent({
+          ...parsed,
+          type: frame.event || parsed.type,
+          id: frame.id || parsed.id,
+        });
       });
       if (!this.stopped) {
         this.scheduleReconnect();

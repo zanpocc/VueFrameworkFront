@@ -39,7 +39,9 @@ function systemPrefersDark(): boolean {
 export const useThemeStore = defineStore('theme', () => {
   const mode = ref<ThemeMode>(readStoredMode());
   const systemDark = ref(systemPrefersDark());
-  const isDark = computed(() => (mode.value === 'system' ? systemDark.value : mode.value === 'dark'));
+  const isDark = computed(() =>
+    mode.value === 'system' ? systemDark.value : mode.value === 'dark',
+  );
 
   applyTheme();
   watchSystemPreference();

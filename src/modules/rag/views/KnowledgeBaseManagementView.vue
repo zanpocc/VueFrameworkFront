@@ -1,8 +1,8 @@
 <template>
   <QfPageShell class="rag-page">
     <QfPageHeader
-      title="RAG 知识库"
-      description="上传 Intel 开发手册，建立向量索引，再用检索结果验证问答质量。"
+      title="知识库管理"
+      description="维护知识库、文档和索引，并通过检索试验台验证召回质量。"
     >
       <template #actions>
         <el-button :icon="Refresh" :loading="loading" @click="loadKnowledgeBases"> 刷新 </el-button>
@@ -11,7 +11,7 @@
     </QfPageHeader>
 
     <section class="rag-page__overview">
-      <QfCard class="rag-page__intro" title="第一版工作流">
+      <QfCard class="rag-page__intro" title="知识库管理流程">
         <div class="rag-page__steps">
           <div v-for="step in steps" :key="step.number" class="rag-page__step">
             <span>{{ step.number }}</span>
@@ -90,7 +90,7 @@
             :http-request="uploadDocument"
             accept=".pdf,.txt,.md,.markdown,.csv,.json,.xml"
           >
-            <el-button type="primary" :icon="Upload">上传 Intel 手册</el-button>
+            <el-button type="primary" :icon="Upload">上传文档</el-button>
           </el-upload>
         </template>
         <el-table v-loading="documentsLoading" :data="documents" size="small" row-key="id">
@@ -176,40 +176,6 @@
           </div>
         </div>
       </QfTablePanel>
-
-      <QfTablePanel title="问答" description="Chat 服务未配置时，仍可单独使用检索试验台">
-        <template #actions>
-          <el-button
-            type="primary"
-            :loading="chatting"
-            :disabled="!selectedKnowledgeBaseId"
-            @click="runChat"
-          >
-            询问
-          </el-button>
-        </template>
-        <el-input
-          v-model="question"
-          type="textarea"
-          :rows="3"
-          maxlength="4000"
-          show-word-limit
-          placeholder="基于 Intel 开发手册提问"
-          @keydown.ctrl.enter="runChat"
-        />
-        <div v-if="chatResponse" class="rag-page__answer">
-          <div class="rag-page__answer-label">回答</div>
-          <p>{{ chatResponse.answer }}</p>
-          <div class="rag-page__citations">
-            <span
-              v-for="citation in chatResponse.citations"
-              :key="`${citation.documentId}-${citation.pageNumber}`"
-            >
-              {{ citation.documentTitle }} · p.{{ citation.pageNumber }}
-            </span>
-          </div>
-        </div>
-      </QfTablePanel>
     </section>
 
     <el-dialog
@@ -243,16 +209,10 @@ import axios from 'axios';
 import type { FormInstance, FormRules, UploadRequestOptions } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import { ArrowRight, Collection, Plus, Refresh, Upload } from '@element-plus/icons-vue';
-import {
-  ragApi,
-  type KnowledgeBase,
-  type RagDocument,
-  type SearchResponse,
-  type ChatResponse,
-} from '@/api/rag';
+import { ragApi, type KnowledgeBase, type RagDocument, type SearchResponse } from '@/api/rag';
 import { QfCard, QfPageHeader, QfPageShell, QfStatusTag, QfTablePanel } from '@/shared';
 
-defineOptions({ name: 'KnowledgeBaseView' });
+defineOptions({ name: 'KnowledgeBaseManagementView' });
 
 const DOCUMENT_STATUS_MAP = {
   INDEXED: 'success',
@@ -270,7 +230,7 @@ const steps = [
   { number: '01', title: '创建知识库', description: '为资料集定义隔离边界' },
   { number: '02', title: '上传手册', description: '原文件走现有文件存储' },
   { number: '03', title: '建立索引', description: '按页切分并写入 Qdrant' },
-  { number: '04', title: '检索问答', description: '答案必须带文档引用' },
+  { number: '04', title: '验证召回', description: '确认分段和相关性质量' },
 ];
 
 const knowledgeBases = ref<KnowledgeBase[]>([]);
@@ -280,11 +240,8 @@ const loading = ref(false);
 const documentsLoading = ref(false);
 const indexingDocumentId = ref<number>();
 const searching = ref(false);
-const chatting = ref(false);
 const searchQuery = ref('');
-const question = ref('');
 const searchResponse = ref<SearchResponse>();
-const chatResponse = ref<ChatResponse>();
 const createDialogVisible = ref(false);
 const creating = ref(false);
 const createFormRef = ref<FormInstance>();
@@ -313,7 +270,6 @@ watch(selectedKnowledgeBaseId, (id) => {
     documents.value = [];
   }
   searchResponse.value = undefined;
-  chatResponse.value = undefined;
 });
 
 async function loadKnowledgeBases() {
@@ -446,24 +402,6 @@ async function runSearch() {
   }
 }
 
-async function runChat() {
-  if (!selectedKnowledgeBaseId.value || !question.value.trim()) {
-    ElMessage.warning('请选择知识库并输入问题');
-    return;
-  }
-  chatting.value = true;
-  try {
-    chatResponse.value = await ragApi.chat({
-      knowledgeBaseId: selectedKnowledgeBaseId.value,
-      question: question.value,
-    });
-  } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : '问答失败');
-  } finally {
-    chatting.value = false;
-  }
-}
-
 function formatScore(score: number) {
   return score.toFixed(4);
 }
@@ -502,7 +440,7 @@ onMounted(() => void loadKnowledgeBases());
 }
 
 .rag-page__tools {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .rag-page__intro :deep(.qf-card__body),
@@ -654,53 +592,18 @@ onMounted(() => void loadKnowledgeBases());
   justify-content: space-between;
 }
 
-.rag-page__result,
-.rag-page__answer {
+.rag-page__result {
   padding: var(--qf-spacing-md);
   background: var(--qf-color-bg-muted);
   border: 1px solid var(--qf-color-border-soft);
   border-radius: var(--qf-border-radius-sm);
 }
 
-.rag-page__result p,
-.rag-page__answer p {
+.rag-page__result p {
   margin: var(--qf-spacing-sm) 0 0;
   color: var(--qf-color-text-secondary);
   line-height: 1.7;
   white-space: pre-wrap;
-}
-
-.rag-page__answer p {
-  max-height: 360px;
-  padding-right: var(--qf-spacing-xs);
-  overflow-y: auto;
-}
-
-.rag-page__answer {
-  margin-top: var(--qf-spacing-md);
-  background: var(--qf-color-primary-soft);
-  border-color: var(--qf-color-primary-light);
-}
-
-.rag-page__answer-label {
-  color: var(--qf-color-primary-strong);
-  font-size: var(--qf-font-size-caption);
-  font-weight: 700;
-}
-
-.rag-page__citations {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--qf-spacing-xs);
-  margin-top: var(--qf-spacing-md);
-}
-
-.rag-page__citations span {
-  padding: var(--qf-spacing-2xs) var(--qf-spacing-xs);
-  color: var(--qf-color-primary-strong);
-  background: var(--qf-color-bg-surface);
-  border-radius: var(--qf-border-radius-sm);
-  font-size: var(--qf-font-size-caption);
 }
 
 .rag-page__results-heading span,

@@ -407,3 +407,15 @@ yarn build
 - [x] `AGENTS.md` 新增 "共享层 src/shared/" 章节说明定位、扩展规则、测试约定
 - [x] 本轮视觉收敛：Dashboard 面板密度优化、全局表格/表单间距收敛、迁移页中英文混杂清理
 - [x] 业务页面（`src/modules/*`）完成共享组件迁移并统一视觉：PostListView、ConfigListView、DeptListView 已迁移；MenuListView 已完成权限按钮、状态标签和表单弹窗收敛；DictListView 已完成新增按钮和类型/字典项表单弹窗收敛；UserListView 已完成新增/编辑表单弹窗和详情抽屉收敛；RoleListView 已完成新增/编辑表单弹窗、关联用户详情抽屉和提示文案收敛；TaskListView 已完成新建任务表单弹窗、任务/消息详情抽屉、日志表格和人工处理提示收敛；DataGovernanceView 已完成数据源明细分组和健康状态标签收敛；`tests/e2e/visual-structure.spec.ts` 覆盖关键业务页视觉结构和主内容横向溢出检查
+
+## 14. v0.1.1 发布门禁
+
+当前决定：前端 v0.1.1 以“能直接进入并完成 RAG 知识库演示”为发布边界；页面继续遵守 `src/shared` 组件和 UI token 约束。根目录 `TODO.md` 是跨仓库发布状态的总控文档。
+
+- [done] RAG 已拆分为“知识库管理”和“智能问答”两个菜单；前者包含知识库、文档、索引和检索试验台，后者按知识库进行问答并展示引用。
+- [done] `.env` 和 `.env.monolith` 默认代理本地单体，无需 IDEA Run Configuration。
+- [done] README 补充 RAG 能力、真实后端路径和 H2 + Ollama + Qdrant 快速启动文档。
+- [done] `yarn lint`、`yarn lint:style`、`yarn format:check`、`yarn typecheck`、`yarn test:unit`、`yarn test:e2e` 和 `yarn build` 已通过（29 个单元测试文件 / 127 个测试，10 个 E2E）。
+- [done] H2 RAG 真实演示已完成：上传、索引状态轮询、检索和问答均成功，并返回 1 条引用；使用临时文本夹具，Intel PDF 待补充。
+- [todo] 录制或截取稳定的 README 演示素材后，再决定是否接入 Playwright 视觉回归。
+- [deferred] RAG 对话流式渲染、引用页码定位和知识库权限页面转入后续版本。

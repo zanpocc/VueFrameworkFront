@@ -1,1 +1,2 @@
-export { default as KnowledgeBaseView } from './views/KnowledgeBaseView.vue';
+export { default as KnowledgeBaseManagementView } from './views/KnowledgeBaseManagementView.vue';
+export { default as RagChatView } from './views/RagChatView.vue';

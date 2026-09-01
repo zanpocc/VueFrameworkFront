@@ -1182,7 +1182,6 @@ test('logs in and shows dashboard with dynamic permissions', async ({ page }) =>
   await expect(page.getByText('可预览')).toBeVisible();
   await expect(page.getByLabel('文件预览').getByText('TEXT', { exact: true })).toBeVisible();
   await page.keyboard.press('Escape');
-
 });
 
 test('system notice list can create and publish notices', async ({ page }) => {

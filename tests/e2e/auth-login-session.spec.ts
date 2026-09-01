@@ -92,6 +92,35 @@ const ADMIN_USER = {
   email: null,
 };
 
+test.beforeEach(async ({ page }) => {
+  // DashboardView loads these platform widgets after auth. Keep auth tests
+  // independent from a live backend so an unmocked 401 cannot clear tokens.
+  await page.route('**/api/tasks**', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(apiResult([])),
+    });
+  });
+  await page.route('**/api/system/configs**', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(apiResult([])),
+    });
+  });
+  await page.route('**/api/system/notices**', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(apiResult([])),
+    });
+  });
+  await page.route('**/api/iam/menus**', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(apiResult([])),
+    });
+  });
+});
+
 test.describe('login failure', () => {
   test('shows error message and stays on /login when credentials are wrong', async ({ page }) => {
     // Returning a 401 with the platform's standard error envelope simulates

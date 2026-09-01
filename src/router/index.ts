@@ -20,7 +20,8 @@ import ForbiddenView from '@/components/error/ForbiddenView.vue';
 import NotFoundView from '@/components/error/NotFoundView.vue';
 import ServerErrorView from '@/components/error/ServerErrorView.vue';
 import DemoCrudView from '@/modules/system/views/DemoCrudView.vue';
-import KnowledgeBaseView from '@/modules/rag/views/KnowledgeBaseView.vue';
+import KnowledgeBaseManagementView from '@/modules/rag/views/KnowledgeBaseManagementView.vue';
+import RagChatView from '@/modules/rag/views/RagChatView.vue';
 import { useAuthStore } from '@/stores/auth';
 import type { MenuTreeNode } from '@/api/auth';
 
@@ -42,7 +43,10 @@ const componentMap: Record<string, RouteRecordRaw['component']> = {
   'iam/MenuListView': MenuListView,
   PlaceholderView,
   DemoCrudView,
-  'rag/KnowledgeBaseView': KnowledgeBaseView,
+  'rag/KnowledgeBaseManagementView': KnowledgeBaseManagementView,
+  'rag/RagChatView': RagChatView,
+  // Keep old menu data usable until every environment has run the menu migration.
+  'rag/KnowledgeBaseView': KnowledgeBaseManagementView,
 };
 
 export const routes: RouteRecordRaw[] = [

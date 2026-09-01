@@ -4,7 +4,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // faithful copy of unwrap so file.ts's `.then(unwrap)` behaves like production.
 vi.mock('@/api/http', () => ({
   http: { get: vi.fn(), post: vi.fn(), put: vi.fn() },
-  unwrap: (response: { data: { success: boolean; code: string; message: string; data: unknown } }) => {
+  unwrap: (response: {
+    data: { success: boolean; code: string; message: string; data: unknown };
+  }) => {
     if (!response.data.success) {
       throw new Error(response.data.message || response.data.code);
     }
@@ -69,7 +71,14 @@ describe('fileApi.upload', () => {
     const completed = { id: 42, originalFilename: 'video.mp4', status: 'ACTIVE' };
     post.mockImplementation((url: string) => {
       if (url === '/files/multipart/init') {
-        return ok({ uploadId: 99, objectKey: '2026/06/29/video.mp4', partSize: THRESHOLD, partCount: 2, uploadedParts: [], file: null });
+        return ok({
+          uploadId: 99,
+          objectKey: '2026/06/29/video.mp4',
+          partSize: THRESHOLD,
+          partCount: 2,
+          uploadedParts: [],
+          file: null,
+        });
       }
       if (url === '/files/multipart/99/complete') {
         return ok(completed);
@@ -77,7 +86,12 @@ describe('fileApi.upload', () => {
       return Promise.reject(new Error(`unexpected POST ${url}`));
     });
     put.mockImplementation((url: string) =>
-      ok({ partNumber: Number(url.split('/').pop()), etag: 'etag', partSize: THRESHOLD, status: 'UPLOADED' }),
+      ok({
+        partNumber: Number(url.split('/').pop()),
+        etag: 'etag',
+        partSize: THRESHOLD,
+        status: 'UPLOADED',
+      }),
     );
     const file = fakeFile(THRESHOLD + 1024);
 
@@ -85,7 +99,10 @@ describe('fileApi.upload', () => {
 
     expect(result).toEqual(completed);
     // init sent a 64-char hex sha256.
-    const initBody = post.mock.calls.find((call) => call[0] === '/files/multipart/init')?.[1] as { fileSha256: string; partCount: number };
+    const initBody = post.mock.calls.find((call) => call[0] === '/files/multipart/init')?.[1] as {
+      fileSha256: string;
+      partCount: number;
+    };
     expect(initBody.fileSha256).toMatch(/^[0-9a-f]{64}$/);
     expect(initBody.partCount).toBe(2);
     // Two parts uploaded over PUT.
@@ -97,10 +114,22 @@ describe('fileApi.upload', () => {
   });
 
   it('returns the existing file on an instant-upload (秒传) hit without uploading parts', async () => {
-    const existing = { id: 5, originalFilename: 'video.mp4', objectKey: '2026/06/29/old.mp4', status: 'ACTIVE' };
+    const existing = {
+      id: 5,
+      originalFilename: 'video.mp4',
+      objectKey: '2026/06/29/old.mp4',
+      status: 'ACTIVE',
+    };
     post.mockImplementation((url: string) => {
       if (url === '/files/multipart/init') {
-        return ok({ uploadId: null, objectKey: '2026/06/29/old.mp4', partSize: THRESHOLD, partCount: 2, uploadedParts: [], file: existing });
+        return ok({
+          uploadId: null,
+          objectKey: '2026/06/29/old.mp4',
+          partSize: THRESHOLD,
+          partCount: 2,
+          uploadedParts: [],
+          file: existing,
+        });
       }
       return Promise.reject(new Error(`unexpected POST ${url}`));
     });
@@ -118,7 +147,14 @@ describe('fileApi.upload', () => {
     const abort = vi.fn(() => ok(undefined));
     post.mockImplementation((url: string) => {
       if (url === '/files/multipart/init') {
-        return ok({ uploadId: 77, objectKey: '2026/06/29/video.mp4', partSize: THRESHOLD, partCount: 2, uploadedParts: [], file: null });
+        return ok({
+          uploadId: 77,
+          objectKey: '2026/06/29/video.mp4',
+          partSize: THRESHOLD,
+          partCount: 2,
+          uploadedParts: [],
+          file: null,
+        });
       }
       if (url === '/files/multipart/77/abort') {
         return abort();

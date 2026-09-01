@@ -16,12 +16,8 @@ export function resolveInitialLocale(): AppLocale {
   if (stored && (SUPPORTED_LOCALES as readonly string[]).includes(stored)) {
     return stored as AppLocale;
   }
-  if (typeof navigator !== 'undefined') {
-    const nav = navigator.language;
-    if (nav.toLowerCase().startsWith('en')) {
-      return 'en-US';
-    }
-  }
+  // Keep the first-run experience deterministic across IDE, CI and browsers.
+  // Users can switch to English explicitly and the choice is persisted above.
   return DEFAULT_LOCALE;
 }
 
