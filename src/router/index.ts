@@ -22,6 +22,7 @@ import ServerErrorView from '@/components/error/ServerErrorView.vue';
 import DemoCrudView from '@/modules/system/views/DemoCrudView.vue';
 import KnowledgeBaseManagementView from '@/modules/rag/views/KnowledgeBaseManagementView.vue';
 import RagChatView from '@/modules/rag/views/RagChatView.vue';
+import RagEvaluationView from '@/modules/rag/views/RagEvaluationView.vue';
 import { useAuthStore } from '@/stores/auth';
 import type { MenuTreeNode } from '@/api/auth';
 
@@ -45,6 +46,7 @@ const componentMap: Record<string, RouteRecordRaw['component']> = {
   DemoCrudView,
   'rag/KnowledgeBaseManagementView': KnowledgeBaseManagementView,
   'rag/RagChatView': RagChatView,
+  'rag/RagEvaluationView': RagEvaluationView,
   // Keep old menu data usable until every environment has run the menu migration.
   'rag/KnowledgeBaseView': KnowledgeBaseManagementView,
 };

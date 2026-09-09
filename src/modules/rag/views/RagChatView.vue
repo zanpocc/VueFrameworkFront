@@ -48,10 +48,20 @@
               <dd>{{ selectedKnowledgeBase.documentCount }}</dd>
             </div>
             <div>
-              <dt>向量维度</dt>
-              <dd>{{ selectedKnowledgeBase.embeddingDimension }}</dd>
+              <dt>当前向量维度</dt>
+              <dd>
+                {{ selectedKnowledgeBase.runtimeEmbeddingDimension }}D
+                <small>{{ selectedKnowledgeBase.runtimeEmbeddingModel }}</small>
+              </dd>
             </div>
           </dl>
+          <el-alert
+            v-if="!selectedKnowledgeBase.embeddingConfigMatchesRuntime"
+            class="rag-chat-page__embedding-warning"
+            type="warning"
+            :closable="false"
+            title="当前知识库的已保存索引仍使用旧 Embedding 配置"
+          />
         </div>
 
         <div v-else class="rag-chat-page__empty">
@@ -91,19 +101,35 @@
           :closable="false"
         />
 
-        <div v-if="chatResponse" class="rag-chat-page__answer">
+        <div v-if="chatResponse || chatting" class="rag-chat-page__answer">
           <div class="rag-chat-page__answer-heading">
             <span class="rag-chat-page__answer-label">回答</span>
-            <span v-if="chatResponse.sessionId">会话 #{{ chatResponse.sessionId }}</span>
+            <span v-if="chatting">正在生成…</span>
+            <span v-else-if="chatResponse?.sessionId">会话 #{{ chatResponse.sessionId }}</span>
           </div>
-          <p>{{ chatResponse.answer }}</p>
-          <div class="rag-chat-page__citations">
-            <span
+          <p>{{ chatting ? streamedAnswer : chatResponse?.answer }}</p>
+          <el-alert
+            v-if="chatResponse && !chatResponse.grounded"
+            class="rag-chat-page__grounding-alert"
+            title="检索结果不足，系统未调用模型生成猜测答案。"
+            type="warning"
+            :closable="false"
+          />
+          <div v-if="chatResponse" class="rag-chat-page__citations">
+            <el-tooltip
               v-for="citation in chatResponse.citations"
-              :key="`${citation.documentId}-${citation.pageNumber}-${citation.score}`"
+              :key="`${citation.sourceId}-${citation.chunkIndex}`"
+              :content="citation.sourceId"
+              placement="top"
             >
-              {{ citation.documentTitle }} · p.{{ citation.pageNumber }}
-            </span>
+              <span class="rag-chat-page__citation">
+                <strong>{{ citation.documentTitle }}</strong>
+                <span>
+                  p.{{ citation.pageNumber }} · chunk #{{ citation.chunkIndex + 1 }} · offset
+                  {{ citation.startOffset }}-{{ citation.endOffset }}
+                </span>
+              </span>
+            </el-tooltip>
           </div>
         </div>
       </QfTablePanel>
@@ -115,16 +141,17 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Collection, Refresh } from '@element-plus/icons-vue';
-import { ragApi, type ChatResponse, type KnowledgeBase } from '@/api/rag';
+import { ragApi, type ChatResponse, type KnowledgeBase, type PlatformId } from '@/api/rag';
 import { QfPageHeader, QfPageShell, QfTablePanel } from '@/shared';
 
 defineOptions({ name: 'RagChatView' });
 
 const knowledgeBases = ref<KnowledgeBase[]>([]);
-const selectedKnowledgeBaseId = ref<number>();
+const selectedKnowledgeBaseId = ref<PlatformId>();
 const question = ref('');
-const sessionId = ref<number>();
+const sessionId = ref<PlatformId>();
 const chatResponse = ref<ChatResponse>();
+const streamedAnswer = ref('');
 const loading = ref(false);
 const chatting = ref(false);
 
@@ -157,12 +184,17 @@ async function runChat() {
     return;
   }
   chatting.value = true;
+  streamedAnswer.value = '';
+  chatResponse.value = undefined;
   try {
-    const response = await ragApi.chat({
-      knowledgeBaseId: selectedKnowledgeBaseId.value,
-      sessionId: sessionId.value,
-      question: question.value,
-    });
+    const response = await ragApi.chatStream(
+      {
+        knowledgeBaseId: selectedKnowledgeBaseId.value,
+        sessionId: sessionId.value,
+        question: question.value,
+      },
+      { onToken: (token) => (streamedAnswer.value += token) },
+    );
     sessionId.value = response.sessionId;
     chatResponse.value = response;
   } catch (error) {
@@ -244,6 +276,23 @@ onMounted(() => void loadKnowledgeBases());
   font-weight: 700;
 }
 
+.rag-chat-page__kb-summary dd small {
+  display: block;
+  max-width: 180px;
+  margin-top: var(--qf-spacing-2xs);
+  overflow: hidden;
+  color: var(--qf-color-text-secondary);
+  font-size: var(--qf-font-size-xs);
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rag-chat-page__embedding-warning {
+  grid-column: 1 / -1;
+  margin-top: var(--qf-spacing-sm);
+}
+
 .rag-chat-page__empty {
   display: flex;
   flex-direction: column;
@@ -312,6 +361,17 @@ onMounted(() => void loadKnowledgeBases());
   background: var(--qf-color-bg-surface);
   border-radius: var(--qf-border-radius-sm);
   font-size: var(--qf-font-size-caption);
+}
+
+.rag-chat-page__citation {
+  display: grid;
+  gap: var(--qf-spacing-2xs);
+}
+
+.rag-chat-page__citation > span {
+  padding: 0;
+  color: var(--qf-color-text-secondary);
+  font-size: var(--qf-font-size-xs);
 }
 
 @media (width <= 800px) {

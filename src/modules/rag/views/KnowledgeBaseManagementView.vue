@@ -33,10 +33,24 @@
             <dd>{{ selectedKnowledgeBase?.documentCount ?? 0 }}</dd>
           </div>
           <div>
-            <dt>Embedding</dt>
-            <dd>{{ selectedKnowledgeBase?.embeddingDimension ?? '—' }}</dd>
+            <dt>当前 Embedding</dt>
+            <dd v-if="selectedKnowledgeBase">
+              {{ selectedKnowledgeBase.runtimeEmbeddingDimension }}D
+              <small>{{ selectedKnowledgeBase.runtimeEmbeddingModel }}</small>
+            </dd>
+            <dd v-else>—</dd>
           </div>
         </dl>
+        <el-alert
+          v-if="selectedKnowledgeBase && !selectedKnowledgeBase.embeddingConfigMatchesRuntime"
+          class="rag-page__embedding-warning"
+          type="warning"
+          :closable="false"
+          title="已保存索引配置与当前运行配置不一致"
+        >
+          已索引：{{ selectedKnowledgeBase.embeddingDimension }}D
+          {{ selectedKnowledgeBase.embeddingModel }}；请删除旧文档或完成全部文档重建后再使用。
+        </el-alert>
       </QfCard>
     </section>
 
@@ -105,6 +119,9 @@
                   :label="documentStatusLabels[row.status] ?? row.status"
                   :mapping="DOCUMENT_STATUS_MAP"
                 />
+                <span v-if="row.status === 'INDEXING'" class="rag-page__document-progress">
+                  {{ row.indexStage || '处理中' }} {{ row.indexProgress }}%
+                </span>
                 <el-tooltip
                   v-if="row.status === 'FAILED' && row.errorMessage"
                   :content="row.errorMessage"
@@ -115,16 +132,34 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="120" fixed="right">
+          <el-table-column label="操作" width="180" fixed="right">
             <template #default="{ row }">
               <el-button
-                v-if="row.status !== 'INDEXING'"
+                v-if="row.status === 'INDEXING'"
+                link
+                type="warning"
+                :loading="indexingDocumentId === row.id"
+                @click="cancelIndex(row)"
+              >
+                取消
+              </el-button>
+              <el-button
+                v-else
                 link
                 type="primary"
                 :loading="indexingDocumentId === row.id"
                 @click="indexDocument(row)"
               >
                 {{ row.status === 'INDEXED' ? '重建索引' : '建立索引' }}
+              </el-button>
+              <el-button
+                v-if="row.status !== 'INDEXING'"
+                link
+                type="danger"
+                :loading="deletingDocumentId === row.id"
+                @click="deleteDocument(row)"
+              >
+                删除
               </el-button>
             </template>
           </el-table-column>
@@ -162,12 +197,19 @@
         <div v-if="searchResponse" class="rag-page__results">
           <div class="rag-page__results-heading">
             <strong>召回 {{ searchResponse.hits.length }} 个片段</strong>
-            <span>技术词 + 定义证据 + 语义相关性</span>
+            <span
+              >{{ searchResponse.retrievalMode }} · 最高相似度
+              {{ formatScore(searchResponse.topScore) }}</span
+            >
           </div>
           <article v-for="hit in searchResponse.hits" :key="hit.chunkId" class="rag-page__result">
             <header>
               <strong>{{ hit.documentTitle }}</strong>
-              <span>p.{{ hit.pageNumber }} · {{ formatScore(hit.score) }}</span>
+              <span>
+                p.{{ hit.pageNumber }} · chunk #{{ hit.chunkIndex + 1 }} · offset
+                {{ hit.startOffset }}-{{ hit.endOffset }} · {{ hit.charCount }} 字符 ·
+                {{ formatScore(hit.score) }}
+              </span>
             </header>
             <p>{{ hit.content }}</p>
           </article>
@@ -207,9 +249,15 @@
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import axios from 'axios';
 import type { FormInstance, FormRules, UploadRequestOptions } from 'element-plus';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { ArrowRight, Collection, Plus, Refresh, Upload } from '@element-plus/icons-vue';
-import { ragApi, type KnowledgeBase, type RagDocument, type SearchResponse } from '@/api/rag';
+import {
+  ragApi,
+  type KnowledgeBase,
+  type PlatformId,
+  type RagDocument,
+  type SearchResponse,
+} from '@/api/rag';
 import { QfCard, QfPageHeader, QfPageShell, QfStatusTag, QfTablePanel } from '@/shared';
 
 defineOptions({ name: 'KnowledgeBaseManagementView' });
@@ -219,12 +267,14 @@ const DOCUMENT_STATUS_MAP = {
   INDEXING: 'warning',
   PENDING: 'info',
   FAILED: 'danger',
+  CANCELED: 'info',
 } as const;
 const documentStatusLabels: Record<string, string> = {
   INDEXED: '已索引',
   INDEXING: '索引中',
   PENDING: '待索引',
   FAILED: '失败',
+  CANCELED: '已取消',
 };
 const steps = [
   { number: '01', title: '创建知识库', description: '为资料集定义隔离边界' },
@@ -235,10 +285,11 @@ const steps = [
 
 const knowledgeBases = ref<KnowledgeBase[]>([]);
 const documents = ref<RagDocument[]>([]);
-const selectedKnowledgeBaseId = ref<number>();
+const selectedKnowledgeBaseId = ref<PlatformId>();
 const loading = ref(false);
 const documentsLoading = ref(false);
-const indexingDocumentId = ref<number>();
+const indexingDocumentId = ref<PlatformId>();
+const deletingDocumentId = ref<PlatformId>();
 const searching = ref(false);
 const searchQuery = ref('');
 const searchResponse = ref<SearchResponse>();
@@ -286,7 +337,7 @@ async function loadKnowledgeBases() {
   }
 }
 
-async function loadDocuments(knowledgeBaseId: number) {
+async function loadDocuments(knowledgeBaseId: PlatformId) {
   documentsLoading.value = true;
   try {
     documents.value = await ragApi.documents(knowledgeBaseId);
@@ -366,7 +417,43 @@ async function indexDocument(document: RagDocument) {
   }
 }
 
-async function waitForIndex(documentId: number) {
+async function cancelIndex(document: RagDocument) {
+  indexingDocumentId.value = document.id;
+  try {
+    const canceled = await ragApi.cancelIndex(document.id);
+    documents.value = documents.value.map((item) => (item.id === canceled.id ? canceled : item));
+    ElMessage.info('索引任务已取消');
+  } catch (error) {
+    ElMessage.error(error instanceof Error ? error.message : '取消索引失败');
+  } finally {
+    indexingDocumentId.value = undefined;
+  }
+}
+
+async function deleteDocument(document: RagDocument) {
+  try {
+    await ElMessageBox.confirm(
+      `确认删除文档“${document.title}”吗？删除后会同时移除其检索向量。`,
+      '删除文档',
+      { type: 'warning', confirmButtonText: '删除', cancelButtonText: '取消' },
+    );
+  } catch {
+    return;
+  }
+  deletingDocumentId.value = document.id;
+  try {
+    await ragApi.deleteDocument(document.id);
+    documents.value = documents.value.filter((item) => item.id !== document.id);
+    await loadKnowledgeBases();
+    ElMessage.success('文档已删除');
+  } catch (error) {
+    ElMessage.error(error instanceof Error ? error.message : '文档删除失败');
+  } finally {
+    deletingDocumentId.value = undefined;
+  }
+}
+
+async function waitForIndex(documentId: PlatformId) {
   const deadline = Date.now() + 10 * 60 * 1000;
   while (Date.now() < deadline) {
     const current = await ragApi.document(documentId);
@@ -376,7 +463,7 @@ async function waitForIndex(documentId: number) {
       ElMessage.success(`索引建立成功，共 ${current.chunkCount} 个分段`);
       return;
     }
-    if (current.status === 'FAILED') {
+    if (current.status === 'FAILED' || current.status === 'CANCELED') {
       throw new Error(current.errorMessage || '索引建立失败，请查看后端日志');
     }
     await new Promise((resolve) => window.setTimeout(resolve, 3000));
@@ -427,6 +514,11 @@ onMounted(() => void loadKnowledgeBases());
   display: inline-flex;
   align-items: center;
   gap: var(--qf-spacing-xs);
+}
+
+.rag-page__document-progress {
+  color: var(--qf-color-text-secondary);
+  font-size: var(--qf-font-size-caption);
 }
 
 .rag-page__document-error {
@@ -505,6 +597,21 @@ onMounted(() => void loadKnowledgeBases());
   color: var(--qf-color-text-primary);
   font-size: var(--qf-font-size-subtitle);
   font-weight: 700;
+}
+
+.rag-page__status dd small {
+  display: block;
+  max-width: 180px;
+  overflow: hidden;
+  color: var(--qf-color-text-secondary);
+  font-size: var(--qf-font-size-xs);
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rag-page__embedding-warning {
+  margin-top: var(--qf-spacing-md);
 }
 
 .rag-page__kb-select {
