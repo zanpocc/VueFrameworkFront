@@ -118,13 +118,35 @@ export interface EvaluationCase {
   updateTime: string;
 }
 
+export interface EvaluationEvidenceMatch {
+  sourceId: string;
+  documentSourceId: string | null;
+  documentTitle: string | null;
+  chunkIndex: number;
+  pageNumber: number;
+  sectionNumber: string | null;
+  sectionTitle: string | null;
+  contentPreview: string;
+  directMatch: boolean;
+}
+
+export interface EvaluationSelectorValidation {
+  valid: boolean;
+  selectorCount: number;
+  matchedChunkCount: number;
+  actualSourceIds: string[];
+  matches: EvaluationEvidenceMatch[];
+  message: string | null;
+}
+
 export interface EvaluationRun {
   id: PlatformId;
+  asyncTaskId: PlatformId | null;
   datasetId: PlatformId;
   knowledgeBaseId: PlatformId;
   mode: 'SEARCH' | 'CHAT' | string;
   topK: number;
-  status: 'RUNNING' | 'SUCCESS' | 'FAILED' | string;
+  status: 'PENDING' | 'RUNNING' | 'SUCCESS' | 'FAILED' | string;
   caseCount: number;
   completedCount: number;
   answerableCaseCount: number | null;
@@ -377,7 +399,10 @@ export const ragApi = {
       .post<ApiResult<EvaluationCase>>(`/rag/evaluations/datasets/${datasetId}/cases`, payload)
       .then(unwrap);
   },
-  updateEvaluationCase(caseId: PlatformId, payload: Omit<EvaluationCase, 'id' | 'datasetId' | 'createTime' | 'updateTime'>) {
+  updateEvaluationCase(
+    caseId: PlatformId,
+    payload: Omit<EvaluationCase, 'id' | 'datasetId' | 'createTime' | 'updateTime'>,
+  ) {
     return http
       .put<ApiResult<EvaluationCase>>(`/rag/evaluations/cases/${caseId}`, payload)
       .then(unwrap);
@@ -385,10 +410,24 @@ export const ragApi = {
   deleteEvaluationCase(caseId: PlatformId) {
     return http.delete<ApiResult<void>>(`/rag/evaluations/cases/${caseId}`).then(unwrap);
   },
-  evaluationRuns(datasetId: PlatformId) {
-    return http.get<ApiResult<EvaluationRun[]>>(`/rag/evaluations/datasets/${datasetId}/runs`).then(unwrap);
+  validateEvaluationSelector(payload: { knowledgeBaseId: PlatformId; evidenceSelector: string }) {
+    return http
+      .post<
+        ApiResult<EvaluationSelectorValidation>
+      >('/rag/evaluations/selector/validate', payload, { timeout: 30000 })
+      .then(unwrap);
   },
-  startEvaluationRun(payload: { datasetId: PlatformId; knowledgeBaseId: PlatformId; mode: string; topK: number }) {
+  evaluationRuns(datasetId: PlatformId) {
+    return http
+      .get<ApiResult<EvaluationRun[]>>(`/rag/evaluations/datasets/${datasetId}/runs`)
+      .then(unwrap);
+  },
+  startEvaluationRun(payload: {
+    datasetId: PlatformId;
+    knowledgeBaseId: PlatformId;
+    mode: string;
+    topK: number;
+  }) {
     return http
       .post<ApiResult<EvaluationRun>>('/rag/evaluations/runs', payload, { timeout: 30000 })
       .then(unwrap);
@@ -397,6 +436,8 @@ export const ragApi = {
     return http.get<ApiResult<EvaluationRun>>(`/rag/evaluations/runs/${runId}`).then(unwrap);
   },
   evaluationRunCases(runId: PlatformId) {
-    return http.get<ApiResult<EvaluationRunCase[]>>(`/rag/evaluations/runs/${runId}/cases`).then(unwrap);
+    return http
+      .get<ApiResult<EvaluationRunCase[]>>(`/rag/evaluations/runs/${runId}/cases`)
+      .then(unwrap);
   },
 };
