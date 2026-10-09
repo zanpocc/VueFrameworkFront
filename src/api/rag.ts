@@ -86,6 +86,30 @@ export interface ChatResponse {
   retrievalCount: number;
 }
 
+export interface ModelRuntimeConfig {
+  chat: ModelRuntimeProvider;
+  embedding: ModelRuntimeProvider;
+  qdrantCollectionName: string;
+}
+
+export interface ModelRuntimeProvider {
+  enabled: boolean;
+  protocol: string;
+  baseUrl: string;
+  model: string;
+  dimensions: number | null;
+  timeout: string;
+}
+
+export interface ModelConnectionTestResult {
+  type: string;
+  success: boolean;
+  model: string | null;
+  dimensions: number | null;
+  latencyMs: number;
+  message: string;
+}
+
 export interface EvaluationDataset {
   id: PlatformId;
   code: string;
@@ -187,6 +211,16 @@ export interface ChatStreamHandlers {
 }
 
 export const ragApi = {
+  modelConfigStatus() {
+    return http.get<ApiResult<ModelRuntimeConfig>>('/rag/model-config/status').then(unwrap);
+  },
+  testModelConnection(type: 'CHAT' | 'EMBEDDING') {
+    return http
+      .post<
+        ApiResult<ModelConnectionTestResult>
+      >('/rag/model-config/test', { type }, { timeout: 180000 })
+      .then(unwrap);
+  },
   knowledgeBases() {
     return http.get<ApiResult<KnowledgeBase[]>>('/rag/knowledge-bases').then(unwrap);
   },

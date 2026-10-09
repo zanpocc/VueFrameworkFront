@@ -23,6 +23,8 @@ import DemoCrudView from '@/modules/system/views/DemoCrudView.vue';
 import KnowledgeBaseManagementView from '@/modules/rag/views/KnowledgeBaseManagementView.vue';
 import RagChatView from '@/modules/rag/views/RagChatView.vue';
 import RagEvaluationView from '@/modules/rag/views/RagEvaluationView.vue';
+import AgentWorkbenchView from '@/modules/agent/views/AgentWorkbenchView.vue';
+import AiModelConfigView from '@/modules/system/views/AiModelConfigView.vue';
 import { useAuthStore } from '@/stores/auth';
 import type { MenuTreeNode } from '@/api/auth';
 
@@ -47,6 +49,8 @@ const componentMap: Record<string, RouteRecordRaw['component']> = {
   'rag/KnowledgeBaseManagementView': KnowledgeBaseManagementView,
   'rag/RagChatView': RagChatView,
   'rag/RagEvaluationView': RagEvaluationView,
+  'agent/AgentWorkbenchView': AgentWorkbenchView,
+  'system/AiModelConfigView': AiModelConfigView,
   // Keep old menu data usable until every environment has run the menu migration.
   'rag/KnowledgeBaseView': KnowledgeBaseManagementView,
 };
@@ -87,6 +91,15 @@ export const routes: RouteRecordRaw[] = [
         meta: {
           title: '工作台',
           permissions: ['dashboard:view'],
+        },
+      },
+      {
+        path: 'agent/workbench',
+        name: 'agent-workbench',
+        component: AgentWorkbenchView,
+        meta: {
+          title: 'Agent 调试台',
+          permissions: ['rag:chat'],
         },
       },
       // Dev-only Demo CRUD page — showcases the full shared layer

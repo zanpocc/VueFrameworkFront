@@ -3,6 +3,8 @@ import layout from './layout';
 import auth from './auth';
 import iam from './iam';
 import rag from './rag';
+import agent from './agent';
+import modelConfig from './model-config';
 
 export default {
   common,
@@ -10,4 +12,6 @@ export default {
   auth,
   iam,
   rag,
+  agent,
+  modelConfig,
 };

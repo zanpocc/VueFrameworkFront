@@ -5,6 +5,7 @@
       description="选择一个知识库，基于已建立索引的文档进行问答，并查看回答引用。"
     >
       <template #actions>
+        <el-button @click="openAgentWorkbench">Agent 调试台</el-button>
         <el-button :icon="Refresh" :loading="loading" @click="loadKnowledgeBases">
           刷新知识库
         </el-button>
@@ -107,7 +108,9 @@
             <span v-if="chatting">正在生成…</span>
             <span v-else-if="chatResponse?.sessionId">会话 #{{ chatResponse.sessionId }}</span>
           </div>
-          <p>{{ chatting ? streamedAnswer : chatResponse?.answer }}</p>
+          <div class="rag-chat-page__answer-content">
+            {{ chatting ? streamedAnswer : chatResponse?.answer }}
+          </div>
           <el-alert
             v-if="chatResponse && !chatResponse.grounded"
             class="rag-chat-page__grounding-alert"
@@ -143,10 +146,12 @@ import { ElMessage } from 'element-plus';
 import { Collection, Refresh } from '@element-plus/icons-vue';
 import { ragApi, type ChatResponse, type KnowledgeBase, type PlatformId } from '@/api/rag';
 import { QfPageHeader, QfPageShell, QfTablePanel } from '@/shared';
+import { useRouter } from 'vue-router';
 
 defineOptions({ name: 'RagChatView' });
 
 const knowledgeBases = ref<KnowledgeBase[]>([]);
+const router = useRouter();
 const selectedKnowledgeBaseId = ref<PlatformId>();
 const question = ref('');
 const sessionId = ref<PlatformId>();
@@ -154,6 +159,10 @@ const chatResponse = ref<ChatResponse>();
 const streamedAnswer = ref('');
 const loading = ref(false);
 const chatting = ref(false);
+
+function openAgentWorkbench() {
+  void router.push({ name: 'agent-workbench' });
+}
 
 const selectedKnowledgeBase = computed(() =>
   knowledgeBases.value.find((item) => item.id === selectedKnowledgeBaseId.value),
@@ -251,6 +260,14 @@ onMounted(() => void loadKnowledgeBases());
   color: var(--qf-color-text-secondary);
   font-size: var(--qf-font-size-caption);
   line-height: 1.6;
+}
+
+.rag-chat-page__answer-content {
+  margin: 0;
+  color: var(--qf-color-text-primary);
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .rag-chat-page__kb-summary dl {
